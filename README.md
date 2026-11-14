@@ -1,1 +1,1 @@
-# regras-videos
+# regras-videos — Manual da Madrugada
