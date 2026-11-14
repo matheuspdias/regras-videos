@@ -1,28 +1,36 @@
-"""Foto de perfil (800x800) e banner (2560x1440) do canal Já Pensou?"""
-import math
+"""Foto de perfil (800x800) e banner (2560x1440) do canal Manual da Madrugada."""
 import cairo
-from .chars import draw_char, Pose, TAU
-from .scenes import text
-from .render import neon_bar, heart
+from .chars import draw_char, Pose
+from .render import rich_text
 
 
 def bg(ctx, w, h):
-    g = cairo.LinearGradient(0, 0, w, h)
-    g.add_color_stop_rgb(0, 0.23, 0.05, 0.64)
-    g.add_color_stop_rgb(1, 0.45, 0.04, 0.72)
+    ctx.rectangle(0, 0, w, h); ctx.set_source_rgba(0.03, 0.03, 0.035, 1); ctx.fill()
+    g = cairo.RadialGradient(w / 2, h / 2, 0, w / 2, h / 2, max(w, h) * 0.6)
+    g.add_color_stop_rgba(0, 0.12, 0.12, 0.14, 1); g.add_color_stop_rgba(1, 0.0, 0.0, 0.0, 1)
     ctx.rectangle(0, 0, w, h); ctx.set_source(g); ctx.fill()
-    ctx.set_source_rgba(1, 1, 1, 0.06)
-    for i in range(-20, 40):
-        ctx.move_to(i * 120, 0); ctx.line_to(i * 120 - h, h); ctx.set_line_width(30); ctx.stroke()
+
+
+def door(ctx, dx, dy, dw, dh, lw, cid_scale, cx_off):
+    """porta entreaberta com a criatura espiando"""
+    ctx.rectangle(dx, dy, dw, dh); ctx.set_source_rgba(0.0, 0.0, 0.0, 1); ctx.fill()
+    ctx.save(); ctx.rectangle(dx, dy, dw, dh); ctx.clip()
+    draw_char(ctx, 'coisa', dx + cx_off, dy + dh + 10 * cid_scale, cid_scale,
+              Pose(mouth='grin', facing=-1, arms='down'))
+    ctx.restore()
+    hinge = dx + dw * 0.42
+    ctx.rectangle(hinge, dy, dx + dw - hinge, dh); ctx.set_source_rgba(0.14, 0.14, 0.16, 1); ctx.fill()
+    ctx.set_source_rgba(0.85, 0.85, 0.88, 1); ctx.set_line_width(lw)
+    ctx.rectangle(dx, dy, dw, dh); ctx.stroke()
+    ctx.move_to(hinge, dy); ctx.line_to(hinge, dy + dh); ctx.stroke()
+    ctx.arc(dx + dw - dw * 0.12, dy + dh * 0.55, lw * 0.9, 0, 6.3); ctx.fill()
 
 
 def avatar(out):
     S = 800
     surf = cairo.ImageSurface(cairo.FORMAT_RGB24, S, S); ctx = cairo.Context(surf)
     bg(ctx, S, S)
-    # ponto de interrogação neon atrás
-    text(ctx, '?', 590, 250, 210, '#FFD23F', outline='#2B0A4A', lw=16)
-    draw_char(ctx, 'voce', 400, 1030, 1.4, Pose(eyes='wide', mouth='smile', arms='face', look=0.6))
+    door(ctx, 190, 70, 420, 820, 12, 1.15, 125)
     surf.write_to_png(out)
 
 
@@ -30,16 +38,31 @@ def banner(out):
     Wb, Hb = 2560, 1440
     surf = cairo.ImageSurface(cairo.FORMAT_RGB24, Wb, Hb); ctx = cairo.Context(surf)
     bg(ctx, Wb, Hb)
-    # área segura: 1546x423 no centro (y 508..931)
-    cx, cy = Wb / 2, Hb / 2
-    text(ctx, 'JÁ PENSOU?', cx, cy + 20, 150, '#FFFFFF', outline='#2B0A4A', lw=22)
-    text(ctx, 'e se você pudesse...?', cx, cy + 105, 50, '#FFD23F', outline='#2B0A4A', lw=10)
-    text(ctx, 'vídeo novo todo dia', cx, cy + 170, 40, '#FFFFFF')
-    draw_char(ctx, 'voce', cx - 600, cy + 300, 0.7, Pose(eyes='wide', mouth='o', arms='face', sweat=True))
-    b = draw_char(ctx, 'bia', cx + 600, cy + 300, 0.68, Pose(eyes='happy', mouth='smile', blush=True, facing=-1))
-    neon_bar(ctx, b['top'][0], b['top'][1] - 45, 0.85, 58)
-    for k in range(9):
-        heart(ctx, cx - 1100 + k * 270, cy - 360 + (k % 3) * 40, 22, (1, 0.35, 0.65, 0.5))
+    cx, cy = Wb / 2, Hb / 2           # área segura: 1546x423 (y 508..931)
+    floor = cy + 205
+    ctx.set_source_rgba(0.75, 0.75, 0.78, 1); ctx.set_line_width(5)
+    ctx.move_to(0, floor); ctx.line_to(Wb, floor); ctx.stroke()
+    # luminárias do corredor
+    for x in (cx - 1150, cx + 1150):
+        g = cairo.RadialGradient(x, cy - 120, 0, x, cy - 120, 110)
+        g.add_color_stop_rgba(0, 1, 0.72, 0.3, 0.55); g.add_color_stop_rgba(1, 1, 0.6, 0.2, 0)
+        ctx.arc(x, cy - 120, 110, 0, 6.3); ctx.set_source(g); ctx.fill()
+        ctx.arc(x, cy - 120, 16, 0, 6.3); ctx.set_source_rgba(1, 0.75, 0.35, 1); ctx.fill()
+    # protagonista com medo (esq.) e criatura na porta (dir.)
+    draw_char(ctx, 'voce', cx - 880, floor + 8, 0.62,
+              Pose(eyes='wide', mouth='o', arms='face', sweat=True, facing=1))
+    door(ctx, cx + 700, cy - 230, 230, 435, 6, 0.6, 70)
+    ctx.select_font_face('Poppins', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+    rich_text(ctx, 'MANUAL DA **MADRUGADA**', cx - 30, cy - 10, 96)
+    ctx.set_font_size(40); ctx.set_source_rgba(0.82, 0.82, 0.85, 1)
+    for msg, y in (('regras para sobreviver até o amanhecer', cy + 70),):
+        e = ctx.text_extents(msg); ctx.move_to(cx - 30 - e.x_advance / 2, y); ctx.show_text(msg)
+    tag = 'UMA NOITE NOVA TODO DIA'
+    ctx.set_font_size(30); e = ctx.text_extents(tag)
+    from .chars import rrect
+    rrect(ctx, cx - 30 - e.x_advance / 2 - 30, cy + 105, e.x_advance + 60, 54, 27)
+    ctx.set_source_rgba(0.9, 0.15, 0.17, 1); ctx.fill()
+    ctx.move_to(cx - 30 - e.x_advance / 2, cy + 143); ctx.set_source_rgba(1, 1, 1, 1); ctx.show_text(tag)
     surf.write_to_png(out)
 
 
