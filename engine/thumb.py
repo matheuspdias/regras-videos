@@ -1,0 +1,167 @@
+"""Thumbnail do ep01: 'só 3%..' — protagonista em choque, tia Marta com 3%, linha neon ligando os dois."""
+import sys
+import math
+import cairo
+from .chars import draw_char, Pose, TAU
+from .scenes import bg_jantar, fg_jantar, text, W, H, vignette
+from .render import neon_bar, heart
+
+
+def neon_line(ctx, pts, glow=(1, 0.25, 0.7)):
+    for lw, a in ((60, 0.06), (40, 0.1), (24, 0.18), (12, 0.6), (5, 1.0)):
+        ctx.set_line_width(lw)
+        ctx.set_line_cap(cairo.LINE_CAP_ROUND)
+        if lw == 5:
+            ctx.set_source_rgba(1, 0.92, 0.98, 1)
+        else:
+            ctx.set_source_rgba(glow[0], glow[1], glow[2], a)
+        ctx.move_to(*pts[0])
+        ctx.curve_to(*pts[1], *pts[2], *pts[3])
+        ctx.stroke()
+
+
+def main(out):
+    surf = cairo.ImageSurface(cairo.FORMAT_RGB24, W, H)
+    ctx = cairo.Context(surf)
+    ctx.save()
+    # fundo: casa da vó, mais escuro e quente
+    ctx.translate(W / 2, H / 2)
+    ctx.scale(1.35, 1.35)
+    ctx.translate(-W / 2, -H / 2 - 40)
+    bg_jantar(ctx, 0)
+    ctx.restore()
+    ctx.rectangle(0, 0, W, H)
+    ctx.set_source_rgba(0.1, 0.0, 0.15, 0.6)
+    ctx.fill()
+    # tia (direita), sorrindo
+    tia = draw_char(ctx, 'tia', 1420, 1330, 1.55, Pose(mouth='grin', eyes='happy', arms='wave', facing=-1))
+    # protagonista (esquerda), em choque
+    voce = draw_char(ctx, 'voce', 520, 1370, 1.75, Pose(eyes='wide', mouth='o', arms='face', sweat=True, facing=1))
+    # linha neon do protagonista até a tia
+    hx, hy = voce['head']
+    tx, ty = tia['head']
+    neon_line(ctx, [(hx + 120, hy - 10), (hx + 400, hy - 260), (tx - 420, ty - 300), (tx - 150, ty - 120)])
+    # barra 3%
+    neon_bar(ctx, tx, tia['top'][1] - 70, 2.0, 3)
+    # texto
+    ctx.select_font_face('Poppins', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+    ctx.set_font_size(190)
+    w1 = ctx.text_extents('só ').x_advance
+    w2 = ctx.text_extents('3%..').x_advance
+    x0 = W / 2 - (w1 + w2) / 2
+    text(ctx, 'só ', x0, 230, 190, '#FFFFFF', align='left', outline='#120018', lw=24)
+    text(ctx, '3%..', x0 + w1, 230, 190, '#FFD23F', align='left', outline='#120018', lw=24)
+    vignette(ctx, 0.45)
+    surf.write_to_png(out)
+
+
+def ep02(out):
+    from .scenes import bg_classe
+    from .render import rings, thought_bubble
+    surf = cairo.ImageSurface(cairo.FORMAT_RGB24, W, H)
+    ctx = cairo.Context(surf)
+    ctx.save()
+    ctx.translate(W / 2, H / 2); ctx.scale(1.3, 1.3); ctx.translate(-W / 2, -H / 2 - 30)
+    bg_classe(ctx, 0)
+    ctx.restore()
+    ctx.rectangle(0, 0, W, H); ctx.set_source_rgba(0.1, 0.0, 0.15, 0.55); ctx.fill()
+    voce = draw_char(ctx, 'voce', 560, 1380, 1.7, Pose(eyes='wide', mouth='wavy', arms='face', sweat=True, blush=True, facing=1))
+    hx, hy = voce['head']
+    rings(ctx, hx, hy, voce['head_r'], 0.15)
+    rings(ctx, hx, hy, voce['head_r'], 0.5)
+    bia = draw_char(ctx, 'bia', 1450, 1380, 1.6, Pose(eyes='wide', mouth='o', blush=True, arms='face', facing=-1))
+    # balão de pensamento com coração
+    bx, by = 1000, 380
+    for k, (fx_, r) in enumerate(((0.3, 16), (0.55, 26))):
+        ctx.arc(hx + (bx - hx) * fx_, hy - 150 + (by - hy + 150) * fx_, r, 0, TAU); ctx.set_source_rgba(1, 1, 1, 1); ctx.fill()
+    ctx.save(); ctx.translate(bx, by); ctx.scale(1.4, 1.0); ctx.arc(0, 0, 110, 0, TAU); ctx.restore()
+    ctx.set_source_rgba(1, 1, 1, 1); ctx.fill()
+    heart(ctx, bx, by + 20, 80, (1, 0.25, 0.6, 1))
+    ctx.select_font_face('Poppins', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+    ctx.set_font_size(180)
+    w1 = ctx.text_extents('ela ').x_advance
+    w2 = ctx.text_extents('ouviu..').x_advance
+    x0 = W / 2 - (w1 + w2) / 2
+    text(ctx, 'ela ', x0, 200, 180, '#FFFFFF', align='left', outline='#120018', lw=24)
+    text(ctx, 'ouviu..', x0 + w1, 200, 180, '#FFD23F', align='left', outline='#120018', lw=24)
+    vignette(ctx, 0.45)
+    surf.write_to_png(out)
+
+
+def _cli():
+    out = sys.argv[1]
+    arg = sys.argv[2] if len(sys.argv) > 2 else None
+    if arg == 'ep02':
+        ep02(out)
+    elif arg and arg.startswith('episodes.'):
+        import importlib
+        generic(importlib.import_module(arg).THUMB, out)
+    else:
+        main(out)
+
+
+# ---------------------------------------------------------------- thumbnail genérica (usada pela automação)
+def generic(spec, out):
+    """spec (THUMB no arquivo do episódio):
+    bg: chave de engine.scenes.BG
+    text: (parte_branca, parte_amarela)   ex.: ('só', '3%..')
+    left: (cid, dict_pose)   protagonista em reação, normalmente 'voce'
+    right: (cid, dict_pose) ou None
+    link: 'bar' | 'neon' | 'thought' | 'rings' | None
+    bar: valor da barra neon sobre o personagem da direita (se link='bar')
+    """
+    from .scenes import BG
+    from .render import rings
+    surf = cairo.ImageSurface(cairo.FORMAT_RGB24, W, H)
+    ctx = cairo.Context(surf)
+    bgf, fgf = BG[spec['bg']]
+    ctx.save()
+    ctx.translate(W / 2, H / 2); ctx.scale(1.3, 1.3); ctx.translate(-W / 2, -H / 2 - 30)
+    bgf(ctx, 0)
+    ctx.restore()
+    ctx.rectangle(0, 0, W, H); ctx.set_source_rgba(0.1, 0.0, 0.15, 0.55); ctx.fill()
+    lid, lpose = spec['left']
+    lp = dict(lpose); lp.setdefault('facing', 1)
+    L = draw_char(ctx, lid, 560, 1380, 1.7, Pose(**lp))
+    R = None
+    if spec.get('right'):
+        rid, rpose = spec['right']
+        rp = dict(rpose); rp.setdefault('facing', -1)
+        R = draw_char(ctx, rid, 1450, 1380, 1.6, Pose(**rp))
+    hx, hy = L['head']
+    link = spec.get('link')
+    if link in ('rings', 'thought'):
+        rings(ctx, hx, hy, L['head_r'], 0.15)
+        rings(ctx, hx, hy, L['head_r'], 0.5)
+    if link == 'thought':
+        bx, by = 1000, 380
+        for fx_, r in ((0.3, 16), (0.55, 26)):
+            ctx.arc(hx + (bx - hx) * fx_, hy - 150 + (by - hy + 150) * fx_, r, 0, TAU); ctx.set_source_rgba(1, 1, 1, 1); ctx.fill()
+        ctx.save(); ctx.translate(bx, by); ctx.scale(1.4, 1.0); ctx.arc(0, 0, 110, 0, TAU); ctx.restore()
+        ctx.set_source_rgba(1, 1, 1, 1); ctx.fill()
+        heart(ctx, bx, by + 20, 80, (1, 0.25, 0.6, 1))
+    if link in ('neon', 'bar') and R:
+        tx, ty = R['head']
+        neon_line(ctx, [(hx + 120, hy - 10), (hx + 400, hy - 260), (tx - 420, ty - 300), (tx - 150, ty - 120)])
+    if link == 'bar' and R:
+        neon_bar(ctx, R['head'][0], R['top'][1] - 70, 2.0, spec.get('bar', 50))
+    a, b = spec['text']
+    ctx.select_font_face('Poppins', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+    size = 180
+    while True:
+        ctx.set_font_size(size)
+        w1 = ctx.text_extents(a + ' ').x_advance if a else 0
+        w2 = ctx.text_extents(b).x_advance
+        if w1 + w2 < W - 160 or size < 90:
+            break
+        size -= 10
+    x0 = W / 2 - (w1 + w2) / 2
+    if a:
+        text(ctx, a + ' ', x0, 200, size, '#FFFFFF', align='left', outline='#120018', lw=24)
+    text(ctx, b, x0 + w1, 200, size, '#FFD23F', align='left', outline='#120018', lw=24)
+    vignette(ctx, 0.45)
+    surf.write_to_png(out)
+
+
+if __name__ == '__main__':
+    _cli()
