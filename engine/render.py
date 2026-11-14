@@ -77,7 +77,8 @@ def envelope(path, dur):
 def build(ep_mod, ep_id):
     ep = importlib.import_module(ep_mod)
     adir = f'media/{ep_id}/audio'
-    t = LEAD
+    t = getattr(ep, 'LEAD', LEAD)
+    extra_after = 0.0
     clips = []
     shots = []
     prev_sp = None
@@ -87,7 +88,8 @@ def build(ep_mod, ep_id):
         path = f'{adir}/{i:03d}.mp3'
         d = probe(path)
         if prev_sp is not None:
-            t += GAP_DIALOG if (sp != 'nar' or prev_sp != 'nar') else GAP_NAR
+            t += GAP_DIALOG if (sp != 'nar' or prev_sp != 'nar') else getattr(ep, 'GAP_NAR', GAP_NAR)
+            t += extra_after
             if sp == 'pens' or prev_sp == 'pens':
                 t += 0.15
         clips.append(dict(i=i, sp=sp, path=path, t0=t, t1=t + d, text=txt))
@@ -97,7 +99,12 @@ def build(ep_mod, ep_id):
             shots[-1]['lines'].append(i)
         t += d
         prev_sp = sp
-    total = t + TAIL
+        extra_after = 0.0
+        if scene is not None and any(isinstance(i, dict) and 'regra' in i for i in scene.get('fx', [])):
+            extra_after = getattr(ep, 'PAUSA_REGRA', 0.0)
+        if sp == 'coisa':
+            extra_after = getattr(ep, 'PAUSA_VOZ', 0.0)
+    total = t + getattr(ep, 'TAIL', TAIL)
     for k, s in enumerate(shots):
         s['t0'] = 0 if k == 0 else s['t0'] - 0.12
         s['t1'] = shots[k + 1]['t0'] - 0.12 if k + 1 < len(shots) else total
@@ -336,8 +343,15 @@ def overlay_mm(ctx, fx, u, dur, t):
             ctx.rectangle(0, 0, W, H); ctx.set_source_rgba(0.02, 0.02, 0.025, 1); ctx.fill()
             a = ease(u / 0.6)
             text(ctx, f'R E G R A   {n}', 960, 420, 48, '#8E8E93')
+            ctx.select_font_face('Poppins', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+            fs = 110
+            while fs > 60:
+                ctx.set_font_size(fs)
+                if ctx.text_extents(frase.replace('*', '')).x_advance < 1600:
+                    break
+                fs -= 6
             ctx.save(); ctx.translate(960, 560); s_ = 0.9 + 0.1 * a; ctx.scale(s_, s_)
-            rich_text(ctx, frase, 0, 0, 110)
+            rich_text(ctx, frase, 0, 0, fs)
             ctx.restore()
             ctx.set_source_rgba(0.9, 0.15, 0.17, a); ctx.rectangle(860, 610, 200 * a, 6); ctx.fill()
         if 'celular' in item:
@@ -673,7 +687,7 @@ def overlay(ctx, fx, u, dur, t, shot):
 
 
 def dog(ctx, x, y, modo, t):
-    ctx.save(); ctx.translate(x, y)
+    ctx.save(); ctx.translate(x, y); ctx.scale(1.45, 1.45)
     from .chars import rrect as rr_, fill_stroke as fs_
     wag = math.sin(t * 14) * 0.5 if modo == 'abana' else 0
     ctx.save(); ctx.translate(-95, -70); ctx.rotate(-0.8 + wag)
@@ -1037,7 +1051,11 @@ def draw_frame(ctx, ep, clips, shots, envs, t):
             ctx.set_font_size(40)
             w_ = ctx.text_extents(msg).width + 60
             rrect(ctx, bx - w_ / 2, by - 50, w_, 76, 30)
-            ctx.set_source_rgba(0.9, 0.15, 0.17, 1); ctx.fill()
+            if c['sp'] == 'coisa':
+                ctx.set_source_rgba(0.9, 0.15, 0.17, 1)
+            else:
+                ctx.set_source_rgba(0.42, 0.42, 0.46, 1)
+            ctx.fill()
             ctx.move_to(bx - 12, by + 26); ctx.line_to(bx + 6, by + 50); ctx.line_to(bx + 16, by + 26); ctx.fill()
             ctx.move_to(bx - w_ / 2 + 30, by + 2); ctx.set_source_rgba(1, 1, 1, 1); ctx.show_text(msg)
     tb = None

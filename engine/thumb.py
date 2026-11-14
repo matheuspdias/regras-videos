@@ -88,16 +88,6 @@ def ep02(out):
     surf.write_to_png(out)
 
 
-def _cli():
-    out = sys.argv[1]
-    arg = sys.argv[2] if len(sys.argv) > 2 else None
-    if arg == 'ep02':
-        ep02(out)
-    elif arg and arg.startswith('episodes.'):
-        import importlib
-        generic(importlib.import_module(arg).THUMB, out)
-    else:
-        main(out)
 
 
 # ---------------------------------------------------------------- thumbnail genérica (usada pela automação)
@@ -161,6 +151,78 @@ def generic(spec, out):
     text(ctx, b, x0 + w1, 200, size, '#FFD23F', align='left', outline='#120018', lw=24)
     vignette(ctx, 0.45)
     surf.write_to_png(out)
+
+
+# ---------------------------------------------------------------- Manual da Madrugada
+def mm(spec, out):
+    """spec (THUMB do episódio):
+    ordem: 'NÃO **RESPONDA**'   (palavra entre ** fica vermelha)
+    esquerda: (cid, pose) protagonista com medo
+    criatura_porta: True -> criatura espiando de uma porta à direita
+    balao: texto do balão vermelho saindo da porta (opcional)
+    """
+    from .render import rich_text
+    from .scenes import lr
+    from .chars import rrect
+    surf = cairo.ImageSurface(cairo.FORMAT_RGB24, W, H)
+    ctx = cairo.Context(surf)
+    ctx.rectangle(0, 0, W, H); ctx.set_source_rgba(0.03, 0.03, 0.035, 1); ctx.fill()
+    # chão
+    ctx.set_source_rgba(0.75, 0.75, 0.78, 1); ctx.set_line_width(8)
+    ctx.move_to(0, 1010); ctx.line_to(W, 1010); ctx.stroke()
+    if spec.get('criatura_porta'):
+        # porta entreaberta com a criatura espiando
+        dx, dy, dw, dh = 1260, 330, 420, 690
+        ctx.rectangle(dx, dy, dw, dh); ctx.set_source_rgba(0.01, 0.01, 0.012, 1); ctx.fill()
+        ctx.save()
+        ctx.rectangle(dx, dy, dw, dh); ctx.clip()
+        draw_char(ctx, 'coisa', dx + 105, dy + dh + 10, 0.95, Pose(mouth='grin', facing=-1, arms='down'))
+        ctx.restore()
+        ctx.rectangle(dx + 170, dy, dw - 170, dh); ctx.set_source_rgba(0.14, 0.14, 0.16, 1); ctx.fill()
+        ctx.set_source_rgba(0.85, 0.85, 0.88, 1); ctx.set_line_width(9)
+        ctx.rectangle(dx, dy, dw, dh); ctx.stroke()
+        ctx.move_to(dx + 170, dy); ctx.line_to(dx + 170, dy + dh); ctx.stroke()
+        if spec.get('balao'):
+            msg = spec['balao']
+            ctx.select_font_face('Courier New', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+            ctx.set_font_size(54)
+            w_ = ctx.text_extents(msg).width + 70
+            bx, by = dx + 40, dy - 30
+            rrect(ctx, bx - w_ / 2, by - 60, w_, 92, 34)
+            ctx.set_source_rgba(0.9, 0.15, 0.17, 1); ctx.fill()
+            ctx.move_to(bx + 10, by + 30); ctx.line_to(bx + 40, by + 70); ctx.line_to(bx + 50, by + 30); ctx.fill()
+            ctx.move_to(bx - w_ / 2 + 35, by + 5); ctx.set_source_rgba(1, 1, 1, 1); ctx.show_text(msg)
+    lid, lp = spec['esquerda']
+    lp = dict(lp); lp.setdefault('facing', 1)
+    draw_char(ctx, lid, 520, 1120, 1.55, Pose(**lp))
+    # linhas de susto
+    ctx.set_source_rgba(0.9, 0.9, 0.92, 1); ctx.set_line_width(8); ctx.set_line_cap(cairo.LINE_CAP_ROUND)
+    for a in (-0.9, -0.5, -0.1):
+        ctx.move_to(520 + math.cos(a - 1.2) * 250, 520 + math.sin(a - 1.2) * 250)
+        ctx.line_to(520 + math.cos(a - 1.2) * 300, 520 + math.sin(a - 1.2) * 300)
+        ctx.stroke()
+    ctx.select_font_face('Poppins', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+    fs = 170
+    while fs > 90:
+        ctx.set_font_size(fs)
+        if ctx.text_extents(spec['ordem'].replace('*', '')).x_advance < W - 160:
+            break
+        fs -= 8
+    rich_text(ctx, spec['ordem'], 960, 190, fs)
+    surf.write_to_png(out)
+
+
+def _cli():
+    out = sys.argv[1]
+    arg = sys.argv[2] if len(sys.argv) > 2 else None
+    if arg == 'ep02':
+        ep02(out)
+    elif arg and arg.startswith('episodes.'):
+        import importlib
+        spec = importlib.import_module(arg).THUMB
+        (mm if 'ordem' in spec else generic)(spec, out)
+    else:
+        main(out)
 
 
 if __name__ == '__main__':

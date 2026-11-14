@@ -706,7 +706,7 @@ def draw_prop(ctx, prop, x, y, f):
         rrect(ctx, -26, -60, 52, 92, 10)
         fill_stroke(ctx, '#222831', 5)
         rrect(ctx, -19, -52, 38, 74, 6)
-        ctx.set_source_rgba(0.4, 0.85, 0.6, 1)
+        ctx.set_source_rgba(0.82, 0.88, 0.96, 1)
         ctx.fill()
     elif prop == 'controle':
         rrect(ctx, -50, -22, 100, 44, 20)

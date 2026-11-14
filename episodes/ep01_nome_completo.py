@@ -5,6 +5,11 @@ from engine.dsl import S, C
 
 TITLE = "Se sua mãe te chamar pelo nome completo de dentro de um quarto vazio… NÃO RESPONDA"
 NOITE = 1
+LEAD = 2.0          # silêncio de ambiente antes da primeira fala
+GAP_NAR = 0.75      # pausas de terror entre falas
+PAUSA_REGRA = 2.0   # segura o cartão da regra
+PAUSA_VOZ = 1.2     # respiro depois de cada voz da criatura
+TAIL = 20.0
 THUMB = dict(ordem='NÃO **RESPONDA**', cena='corredor', esquerda=('voce', dict(eyes='wide', mouth='o', arms='face', sweat=True)),
              criatura_porta=True, balao='Lucas Henrique?')
 
@@ -121,9 +126,9 @@ LINES = [
     ('nar', "Regra número cinco.",
      S('preto', fx=[{'regra': (5, 'NÃO ABRA PRA **PIPOCA**')}])),
     ('nar', "Se a Pipoca descer da cama e for até a porta do quarto da sua mãe, não vai atrás dela. Ela vai abanar o rabo. Vai arranhar a porta, do jeitinho que faz quando a sua mãe chega do trabalho.",
-     S('corredor', cam=dict(zoom=1.1, to=1.22), fx=[{'cachorro': (820, 1000, 'abana')}])),
+     S('corredor', cam=dict(zoom=1.1, to=1.22), fx=[{'cachorro': (760, 960, 'abana')}])),
     ('nar', "Cachorro não se engana com cheiro. Mas se engana com voz. E a coisa sabe imitar a voz que a Pipoca mais ama.",
-     S('corredor', cam=dict(zoom=1.3, to=1.45, cx=900, cy=600), fx=[{'cachorro': (820, 1000, 'abana')}, {'olhos': (940, 470), 'surge': True}])),
+     S('corredor', cam=dict(zoom=1.3, to=1.45, cx=900, cy=600), fx=[{'cachorro': (760, 960, 'abana')}, {'olhos': (940, 470), 'surge': True}])),
     ('nar', "Chama a Pipoca de volta sem falar. Estala os dedos. Bate de leve no colchão. E, se ela não vier, deixa ela lá. Ela vai ficar bem. Ninguém lá dentro quer a Pipoca.",
      S('quarto', quarto(eyes='half', mouth='flat', arms='point'), cam=dict(zoom=1.1, to=1.2))),
 
