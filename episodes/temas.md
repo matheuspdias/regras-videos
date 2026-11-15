@@ -7,7 +7,7 @@ com um detalhe errado]… [ORDEM EM MAIÚSCULAS]**. Os temas de família/casa à
 | # | Título | Ordem na thumb | Base | Ideia (sugestão) | Status |
 | --- | --- | --- | --- | --- | --- |
 | 1 | Se sua mãe te chamar pelo nome completo de dentro de um quarto vazio… NÃO RESPONDA | NÃO **RESPONDA** | família (3 mi) | mãe de plantão, voz no quarto vazio | feito — ep01, 14/11 |
-| 2 | Se sua vó te benzer duas vezes na mesma noite… FINJA QUE DORME | FINJA QUE **DORME** | família + benzedeira | férias na casa da vó no interior; a primeira bênção é dela, a segunda não | pendente |
+| 2 | Se sua vó te benzer duas vezes na mesma noite… FINJA QUE DORME | FINJA QUE **DORME** | família + benzedeira | férias na casa da vó no interior; a primeira bênção é dela, a segunda não | feito — ep02, 15/11 |
 | 3 | Se alguém bater palma no seu portão depois da meia-noite… NÃO ATENDA | NÃO **ATENDA** | casa brasileira | palma no portão, voz do vizinho, cadeado, cachorro | pendente |
 | 4 | Se o grupo da família receber um áudio da sua vó às 3h da manhã… NÃO ESCUTE | NÃO **ESCUTE** | família + WhatsApp | áudio de 0:47 que ninguém deveria ouvir | pendente |
 | 5 | Se o seu irmão te chamar pelo apelido que só a vó usava… NÃO OLHE PRA TRÁS | NÃO **OLHE** | família (851 mil) | irmão mais novo no corredor | pendente |
