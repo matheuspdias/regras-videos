@@ -13,7 +13,9 @@ ffmpeg -v error -y -i "build/$EP/thumb.png" -vf scale=1280:720 -q:v 2 "build/$EP
 TITLE=$(python3 -c "import importlib,sys; sys.path.insert(0,'.'); print(importlib.import_module('$MOD').TITLE)")
 SAFE=$(python3 -c "import unicodedata,re,sys; t=unicodedata.normalize('NFKD',sys.argv[1]).encode('ascii','ignore').decode(); print(re.sub(r'[^A-Za-z0-9 ]','',t).strip())" "$TITLE")
 OUT="build/$EP/entrega"; rm -rf "$OUT"; mkdir -p "$OUT"
-cp "build/$EP/$EP.mp4" "$OUT/$SAFE.mp4"
+# cópia de entrega com bitrate limitado (o envio pelo chat aceita até 400 MiB; ~10 min de vídeo dá ~340 MB)
+ffmpeg -v error -y -i "build/$EP/$EP.mp4" -c:v libx264 -preset veryfast -b:v 4400k -maxrate 4800k -bufsize 9600k \
+  -pix_fmt yuv420p -c:a copy -movflags +faststart "$OUT/$SAFE.mp4"
 cp "build/$EP/thumb.jpg" "$OUT/${EP}_thumb.jpg"
 cp "build/$EP/${EP}_legenda_pt.srt" "$OUT/"
 cp "episodes/$EP/youtube.md" "$OUT/${EP}_titulo_descricao.md"
