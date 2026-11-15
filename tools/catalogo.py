@@ -15,7 +15,7 @@ for k, v in CAST.items():
     print(f'- {k}: {v["name"]}')
 print('\n# POSE (kwargs de C)')
 print("eyes: normal wide happy sad angry closed half | mouth: smile grin flat frown o wavy | arms: down wave face point hip up hold cross shrug")
-print("facing: 1/-1 | look: -1..1 | sweat, blush, sit, veil, mustache: True | prop: " + ', '.join(sorted(set(re.findall(r"prop == '(\w+)'", open('engine/chars.py').read())))))
+print("facing: 1/-1 | look: -1..1 | sweat, blush, sit, lie, veil, mustache: True | prop: " + ', '.join(sorted(set(re.findall(r"prop == '(\w+)'", open('engine/chars.py').read())))))
 print('\n# EFEITOS (fx)')
 src = open('engine/render.py').read()
 print(', '.join(sorted(set(re.findall(r"'(\w+)' in fx", src)))))

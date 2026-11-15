@@ -79,6 +79,7 @@ class Pose:
         self.veil = kw.get('veil', False)
         self.mustache = kw.get('mustache', False)
         self.sit = kw.get('sit', False)
+        self.lie = kw.get('lie', False)          # deitado (cabeça para a esquerda, pés no ponto do slot)
 
 
 def draw_char(ctx, cid, x, y, s=1.0, pose=None):
@@ -88,6 +89,8 @@ def draw_char(ctx, cid, x, y, s=1.0, pose=None):
     ctx.translate(x, y)
     hs = c['h']
     ctx.scale(s, s)
+    if p.lie:
+        ctx.rotate(-math.pi / 2)
     f = p.facing
     by = -p.bob * 6
     H = 520 * hs  # altura total
@@ -248,13 +251,20 @@ def draw_char(ctx, cid, x, y, s=1.0, pose=None):
             hands[side] = arm(side, p.arms)
 
     # ---- cabeça
-    draw_head(ctx, cid, c, p, 0, head_cy, head_r)
+    if p.lie:   # cabeça quase em pé no travesseiro, rosto virado para a câmera
+        ctx.save(); ctx.translate(0, head_cy); ctx.rotate(math.pi / 2 - 0.22); ctx.translate(0, -head_cy)
+        draw_head(ctx, cid, c, p, 0, head_cy, head_r)
+        ctx.restore()
+    else:
+        draw_head(ctx, cid, c, p, 0, head_cy, head_r)
 
     # props
     if p.extra_prop and (1 in hands or -1 in hands):
         hx, hy = hands.get(f, hands.get(1))
         draw_prop(ctx, p.extra_prop, hx, hy, f)
     ctx.restore()
+    if p.lie:
+        return dict(head=(x + head_cy * s, y), head_r=head_r * s, top=(x + head_cy * s, y - head_r * s))
     return dict(head=(x, y + head_cy * s), head_r=head_r * s, top=(x, y + (head_cy - head_r) * s))
 
 

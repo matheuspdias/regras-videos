@@ -874,6 +874,106 @@ def bg_mm_preto(ctx, t):
     ctx.rectangle(0, 0, W, H); ctx.set_source_rgba(0.03, 0.03, 0.035, 1); ctx.fill()
 
 
+
+# ---------------------------------------------------------------- casa da vó (noite 02)
+def wood_window(ctx, x, y, w, h, open_=True):
+    """janela de madeira de casa do interior: duas folhas, a da direita entreaberta mostrando a lua"""
+    lr(ctx, x - 14, y - 14, w + 28, h + 28, fill=DARK3)
+    moon_window(ctx, x, y, w, h)
+    if open_:
+        lr(ctx, x, y, w * 0.5, h, fill='#1E1A17')                     # folha esquerda fechada
+        for k in range(1, 5):
+            ctx.move_to(x + 10, y + k * h / 5); ctx.line_to(x + w * 0.5 - 10, y + k * h / 5)
+        ctx.set_source_rgba(*LINE); ctx.set_line_width(3); ctx.stroke()
+        ctx.move_to(x + w, y); ctx.line_to(x + w + 70, y + 26); ctx.line_to(x + w + 70, y + h - 26); ctx.line_to(x + w, y + h)
+        ctx.close_path(); setc(ctx, '#1E1A17'); ctx.fill_preserve(); ctx.set_source_rgba(*LINE); ctx.set_line_width(4); ctx.stroke()
+
+
+def oratorio(ctx, x, y, t, lit=True):
+    """oratório de madeira numa prateleira, com uma velinha"""
+    lr(ctx, x - 90, y + 150, 180, 16, fill=DARK3)                      # prateleira
+    ctx.move_to(x - 60, y + 150); ctx.line_to(x - 60, y + 20); ctx.line_to(x, y - 30); ctx.line_to(x + 60, y + 20)
+    ctx.line_to(x + 60, y + 150); ctx.close_path()
+    setc(ctx, '#1A1714'); ctx.fill_preserve(); ctx.set_source_rgba(*LINE); ctx.set_line_width(4); ctx.stroke()
+    lr(ctx, x - 40, y + 40, 80, 100, fill='#0C0B0A', r=30)             # nicho
+    lr(ctx, x + 70, y + 110, 18, 40, fill='#D9D4C8')                   # vela
+    if lit:
+        fl = 0.85 + 0.15 * math.sin(t * 17) * math.sin(t * 5.1)
+        ctx.save(); ctx.translate(x + 79, y + 98); ctx.scale(0.55, 1.0 * fl)
+        ctx.arc(0, 0, 13, 0, TAU); ctx.restore(); ctx.set_source_rgba(1, 0.78, 0.35, 0.95); ctx.fill()
+        amber(ctx, x + 79, y + 98, 260, 0.30, t, flick=True)
+    else:
+        ctx.set_source_rgba(0.6, 0.6, 0.64, 0.5); ctx.set_line_width(3)
+        ctx.move_to(x + 79, y + 104); ctx.curve_to(x + 70, y + 80, x + 95, y + 60, x + 82, y + 30); ctx.stroke()
+
+
+def arruda_copo(ctx, x, y):
+    lr(ctx, x - 22, y - 60, 44, 60, fill='#1A1D22', r=6)               # copo d'água
+    ctx.set_source_rgba(0.55, 0.62, 0.55, 1); ctx.set_line_width(4)
+    for a in (-0.35, 0.0, 0.3):
+        ctx.move_to(x, y - 40); ctx.line_to(x + math.sin(a) * 70, y - 40 - math.cos(a) * 70); ctx.stroke()
+        for k in (0.45, 0.75, 1.0):
+            ctx.arc(x + math.sin(a) * 70 * k, y - 40 - math.cos(a) * 70 * k, 7, 0, TAU); ctx.fill()
+
+
+def bg_mm_quarto_vo(ctx, t, lit=True, manha=False):
+    mm_room(ctx, wall_c='#151413')
+    wood_window(ctx, 200, 170, 280, 260)
+    door(ctx, 760, 260, 230, 540)
+    oratorio(ctx, 1300, 300, t, lit=lit)
+    bed(ctx, 1180, 780, 640, made=False)
+    lr(ctx, 1060, 640, 100, 160, r=6)                                  # criado-mudo
+    arruda_copo(ctx, 1110, 640)
+    if manha:
+        ctx.rectangle(0, 0, W, H); ctx.set_source_rgba(0.55, 0.62, 0.75, 0.13); ctx.fill()
+    elif not lit:
+        ctx.rectangle(0, 0, W, H); ctx.set_source_rgba(0, 0, 0, 0.45); ctx.fill()
+
+
+def ramo_seco(ctx, x, y):
+    """raminho de arruda seco e escuro, amarrado com linha vermelha"""
+    for col, lw, rr_ in ((LINE, 11, 11), ((0.07, 0.065, 0.06, 1), 5, 7)):
+        ctx.set_source_rgba(*col); ctx.set_line_width(lw)
+        for a in (-0.5, -0.15, 0.2):
+            ctx.move_to(x, y); ctx.line_to(x + math.cos(a) * 110, y + math.sin(a) * 40); ctx.stroke()
+            for k in (0.5, 0.75, 1.0):
+                ctx.arc(x + math.cos(a) * 110 * k, y + math.sin(a) * 40 * k - 6, rr_, 0, TAU); ctx.fill()
+    ctx.set_source_rgba(0.9, 0.15, 0.17, 1); ctx.set_line_width(6)
+    ctx.move_to(x + 18, y - 16); ctx.line_to(x + 22, y + 14); ctx.stroke()
+    ctx.move_to(x + 20, y + 10); ctx.curve_to(x - 10, y + 30, x - 30, y + 20, x - 40, y + 40); ctx.stroke()
+
+
+def big_bed(ctx):
+    lr(ctx, 600, 400, 50, 420, r=8)                                    # cabeceira de madeira
+    for k in range(3):
+        lr(ctx, 612, 440 + k * 120, 26, 90, fill=DARK3, r=6)
+    lr(ctx, 640, 640, 1140, 130, r=14)                                 # colchão
+    lr(ctx, 690, 575, 300, 85, fill='#2C2C30', r=40)                   # travesseiro
+    lr(ctx, 660, 770, 34, 110); lr(ctx, 1730, 770, 34, 110)            # pés da cama
+
+
+def bg_mm_cama(ctx, t, lit=True):
+    mm_room(ctx, wall_c='#151413', fy=880)
+    wood_window(ctx, 900, 120, 260, 230)
+    oratorio(ctx, 1560, 170, t, lit=lit)
+    big_bed(ctx)
+
+
+def fg_mm_cama(ctx, t, lit=True):
+    # colcha de retalhos cobrindo o corpo (o protagonista deitado tem os pés em ~1250)
+    ctx.move_to(975, 760); ctx.line_to(975, 600)
+    ctx.curve_to(1020, 500, 1200, 505, 1330, 560)
+    ctx.curve_to(1450, 600, 1600, 590, 1760, 610)
+    ctx.line_to(1790, 800); ctx.line_to(990, 800); ctx.close_path()
+    setc(ctx, '#2A2724'); ctx.fill_preserve(); ctx.set_source_rgba(*LINE); ctx.set_line_width(5); ctx.stroke()
+    ctx.set_source_rgba(0.6, 0.6, 0.64, 0.35); ctx.set_line_width(3)
+    for x in range(1080, 1760, 140):                                   # costuras dos retalhos
+        ctx.move_to(x, 600); ctx.line_to(x - 20, 795); ctx.stroke()
+    ctx.move_to(985, 700); ctx.curve_to(1200, 690, 1500, 710, 1780, 700); ctx.stroke()
+    if not lit:
+        ctx.rectangle(0, 0, W, H); ctx.set_source_rgba(0, 0, 0, 0.45); ctx.fill()
+
+
 BG = {
     'quarto': (bg_mm_quarto, None),
     'corredor': (bg_mm_corredor, None),
@@ -884,6 +984,12 @@ BG = {
     'cozinha': (bg_mm_cozinha, None),
     'porta': (bg_mm_porta, None),
     'preto': (bg_mm_preto, None),
+    'quarto_vo': (bg_mm_quarto_vo, None),
+    'quarto_vo_escuro': (lambda c, t: bg_mm_quarto_vo(c, t, lit=False), None),
+    'quarto_vo_manha': (lambda c, t: bg_mm_quarto_vo(c, t, manha=True), None),
+    'quarto_vo_ramo': (lambda c, t: (bg_mm_quarto_vo(c, t, manha=True), ramo_seco(c, 1260, 735)), None),
+    'cama': (bg_mm_cama, fg_mm_cama),
+    'cama_escuro': (lambda c, t: bg_mm_cama(c, t, lit=False), lambda c, t: fg_mm_cama(c, t, lit=False)),
 }
 
 SLOTS = {
@@ -896,4 +1002,10 @@ SLOTS = {
     'cozinha': dict(a=(560, 1000, 0.95), b=(1410, 1000, 0.95), c=(960, 1000, 0.95)),
     'porta': dict(a=(500, 1010, 1.0), porta=(960, 1000, 1.0), b=(1500, 1010, 1.0)),
     'preto': dict(c=(960, 1000, 1.0)),
+    'quarto_vo': dict(cama=(1420, 830, 0.95), porta=(875, 960, 0.95), centro=(560, 1000, 1.0)),
+    'quarto_vo_escuro': dict(cama=(1420, 830, 0.95), porta=(875, 960, 0.95), centro=(560, 1000, 1.0)),
+    'quarto_vo_manha': dict(cama=(1420, 830, 0.95), porta=(875, 960, 0.95), centro=(560, 1000, 1.0)),
+    'quarto_vo_ramo': dict(cama=(1420, 830, 0.95), porta=(875, 960, 0.95), centro=(560, 1000, 1.0)),
+    'cama': dict(deitado=(1250, 625, 0.85), lado=(400, 1000, 0.9)),
+    'cama_escuro': dict(deitado=(1250, 625, 0.85), lado=(400, 1000, 0.9)),
 }
