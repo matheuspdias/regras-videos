@@ -883,6 +883,137 @@ def char_pose(cid, pose, speaking_amp, t, fx, k):
     return Pose(**kw)
 
 
+# ---------------------------------------------------------------- o monstro em cena
+MONSTRO_TRAS = ('atras',)
+
+
+def _eyes_glow(ctx, info, a=1.0):
+    hx, hy = info['head']
+    r = info['head_r']
+    for side in (-1, 1):
+        ex, ey = hx + side * r * 0.33, hy - r * 0.08
+        for k in range(7, 0, -1):
+            ctx.arc(ex, ey, r * (0.14 + k * 0.07), 0, TAU)
+            ctx.set_source_rgba(1, 0.85, 0.2, 0.06 * a); ctx.fill()
+        ctx.arc(ex, ey, r * 0.15, 0, TAU); ctx.set_source_rgba(1, 0.88, 0.25, a); ctx.fill()
+        ctx.arc(ex, ey, r * 0.05, 0, TAU); ctx.set_source_rgba(0.1, 0.05, 0, a); ctx.fill()
+
+
+def _creature(ctx, quem, x, y, s, pose, escuro=0.0, alpha=1.0):
+    """desenha a criatura escurecida (escuro 0..1) com os olhos sempre acesos; devolve info do draw_char"""
+    ctx.push_group()
+    info = draw_char(ctx, quem, x, y, s, pose)
+    if escuro > 0:
+        ctx.set_operator(cairo.OPERATOR_ATOP)
+        ctx.rectangle(-4000, -4000, 12000, 12000)
+        ctx.set_source_rgba(0.02, 0.02, 0.025, escuro); ctx.fill()
+        ctx.set_operator(cairo.OPERATOR_OVER)
+    ctx.pop_group_to_source()
+    ctx.paint_with_alpha(alpha)
+    if escuro > 0.2:
+        _eyes_glow(ctx, info, alpha)
+    return info
+
+
+def draw_monstro(ctx, item, u, dur, t):
+    """item = {'monstro': modo, ...}. Modos:
+    porta   rect=(x,y,w,h) da porta; lado='esq'|'dir' (onde fica a fresta); abre=0.45
+    fundo   pos=(x, y_pés), s; escuro=0.55; avanca=True (chega mais perto durante o plano)
+    atras   pos=(x, y_pés), s — atrás dos personagens do plano, debruçada sobre eles
+    teto    pos=(x, y_teto), s — de cabeça pra baixo, pendurada no teto
+    janela  rect=(x,y,w,h) — rosto aparecendo na janela
+    borda   pos=(x, y_borda), s — espiando por cima de uma borda (pé da cama, sofá, balcão)
+    lateral lado='esq'|'dir', y_pés, s — espiando pela beirada da tela
+    rosto   pos=(x, y), s — o rosto enorme, colado na câmera
+    Comuns: quem='coisa'|'coisa_vo'|..., surge=True (aparece aos poucos), boca='grin'|'flat'
+    Devolve (x, y) do topo da cabeça em coordenadas do mundo (para o balão de fala)."""
+    modo = item['monstro']
+    quem = item.get('quem', 'coisa')
+    hc = CAST[quem]['h']
+    a = ease(u / 1.2) if item.get('surge') else 1.0
+    boca = item.get('boca', 'grin')
+    sway = 0.035 * math.sin(t * 0.9)
+    pose = Pose(mouth=boca, facing=item.get('facing', -1), arms=item.get('bracos', 'down'))
+    ctx.save()
+    top = None
+    if modo == 'porta':
+        x, y, w, h = item['rect']
+        lado = item.get('lado', 'esq')
+        abre = item.get('abre', 0.45)
+        gap = w * abre
+        ctx.rectangle(x, y, w, h); ctx.set_source_rgba(0.0, 0.0, 0.0, 1); ctx.fill()
+        ctx.save(); ctx.rectangle(x, y, w, h); ctx.clip()
+        s = item.get('s', h * 1.02 / (520 * hc))
+        gx = x + gap * 0.62 if lado == 'esq' else x + w - gap * 0.62
+        ctx.translate(gx, y + h + 8)
+        ctx.rotate((-1 if lado == 'esq' else 1) * (-0.10 - sway))
+        info = _creature(ctx, quem, 0, 0, s, pose, alpha=a)
+        top = ctx.user_to_device(info['top'][0], info['top'][1])
+        ctx.restore()
+        lx = x + gap if lado == 'esq' else x
+        ctx.rectangle(lx, y, w - gap, h); ctx.set_source_rgba(0.11, 0.11, 0.125, 1); ctx.fill_preserve()
+        ctx.set_source_rgba(0.82, 0.82, 0.85, 1); ctx.set_line_width(5); ctx.stroke()
+        ctx.rectangle(x, y, w, h); ctx.stroke()
+    elif modo in ('fundo', 'atras', 'borda'):
+        x, y = item['pos']
+        s = item.get('s', 0.8)
+        if item.get('avanca'):
+            s *= 1 + 0.28 * ease(u / max(dur, 0.01))
+        esc = item.get('escuro', {'fundo': 0.55, 'atras': 0.45, 'borda': 0.15}[modo])
+        if modo == 'borda':
+            ctx.rectangle(-2000, -2000, 6000, 2000 + y); ctx.clip()
+            rise = ease(u / 1.6) if item.get('surge') else 1.0
+            hh = 520 * hc * s
+            yy = y + hh - (0.22 * hh + 10) * rise
+            pose.arms = item.get('bracos', 'down')
+            ctx.translate(x, yy); ctx.rotate(sway)
+            info = _creature(ctx, quem, 0, 0, s, pose, escuro=esc)
+        else:
+            ctx.translate(x, y); ctx.rotate(sway * (2.2 if modo == 'atras' else 1.0))
+            info = _creature(ctx, quem, 0, 0, s, pose, escuro=esc, alpha=a)
+        top = ctx.user_to_device(info['top'][0], info['top'][1])
+    elif modo == 'teto':
+        x, y = item['pos']
+        s = item.get('s', 0.75)
+        drop = (1 - ease(u / 1.4)) * 300 if item.get('surge') else 0
+        ctx.translate(x, y - drop); ctx.rotate(math.pi + sway)
+        pose.arms = item.get('bracos', 'up')
+        info = _creature(ctx, quem, 0, 0, s, pose, escuro=item.get('escuro', 0.25))
+        hx, hy = info['head']
+        top = ctx.user_to_device(hx, hy - info['head_r'] * -1.2)
+    elif modo == 'janela':
+        x, y, w, h = item['rect']
+        ctx.rectangle(x, y, w, h); ctx.clip()
+        s = item.get('s', h * 0.55 / (2 * 118 * (0.92 + 0.08 * hc)))
+        rise = ease(u / 1.5) if item.get('surge') else 1.0
+        head_from_feet = 520 * hc * s * 0.80
+        cy_ = y + h * 0.55 + (1 - rise) * h * 0.9
+        ctx.translate(x + w / 2, cy_ + head_from_feet); ctx.rotate(sway)
+        info = _creature(ctx, quem, 0, 0, s, pose, escuro=item.get('escuro', 0.3))
+        top = ctx.user_to_device(info['top'][0], info['top'][1])
+    elif modo == 'lateral':
+        lado = item.get('lado', 'dir')
+        y = item.get('y', 1000)
+        s = item.get('s', 1.0)
+        out = (1 - ease(u / 1.2)) * 200 if item.get('surge') else 0
+        x = (W + 70 + out) if lado == 'dir' else (-70 - out)
+        ctx.translate(x, y); ctx.rotate((-0.30 if lado == 'dir' else 0.30) + sway)
+        pose.facing = -1 if lado == 'dir' else 1
+        info = _creature(ctx, quem, 0, 0, s, pose, escuro=item.get('escuro', 0.2))
+        top = ctx.user_to_device(info['top'][0], info['top'][1])
+    elif modo == 'rosto':
+        x, y = item.get('pos', (W / 2, H / 2))
+        s = item.get('s', 3.2)
+        k = 1 + 0.06 * ease(u / max(dur, 0.01))
+        hc_ = 520 * hc
+        ctx.translate(x, y); ctx.scale(k, k); ctx.rotate(sway * 0.6)
+        r_ = 118 * (0.92 + 0.08 * hc)
+        info = _creature(ctx, quem, 0, (hc_ * 0.80) * s, s, pose, escuro=item.get('escuro', 0.0), alpha=a)
+        top = ctx.user_to_device(info['top'][0], info['top'][1])
+    ctx.restore()
+    return ctx.device_to_user(*top) if top else None
+
+
 def draw_frame(ctx, ep, clips, shots, envs, t):
     # shot atual
     si = 0
@@ -951,6 +1082,10 @@ def draw_frame(ctx, ep, clips, shots, envs, t):
     ctx.scale(z, z)
     ctx.translate(-cx, -cy)
     bg(ctx, t)
+    monstro_top = None
+    for item in fx:
+        if isinstance(item, dict) and item.get('monstro') in MONSTRO_TRAS:
+            monstro_top = draw_monstro(ctx, item, u, dur, t)
     heads = {}
     for k, (cid, slot, pose, bar) in enumerate(sc['cast']):
         x, y, s = slots[slot]
@@ -988,6 +1123,9 @@ def draw_frame(ctx, ep, clips, shots, envs, t):
         soccer(ctx, info['head'][0] + 70 * sv, 960 - 260 * math.sin(math.pi * ph) * sv, 32, t * 4)
         if n > 0:
             text(ctx, str(min(n, 13)), info['head'][0] + 260, info['head'][1] - 120, 90, '#FFD23F', outline='#1E1E24', lw=12)
+    for item in fx:
+        if isinstance(item, dict) and 'monstro' in item and item['monstro'] not in MONSTRO_TRAS:
+            monstro_top = draw_monstro(ctx, item, u, dur, t)
     for item in fx:
         if isinstance(item, dict) and 'olhos' in item:
             ox, oy = item['olhos']
@@ -1037,9 +1175,12 @@ def draw_frame(ctx, ep, clips, shots, envs, t):
             voz_pos = item['voz']
     for c in clips:
         if c['sp'] in ('coisa', 'mae') and c['t0'] <= t < c['t1'] + 0.4:
-            if c['sp'] in heads:
-                info, sv = heads[c['sp']]
+            coisa_head = next((heads[k_] for k_ in heads if k_.startswith('coisa')), None) if c['sp'] == 'coisa' else None
+            if c['sp'] in heads or coisa_head:
+                info, sv = heads[c['sp']] if c['sp'] in heads else coisa_head
                 bx, by = info['head'][0] + 40, info['top'][1] - 60
+            elif c['sp'] == 'coisa' and monstro_top and not voz_pos:
+                bx, by = monstro_top[0], max(80, monstro_top[1] - 70)
             elif voz_pos:
                 bx, by = voz_pos
             else:

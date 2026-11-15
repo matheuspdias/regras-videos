@@ -57,6 +57,13 @@ CAST = {
     'irmao': dict(skin='#ECECEC', name='Irmão', shirt='#DADADA', pants='#8A8A8A', shoes='#F2F2F2', kind='tee', hair='short', hair_c='#6A6A6A', extra=None, face='min', h=0.7),
     'pai':   dict(tie='#6A6A6A', skin='#ECECEC', name='Pai', shirt='#C4C4C4', pants='#6A6A6A', shoes='#2A2A2A', kind='shirt', hair='short', hair_c='#3A3A3A', extra=None, face='min', h=1.06),
     'vo':    dict(skin='#ECECEC', name='Vó', shirt='#CFCFCF', pants='#CFCFCF', shoes='#3A3A3A', kind='dress', hair='bun', hair_c='#BDBDBD', extra='oculos', face='min', h=0.9),
+    # variantes da criatura: a coisa copia quem ela imita, sempre alta, olhos amarelos e UM detalhe vermelho
+    'coisa_vo':     dict(skin='#E4E4E4', name='A coisa (vó)', shirt='#CFCFCF', pants='#CFCFCF', shoes='#3A3A3A', kind='dress', hair='bun', hair_c='#BDBDBD', extra='laco_red', face='creature', h=1.36),
+    'coisa_pai':    dict(tie='#E5262B', skin='#E4E4E4', name='A coisa (pai)', shirt='#C4C4C4', pants='#5A5A5A', shoes='#2A2A2A', kind='shirt', hair='short', hair_c='#3A3A3A', extra=None, face='creature', h=1.55),
+    'coisa_irmao':  dict(skin='#E4E4E4', name='A coisa (irmão)', shirt='#DADADA', pants='#8A8A8A', shoes='#E5262B', kind='tee', hair='short', hair_c='#6A6A6A', extra=None, face='creature', h=1.05),
+    'coisa_vizinho': dict(skin='#E4E4E4', name='A coisa (vizinho)', shirt='#BDBDBD', pants='#5A5A5A', shoes='#2A2A2A', kind='tee', hair='cap', hair_c='#E5262B', extra=None, face='creature', h=1.55),
+    'coisa_crianca': dict(skin='#E4E4E4', name='A coisa (criança)', shirt='#D6D6D6', pants='#D6D6D6', shoes='#3A3A3A', kind='dress', hair='pigtails', hair_c='#4A4A4A', extra='presilha_red', face='creature', h=0.95),
+    'coisa_sombra': dict(skin='#2E2E33', name='A coisa (sombra)', shirt='#1E1E22', pants='#1E1E22', shoes='#111113', kind='tee', hair='none', hair_c='#1E1E22', extra='olhos_red', face='creature', h=1.85),
     'vizinho': dict(skin='#ECECEC', name='Vizinho', shirt='#BDBDBD', pants='#6A6A6A', shoes='#2A2A2A', kind='tee', hair='cap', hair_c='#5A5A5A', extra=None, face='min', h=1.02),
 }
 
@@ -444,6 +451,15 @@ def draw_head(ctx, cid, c, p, hx, hy, r):
         ctx.rotate(0.5)
         rrect(ctx, -26, -9, 52, 18, 9)
         ctx.restore()
+        fill_stroke(ctx, '#E5262B', 4)
+    if ext == 'laco_red':                      # laço vermelho no coque
+        for side in (-1, 1):
+            ctx.move_to(hx, hy - r * 1.32)
+            ctx.line_to(hx + side * r * 0.42, hy - r * 1.5)
+            ctx.line_to(hx + side * r * 0.42, hy - r * 1.14)
+            ctx.close_path()
+            fill_stroke(ctx, '#E5262B', 4)
+        ctx.arc(hx, hy - r * 1.32, r * 0.1, 0, TAU)
         fill_stroke(ctx, '#E5262B', 4)
     if ext == 'presilha':
         ctx.save()

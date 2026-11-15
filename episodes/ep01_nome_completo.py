@@ -22,6 +22,13 @@ VOICES = {
 V = (940, 230)       # de onde vem a voz no corredor (porta do meio)
 VQ = (1590, 380)     # porta entreaberta do quarto da mãe
 
+# onde o monstro aparece
+PORTA_MEIO = {'monstro': 'porta', 'rect': (820, 280, 240, 540), 'lado': 'esq', 'abre': 0.4}
+PORTA_FUNDO_DIR = {'monstro': 'porta', 'rect': (1400, 280, 240, 540), 'lado': 'esq', 'abre': 0.35}
+PORTA_QUARTO = {'monstro': 'porta', 'rect': (760, 260, 230, 540), 'lado': 'esq', 'abre': 0.32}
+JANELA_QUARTO = {'monstro': 'janela', 'rect': (220, 160, 300, 280)}
+JANELA_SALA = {'monstro': 'janela', 'rect': (300, 240, 260, 360)}
+
 
 def quarto(**p):
     d = dict(sit=True, facing=-1)
@@ -32,7 +39,7 @@ def quarto(**p):
 LINES = [
     # ---------------------------------------------------------------- A REGRA
     ('nar', "Se a sua mãe te chamar pelo nome completo de dentro de um quarto vazio, não responda. Não diga senhora. Não acenda a luz. E, aconteça o que acontecer, não vá ver o que ela quer.",
-     S('quarto', quarto(eyes='wide', mouth='flat'), cam=dict(zoom=1.0, to=1.12), fx=['piscar'])),
+     S('quarto', quarto(eyes='wide', mouth='flat'), cam=dict(zoom=1.0, to=1.12), fx=['piscar', dict(PORTA_QUARTO, surge=True)])),
     ('nar', "Eu não tô falando de quando ela grita o seu nome da cozinha porque você deixou a toalha molhada em cima da cama.",
      S('cozinha', C('mae', 'b', None, facing=-1, eyes='angry', arms='hip', mouth='o'), C('voce', 'a', None, eyes='half', mouth='flat'))),
     ('nar', "Também não tô falando de quando ela chama do portão pra você ajudar com as sacolas do mercado.",
@@ -48,7 +55,7 @@ LINES = [
     ('nar', "E aí, do quarto da sua mãe, o quarto que você mesmo viu vazio antes de dormir, com a cama arrumada, vem a voz dela.",
      S('quarto_mae', cam=dict(zoom=1.05, to=1.2, cx=700, cy=600))),
     ('coisa', "Lucas Henrique Ferreira da Silva!",
-     S('corredor', cam=dict(zoom=1.3, to=1.45, cx=940, cy=500), fx=[{'voz': V}, 'zoom_punch'])),
+     S('corredor', cam=dict(zoom=1.25, to=1.4, cx=940, cy=520), fx=[PORTA_MEIO, 'zoom_punch'])),
     ('nar', "O seu nome inteiro. Com todos os sobrenomes. No mesmo tom de quando você fez alguma coisa muito errada.",
      S('quarto', quarto(eyes='wide', mouth='o', sweat=True), cam=dict(focus='voce', zoom=1.6, to=1.75))),
     ('nar', "Ninguém abriu o portão. Ninguém girou a chave. A Pipoca não latiu. Só a voz. Do lado de lá de uma porta que deveria estar vazia.",
@@ -56,19 +63,19 @@ LINES = [
 
     # ---------------------------------------------------------------- O QUE É
     ('nar', "Presta atenção, porque isso é importante. A coisa que tá naquele quarto conhece a voz da sua mãe. Conhece a casa. Sabe onde fica cada degrau e cada interruptor.",
-     S('quarto_mae', cam=dict(zoom=1.0, to=1.15), fx=[{'olhos': (1590, 560), 'surge': True}])),
+     S('quarto_mae', cam=dict(zoom=1.0, to=1.15), fx=[{'monstro': 'fundo', 'pos': (1300, 810), 's': 0.72, 'escuro': 0.6, 'surge': True}])),
     ('nar', "Mas ela não sabe quem você é.",
-     S('preto', fx=[{'olhos': (960, 520), 'surge': True}])),
+     S('preto', fx=[{'monstro': 'rosto', 's': 3.0, 'escuro': 0.65, 'surge': True}])),
     ('nar', "Apelido, qualquer um tem. Tem um monte de Lucas na sua escola. Mas o nome completo, aquele com todos os sobrenomes, só pertence a uma pessoa. E ela tá testando.",
      S('quarto', quarto(eyes='half', mouth='flat'), cam=dict(zoom=1.1, to=1.2))),
     ('nar', "Quando ela chama o seu nome inteiro, ela não tá te chamando. Ela tá perguntando: esse nome é seu? E o único jeito de você dizer que sim é respondendo.",
-     S('corredor', cam=dict(zoom=1.2, to=1.4, cx=940, cy=520), fx=[{'olhos': (940, 470)}])),
+     S('corredor', cam=dict(zoom=1.1, to=1.3, cx=940, cy=560), fx=[{'monstro': 'fundo', 'pos': (940, 822), 's': 0.62, 'escuro': 0.55, 'avanca': True}])),
 
     # ---------------------------------------------------------------- GANCHO
     ('nar', "E pensa bem nisso. Sabe aquela vez em que você acordou de madrugada com a certeza de que alguém tinha te chamado? Você ficou esperando, ouvindo. E não tinha ninguém.",
      S('quarto', quarto(eyes='wide', mouth='flat', look=-1), cam=dict(zoom=1.0, to=1.15))),
     ('nar', "Talvez você tenha tido sorte. Talvez você tenha dormido de novo antes de responder.",
-     S('quarto', quarto(eyes='closed', mouth='flat'), cam=dict(focus='voce', zoom=1.5, to=1.65))),
+     S('quarto', quarto(eyes='closed', mouth='flat'), cam=dict(zoom=1.0, to=1.12), fx=[dict(JANELA_QUARTO, surge=True)])),
 
     # ---------------------------------------------------------------- REGRA 1
     ('nar', "Regra número um.",
@@ -78,11 +85,11 @@ LINES = [
     ('nar', "Isso é mais difícil do que parece. Você passou a vida inteira respondendo senhora quando a sua mãe chama. A sua boca vai querer responder sozinha. Morde a língua, se precisar.",
      S('quarto', quarto(eyes='closed', mouth='wavy', arms='face', sweat=True), cam=dict(zoom=1.2, to=1.3))),
     ('nar', "Se você ficar em silêncio, ela vai chamar de novo. Talvez mais baixo. Talvez com carinho.",
-     S('corredor', cam=dict(zoom=1.1, to=1.25))),
+     S('corredor', cam=dict(zoom=1.1, to=1.25), fx=[dict(PORTA_MEIO, abre=0.3, surge=True)])),
     ('coisa', "Lucas Henrique... vem cá, filho.",
-     S('corredor', cam=dict(zoom=1.35, to=1.5, cx=940, cy=500), fx=[{'voz': V}])),
+     S('corredor', cam=dict(zoom=1.3, to=1.45, cx=940, cy=520), fx=[PORTA_MEIO])),
     ('nar', "Continua quieto. Cada vez que ela chama e ninguém responde, ela fica um pouco menos certa de que você está na casa.",
-     S('quarto', quarto(eyes='half', mouth='flat'), cam=dict(zoom=1.0, to=1.1))),
+     S('quarto', quarto(eyes='half', mouth='flat'), cam=dict(zoom=1.0, to=1.1), fx=[dict(PORTA_QUARTO, abre=0.22, surge=True)])),
 
     # ---------------------------------------------------------------- REGRA 2
     ('nar', "Regra número dois.",
@@ -90,7 +97,7 @@ LINES = [
     ('nar', "Não acenda nenhuma luz. Nem a do quarto, nem a do corredor, nem a lanterna do celular.",
      S('quarto', quarto(eyes='wide', arms='hold', prop='celular'), cam=dict(zoom=1.15, to=1.25))),
     ('nar', "Do quarto da sua mãe dá pra ver a fresta debaixo de todas as portas. Uma fresta acesa às três da manhã é a mesma coisa que dizer: tem alguém acordado aqui.",
-     S('corredor_luz', cam=dict(zoom=1.0, to=1.12), fx=[{'olhos': (940, 470), 'surge': True}])),
+     S('corredor_luz', cam=dict(zoom=1.0, to=1.12), fx=[{'monstro': 'fundo', 'pos': (940, 822), 's': 0.62, 'escuro': 0.75, 'surge': True}])),
     ('nar', "Abaixa o brilho da tela. Vira o celular pra parede. Fica no escuro. O escuro, essa noite, tá do seu lado.",
      S('quarto', quarto(eyes='half', mouth='flat', arms='hold', prop='celular'), cam=dict(focus='voce', zoom=1.4, to=1.5))),
 
@@ -98,15 +105,15 @@ LINES = [
     ('nar', "Regra número três.",
      S('preto', fx=[{'regra': (3, 'PROTEJA O **THÉO**')}])),
     ('nar', "Se ela parar de chamar o seu nome e começar a chamar o nome do seu irmão, levanta devagar e vai até o quarto dele.",
-     S('corredor', C('voce', 'p1', None, eyes='wide', mouth='flat'), cam=dict(zoom=1.05, to=1.15))),
+     S('corredor', C('voce', 'p1', None, eyes='wide', mouth='flat'), cam=dict(zoom=1.05, to=1.15), fx=[dict(PORTA_FUNDO_DIR, surge=True)])),
     ('coisa', "Théo Gabriel Ferreira da Silva...",
-     S('corredor', C('voce', 'p1', None, eyes='wide', mouth='o', sweat=True), cam=dict(zoom=1.2, to=1.3, cx=700, cy=540), fx=[{'voz': V}])),
+     S('corredor', C('voce', 'p1', None, eyes='wide', mouth='o', sweat=True), cam=dict(zoom=1.05, to=1.15), fx=[PORTA_FUNDO_DIR])),
     ('nar', "Não corre. Pisa na beirada do piso, perto da parede, onde a madeira não range. O Théo tem oito anos. Ele ainda responde tudo.",
      S('corredor', C('voce', 'meio', None, eyes='half', mouth='flat', facing=1), cam=dict(zoom=1.15, to=1.25))),
     ('nar', "Senta do lado dele. Se ele acordar, coloca o dedo na frente da boca. E, se ele já estiver com a boca aberta pra responder, tapa com a mão. Com carinho. Mas tapa.",
      S('quarto', C('irmao', 'cama', None, sit=True, facing=-1, eyes='wide', mouth='o'), C('voce', 'centro', None, eyes='angry', mouth='flat', arms='point'), cam=dict(zoom=1.1, to=1.2))),
     ('nar', "Ele vai ficar bravo com você amanhã. Deixa ele ficar bravo.",
-     S('quarto', C('irmao', 'cama', None, sit=True, facing=-1, eyes='angry', mouth='frown'), C('voce', 'centro', None, eyes='half', mouth='smile'), cam=dict(focus='irmao', zoom=1.5, to=1.6))),
+     S('quarto', C('irmao', 'cama', None, sit=True, facing=-1, eyes='angry', mouth='frown'), C('voce', 'centro', None, eyes='half', mouth='smile'), cam=dict(zoom=1.0, to=1.08), fx=[dict(JANELA_QUARTO, surge=True)])),
 
     # ---------------------------------------------------------------- REGRA 4
     ('nar', "Regra número quatro.",
@@ -128,7 +135,7 @@ LINES = [
     ('nar', "Se a Pipoca descer da cama e for até a porta do quarto da sua mãe, não vai atrás dela. Ela vai abanar o rabo. Vai arranhar a porta, do jeitinho que faz quando a sua mãe chega do trabalho.",
      S('corredor', cam=dict(zoom=1.1, to=1.22), fx=[{'cachorro': (760, 960, 'abana')}])),
     ('nar', "Cachorro não se engana com cheiro. Mas se engana com voz. E a coisa sabe imitar a voz que a Pipoca mais ama.",
-     S('corredor', cam=dict(zoom=1.3, to=1.45, cx=900, cy=600), fx=[{'cachorro': (760, 960, 'abana')}, {'olhos': (940, 470), 'surge': True}])),
+     S('corredor', cam=dict(zoom=1.3, to=1.45, cx=900, cy=600), fx=[dict(PORTA_MEIO, abre=0.3, surge=True), {'cachorro': (760, 960, 'abana')}])),
     ('nar', "Chama a Pipoca de volta sem falar. Estala os dedos. Bate de leve no colchão. E, se ela não vier, deixa ela lá. Ela vai ficar bem. Ninguém lá dentro quer a Pipoca.",
      S('quarto', quarto(eyes='half', mouth='flat', arms='point'), cam=dict(zoom=1.1, to=1.2))),
 
@@ -136,13 +143,13 @@ LINES = [
     ('nar', "Regra número seis.",
      S('preto', fx=[{'regra': (6, 'SE ELA CHORAR, **FIQUE**')}])),
     ('nar', "Em algum momento, ela vai mudar de estratégia. A voz não vai mais brigar. Ela vai chorar.",
-     S('corredor', cam=dict(zoom=1.1, to=1.3), fx=['piscar'])),
+     S('corredor', cam=dict(zoom=1.0, to=1.15), fx=[{'monstro': 'teto', 'pos': (1210, 0), 's': 0.62, 'surge': True}])),
     ('coisa', "Filho... eu caí. Eu não consigo levantar. Me ajuda, por favor.",
-     S('corredor', cam=dict(zoom=1.3, to=1.45, cx=940, cy=520), fx=[{'voz': V}])),
+     S('corredor', cam=dict(zoom=1.25, to=1.4, cx=940, cy=520), fx=[dict(PORTA_MEIO, abre=0.25, boca='flat')])),
     ('nar', "Esse é o pior momento da noite. Porque você ama a sua mãe. E tudo dentro de você vai gritar pra levantar e ir.",
      S('quarto', quarto(eyes='sad', mouth='frown', sweat=True), cam=dict(focus='voce', zoom=1.5, to=1.7))),
     ('nar', "Lembra de uma coisa: mãe machucada grita de dor. Fala palavrão. Pede pra você ligar pro SAMU. Mãe machucada não chama ninguém pelo nome completo.",
-     S('quarto', quarto(eyes='angry', mouth='flat'), cam=dict(zoom=1.15, to=1.25))),
+     S('quarto', quarto(eyes='angry', mouth='flat'), cam=dict(zoom=1.0, to=1.1), fx=[dict(JANELA_QUARTO, surge=True)])),
     ('nar', "Fica onde você tá. Abraça o Théo. Conta as respirações dele. Ela vai chorar até cansar. E coisa que chora sem resposta, uma hora, desiste.",
      S('quarto', C('irmao', 'cama', None, sit=True, facing=-1, eyes='closed'), C('voce', 'centro', None, eyes='half', mouth='flat'), cam=dict(zoom=1.0, to=1.12))),
 
@@ -150,11 +157,11 @@ LINES = [
     ('nar', "Regra número sete.",
      S('preto', fx=[{'regra': (7, 'SÓ ABRA PRA QUEM TEM A **CHAVE**')}])),
     ('nar', "Quando o dia começar a clarear, a voz vai mudar de lugar. Vai sair do quarto da sua mãe e vai pra porta da frente.",
-     S('porta', cam=dict(zoom=1.0, to=1.12))),
+     S('porta', cam=dict(zoom=1.0, to=1.12), fx=[dict(JANELA_SALA, surge=True)])),
     ('coisa', "Lu, abre aqui pra mim. Esqueci a chave.",
-     S('porta', cam=dict(zoom=1.25, to=1.4, cx=960, cy=470), fx=[{'voz': (960, 230)}])),
+     S('porta', cam=dict(zoom=1.2, to=1.35, cx=700, cy=480), fx=[JANELA_SALA])),
     ('nar', "Ela agora te chama de Lu. Ela aprendeu. Ela passou a noite inteira ouvindo a casa.",
-     S('porta', C('voce', 'a', None, eyes='wide', mouth='flat', sweat=True), cam=dict(focus='voce', zoom=1.5, to=1.6))),
+     S('porta', C('voce', 'b', None, eyes='wide', mouth='flat', sweat=True, facing=-1), cam=dict(zoom=1.0, to=1.1), fx=[JANELA_SALA])),
     ('nar', "Não abre. A sua mãe nunca esqueceu a chave na vida. Ela tem uma cópia na bolsa, outra no carro e outra com a vizinha.",
      S('porta', C('voce', 'a', None, eyes='angry', mouth='flat'), cam=dict(zoom=1.05, to=1.15))),
     ('nar', "Espera o barulho. Primeiro o portão. Depois o molho de chaves batendo. Depois a chave entrando na fechadura e girando duas vezes, porque ela sempre tranca duas vezes.",
@@ -178,7 +185,7 @@ LINES = [
     ('mae', "Porque, numa noite de plantão, eu liguei pra casa. E quem atendeu foi a minha voz. Me chamando pelo meu nome completo.",
      S('cozinha', C('mae', 'b', None, facing=-1, eyes='sad', mouth='flat'), C('voce', 'a', None, eyes='wide', mouth='o'), cam=dict(focus='mae', zoom=1.7, to=1.8))),
     ('nar', "E ela respondeu.",
-     S('preto', fx=[{'olhos': (960, 520), 'surge': True}, 'zoom_punch'])),
+     S('preto', fx=[{'monstro': 'rosto', 's': 3.0, 'surge': True}, 'zoom_punch'])),
 
     # ---------------------------------------------------------------- CTA
     ('nar', "Agora você conhece as regras. Se inscreve antes que a luz apague. E me conta nos comentários: qual dessas regras você quebraria primeiro?",

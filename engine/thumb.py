@@ -176,7 +176,7 @@ def mm(spec, out):
         ctx.rectangle(dx, dy, dw, dh); ctx.set_source_rgba(0.01, 0.01, 0.012, 1); ctx.fill()
         ctx.save()
         ctx.rectangle(dx, dy, dw, dh); ctx.clip()
-        draw_char(ctx, 'coisa', dx + 105, dy + dh + 10, 0.95, Pose(mouth='grin', facing=-1, arms='down'))
+        draw_char(ctx, spec.get('criatura', 'coisa'), dx + 105, dy + dh + 10, 0.95, Pose(mouth='grin', facing=-1, arms='down'))
         ctx.restore()
         ctx.rectangle(dx + 170, dy, dw - 170, dh); ctx.set_source_rgba(0.14, 0.14, 0.16, 1); ctx.fill()
         ctx.set_source_rgba(0.85, 0.85, 0.88, 1); ctx.set_line_width(9)

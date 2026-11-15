@@ -10,4 +10,4 @@ Lullorin e adaptado ao Brasil). Para produzir um episódio, siga **PRODUCAO.md**
 - `branding/` — foto de perfil, banner e descrição do canal.
 - `build/` — saídas (fora do git).
 
-Não altere `episodes/ep01_*` (já entregue). Commits com a atribuição padrão do Claude.
+Não altere episódios já publicados no YouTube (veja `episodes/agenda.md`). Commits com a atribuição padrão do Claude.

@@ -5,7 +5,7 @@ dias; melhor vídeo "If Your Mom Ever Says Goodnight to You Twice... LOCK YOUR D
 Um vídeo longo por dia, publicado às **20h**. **Não fazemos Shorts.** O Matheus só revisa e agenda: tudo o mais é
 produzido aqui.
 
-Este arquivo é a fonte da verdade da automação. Siga na ordem. Não altere `episodes/ep01_*`.
+Este arquivo é a fonte da verdade da automação. Siga na ordem. Não altere episódios já publicados.
 O episódio de referência é `episodes/ep01_nome_completo.py`: leia-o inteiro antes de escrever um roteiro novo.
 
 ---
@@ -73,7 +73,8 @@ NOITE = 2
 LEAD = 2.0; GAP_NAR = 0.75; PAUSA_REGRA = 2.0; PAUSA_VOZ = 1.2; TAIL = 20.0
 THUMB = dict(ordem='NÃO **RESPONDA**',                 # ordem do título; palavra-chave entre ** fica vermelha
              esquerda=('voce', dict(eyes='wide', mouth='o', arms='face', sweat=True)),
-             criatura_porta=True, balao='Lucas Henrique?')   # balão vermelho (frase curta da coisa) ou None
+             criatura_porta=True, criatura='coisa',         # a mesma variante que aparece no vídeo
+             balao='Lucas Henrique?')                        # balão vermelho (frase curta da coisa) ou None
 VOICES = {...}                                          # copie da tabela da seção 3
 LINES = [ (falante, texto, S(bg, C(id, slot, None, **pose), cam=dict(...), fx=[...])), ... ]
 ```
@@ -83,13 +84,61 @@ LINES = [ (falante, texto, S(bg, C(id, slot, None, **pose), cam=dict(...), fx=[.
 - A legenda gravada (maiúsculas, embaixo), a marca "MANUAL DA MADRUGADA · NOITE NN · REGRA N", o chiado de imagem, a
   música e o "boom" dos cartões são automáticos.
 
-**Efeitos de terror** (itens de `fx`):
+**O monstro tem que aparecer** (pedido do Matheus): o vídeo não pode ficar só em "olhos no escuro". A criatura
+aparece de corpo inteiro ou espiando **em 12 a 18 planos** do episódio, em lugares estratégicos, e é o mesmo monstro
+da thumbnail. Use `{'olhos': …}` só em 1 ou 2 momentos de suspense (cena preta antes de um susto). Regras de uso:
+- **Toda fala da `coisa`** acontece com o monstro em quadro (porta, janela, ao lado da cama, rosto). O balão vermelho
+  sai da cabeça dele automaticamente — não use `{'voz': …}` nesses planos.
+- **Escalada:** começa longe e escondido (fundo do corredor, fresta da porta, janela) e chega cada vez mais perto
+  (na porta do quarto, ao lado da cama, atrás de você, no teto em cima de você). O `rosto` gigante fica reservado para
+  2 ou 3 sustos fortes (a frase "ela sabe quem você é", a ameaça mais direta, a reviravolta final com `zoom_punch`).
+- **Lugares sinistros:** a porta do seu quarto entreaberta enquanto você "dorme", a janela atrás de você, o fim do
+  corredor, pendurado no teto, espiando por cima do pé da cama, atrás do protagonista sem ele perceber.
+- Não repita o mesmo modo em mais de 3 planos seguidos.
+
+`fx` do monstro — `{'monstro': modo, 'quem': <variante>, ...}`; comuns: `surge=True` (aparece aos poucos),
+`boca='grin'|'flat'` (flat quando finge estar triste/machucado):
+
+| modo | parâmetros | efeito |
+| --- | --- | --- |
+| `porta` | `rect=(x,y,w,h)` da porta, `lado='esq'\|'dir'`, `abre=0.15..0.5` | porta entreaberta com ela espiando pela fresta |
+| `fundo` | `pos=(x, y_pés)`, `s`, `escuro=0..0.85`, `avanca=True` | em pé, longe, no escuro, olhos acesos; `avanca` chega mais perto |
+| `atras` | `pos=(x, y_pés)`, `s` | atrás dos personagens do plano, debruçada (desenhada antes deles) |
+| `teto` | `pos=(x, y_teto)`, `s` | pendurada de cabeça pra baixo no teto |
+| `janela` | `rect=(x,y,w,h)` da janela | o rosto aparecendo na janela |
+| `borda` | `pos=(x, y_borda)`, `s` | espiando por cima de uma borda (pé da cama, sofá, balcão) |
+| `lateral` | `lado`, `y`, `s` | entrando pela beirada da tela |
+| `rosto` | `s≈3.0`, `escuro` | o rosto enorme, colado na câmera (em `'preto'`) |
+
+Portas e janelas dos cenários (use estes `rect`): corredor — portas `(240,280,240,540)`, `(820,280,240,540)`,
+`(1400,280,240,540)`; quarto e quarto_vo — porta `(760,260,230,540)`, janela do quarto `(220,160,300,280)`, janela do
+quarto_vo `(200,170,280,260)`; cama — janela `(900,120,260,230)`; porta (entrada) — janela lateral `(300,240,260,360)`.
+Exemplos prontos: `episodes/ep01_nome_completo.py` e `episodes/ep02_benzer_duas_vezes.py` (procure `monstro`).
+
+**Variantes da criatura** (`quem` no fx, ou o id no `C(...)` para pô-la em cena como personagem): a coisa copia quem
+ela imita, sempre alta, com olhos amarelos, sorriso largo e **um** detalhe vermelho.
+
+| id | imita | detalhe vermelho |
+| --- | --- | --- |
+| `coisa` | mãe (rabo de cavalo) | presilha |
+| `coisa_vo` | vó (coque grisalho) | laço no coque |
+| `coisa_pai` | pai (camisa social) | gravata |
+| `coisa_irmao` | irmão/criança | tênis |
+| `coisa_vizinho` | vizinho, porteiro, motorista | boné |
+| `coisa_crianca` | criança desconhecida (festa junina, esconde-esconde) | presilha |
+| `coisa_sombra` | nada — um vulto escuro e muito alto (mata, folclore, ônibus) | — (só os olhos) |
+
+Precisa de um monstro novo para a história (ex.: imitando a vizinha, um vulto da mata com chapéu)? Crie uma variante
+em `CAST` de `engine/chars.py` copiando uma dessas (`face='creature'`, `h` entre 1.3 e 1.9, um único detalhe vermelho)
+e confira numa still antes de seguir. Use a mesma variante no `THUMB` com `criatura='<id>'`.
+
+**Outros efeitos** (itens de `fx`):
 
 | efeito | uso |
 | --- | --- |
 | `{'regra': (n, 'NÃO **RESPONDA**')}` | cartão preto da regra (use no cenário `'preto'`, numa linha curta "Regra número n.") |
-| `{'voz': (x, y)}` | balão de onde vem a voz quando quem fala está fora de quadro (vermelho para `coisa`, cinza para os outros) |
-| `{'olhos': (x, y), 'surge': True}` | olhos amarelos no escuro (`surge` = acendem devagar) |
+| `{'voz': (x, y)}` | balão de onde vem a voz quando ninguém está em quadro (raro: prefira mostrar o monstro) |
+| `{'olhos': (x, y), 'surge': True}` | só os olhos amarelos no escuro (1 ou 2 vezes por episódio) |
 | `{'cachorro': (x, y, 'abana' \| 'rosna' \| 'parado')}` | cachorro (pés em y≈960 no chão; no quarto, ~(1720, 830)) |
 | `{'celular': [('eu', 'texto'), ('ela', 'texto')], 'vermelho': True}` | conversa de celular em tela cheia; `vermelho` marca a última mensagem |
 | `{'fechadura': True}` | chave girando na fechadura |
@@ -98,9 +147,7 @@ LINES = [ (falante, texto, S(bg, C(id, slot, None, **pose), cam=dict(...), fx=[.
 | `{'cta_mm': ('QUAL REGRA VOCÊ', 'QUEBRARIA PRIMEIRO?')}` | tela final |
 
 **Elenco** (`chars.py`): `voce` (protagonista, moletom), `mae`, `pai` (gravata), `vo` (coque e óculos), `irmao`
-(criança), `vizinho` (boné; serve para porteiro e motorista), `coisa` (criatura alta, olhos amarelos, sorriso largo,
-presilha vermelha). Precisa de outra aparência para a criatura (ex.: imitando o pai)? Use `coisa` mesmo — é a marca
-do canal — ou crie uma variante no `CAST` no mesmo estilo (cinza, um único detalhe vermelho).
+(criança), `vizinho` (boné; serve para porteiro e motorista) e as variantes da criatura acima.
 
 **Cenários** (`scenes.py`): quarto, corredor, corredor_luz, quarto_mae, sala, sala_manha, cozinha, porta, preto.
 Precisa de um novo (portão/rua, varanda com rede, prédio/interfone, ônibus, mata, festa junina)? Crie em
@@ -154,12 +201,13 @@ Se `verify_audio` acusar duração errada: apague os arquivos errados, rode `too
 
 ```bash
 python3 -m engine.render episodes.epNN_<slug> epNN --shots    # duração total na última linha (meta 540–660 s, mínimo 480)
-python3 -m engine.render episodes.epNN_<slug> epNN --stills t1,t2,...   # 12–20 instantes: cartões, cenas novas, criatura
+python3 -m engine.render episodes.epNN_<slug> epNN --stills t1,t2,...   # 16–24 instantes: todos os planos com o monstro + cenas novas
 cd build/epNN && ffmpeg -v error -y -pattern_type glob -i 'still_*.png' -vf "scale=480:270,tile=4x5:padding=4" -frames:v 1 sheet.png
 ```
 
 Abra a `sheet.png` com Read e corrija: personagem cortado ou escondido, legenda cobrindo rosto, cartão de regra com
-texto estourando, cenário vazio demais, criatura que não aparece. Se a duração ficar abaixo de 480 s, suba `GAP_NAR`
+texto estourando, cenário vazio demais, monstro cortado/escondido demais ou aparecendo pouco (tem que estar em
+12 a 18 planos). Se a duração ficar abaixo de 480 s, suba `GAP_NAR`
 (máx. 1.0) / `PAUSA_REGRA` (máx. 2.5) ou acrescente falas **antes** de gerar vozes.
 
 ## 6. Produzir

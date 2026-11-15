@@ -11,7 +11,7 @@ PAUSA_REGRA = 2.0   # segura o cartão da regra
 PAUSA_VOZ = 1.2     # respiro depois de cada voz da criatura
 TAIL = 20.0
 THUMB = dict(ordem='FINJA QUE **DORME**', esquerda=('voce', dict(eyes='wide', mouth='o', arms='face', sweat=True)),
-             criatura_porta=True, balao='Tá dormindo?')
+             criatura_porta=True, criatura='coisa_vo', balao='Tá dormindo?')
 
 VOICES = {
     'nar': 'f22a680983644e699676e5b8879923c6',    # MM Narrador
@@ -23,6 +23,13 @@ VOICES = {
 CAB = (910, 620)     # cabeça do protagonista deitado na cena 'cama'
 VL = (430, 300)      # de onde vem a voz ao lado da cama
 VC = (1520, 230)     # porta do quarto da vó, no fim do corredor
+
+# onde o monstro aparece (a coisa imita a vó: coque, laço vermelho)
+Q = 'coisa_vo'
+JANELA_CAMA = {'monstro': 'janela', 'rect': (900, 120, 260, 230), 'quem': Q}
+JANELA_QVO = {'monstro': 'janela', 'rect': (200, 170, 280, 260), 'quem': Q}
+PORTA_QVO = {'monstro': 'porta', 'rect': (760, 260, 230, 540), 'lado': 'esq', 'abre': 0.45, 'quem': Q}
+PORTA_VO = {'monstro': 'porta', 'rect': (1400, 280, 240, 540), 'lado': 'esq', 'abre': 0.3, 'quem': Q}
 
 
 def deitado(**p):
@@ -44,7 +51,7 @@ def close(z=1.6, to=1.75):
 LINES = [
     # ---------------------------------------------------------------- A REGRA
     ('nar', "Se a sua vó te benzer duas vezes na mesma noite, finja que dorme. Não abra os olhos. Não diga amém. E, aconteça o que acontecer, não deixe ela perceber que você tá acordado.",
-     S('cama', deitado(), cam=dict(zoom=1.0, to=1.12), fx=['piscar'])),
+     S('cama', deitado(), cam=dict(zoom=1.0, to=1.12), fx=['piscar', dict(JANELA_CAMA, surge=True)])),
     ('nar', "Eu não tô falando de quando ela te benze no almoço de domingo, porque você chegou da rua com cara de quebranto.",
      S('cozinha', C('vo', 'b', None, facing=-1, arms='point', mouth='smile'), C('voce', 'a', None, eyes='half', mouth='flat'))),
     ('nar', "Também não tô falando de quando ela passa a mão na sua cabeça na rodoviária e reza baixinho pra você fazer boa viagem.",
@@ -72,11 +79,11 @@ LINES = [
     ('nar', "São três e dez da manhã.",
      S('corredor', cam=dict(zoom=1.0, to=1.08), fx=[{'texto': ['03:10'], 'pos': 'centro', 'cor': '#E5262B'}])),
     ('nar', "Você acorda com o barulho de um chinelo arrastando no corredor. Devagar. Parando bem na frente da sua porta.",
-     S('corredor', cam=dict(zoom=1.15, to=1.35, cx=360, cy=560), fx=[{'olhos': (360, 470), 'surge': True}])),
+     S('corredor', cam=dict(zoom=1.15, to=1.35, cx=360, cy=560), fx=[{'monstro': 'fundo', 'quem': Q, 'pos': (560, 830), 's': 0.6, 'escuro': 0.65, 'avanca': True, 'surge': True}])),
     ('nar', "A porta abre. Entra um cheiro de vela. E alguém para do lado da sua cama.",
-     S('quarto_vo', cam=dict(zoom=1.05, to=1.2, cx=875, cy=560), fx=[{'olhos': (875, 420), 'surge': True}])),
+     S('quarto_vo', cam=dict(zoom=1.05, to=1.2, cx=875, cy=560), fx=[dict(PORTA_QVO, surge=True)])),
     ('coisa', "Fica guardadinho, meu anjo. Fica guardadinho com a vó.",
-     S('cama', deitado(), cam=dict(zoom=1.05, to=1.15), fx=[{'voz': VL}, {'olhos': (420, 330), 'surge': True}])),
+     S('cama', deitado(), C(Q, 'lado', None, facing=1, mouth='grin', arms='hold'), cam=dict(zoom=1.05, to=1.15))),
     ('nar', "A mesma voz. O mesmo raminho roçando na sua testa. As mesmas três cruzes. Só que tem uma coisa errada.",
      S('cama', deitado(sweat=True), cam=close())),
     ('nar', "No fim do corredor, a sua vó continua roncando.",
@@ -84,13 +91,13 @@ LINES = [
 
     # ---------------------------------------------------------------- O QUE É
     ('nar', "Presta atenção, porque isso é importante. A coisa que tá do lado da sua cama conhece essa casa. Conhece o chinelo, o cheiro da vela, a voz da sua vó. Ela já ouviu essa reza muitas vezes. Pela janela.",
-     S('quarto_vo', cam=dict(zoom=1.1, to=1.3, cx=380, cy=330), fx=[{'olhos': (420, 300), 'surge': True}])),
+     S('quarto_vo', cam=dict(zoom=1.1, to=1.3, cx=380, cy=330), fx=[dict(JANELA_QVO, surge=True)])),
     ('nar', "Mas ela não enxerga quem dorme.",
-     S('preto', fx=[{'olhos': (960, 520), 'surge': True}])),
+     S('preto', fx=[{'monstro': 'rosto', 'quem': Q, 's': 3.0, 'escuro': 0.65, 'surge': True}])),
     ('nar', "Pra ela, quem dorme é só um volume debaixo da coberta, fechado pela primeira bênção. Igual a um travesseiro. Igual a uma pilha de roupa em cima da cadeira.",
      S('cama', deitado(), cam=dict(zoom=1.0, to=1.1))),
     ('nar', "Ela só enxerga quem tá acordado. Por isso ela benze de novo. A segunda bênção não é pra te proteger. É pra ver se você acorda.",
-     S('cama', deitado(), C('coisa', 'lado', None, facing=1, mouth='grin', arms='point'), cam=dict(zoom=1.0, to=1.12))),
+     S('cama', deitado(), C(Q, 'lado', None, facing=1, mouth='grin', arms='point'), cam=dict(zoom=1.0, to=1.12))),
 
     # ---------------------------------------------------------------- GANCHO
     ('nar', "E pensa bem nisso. Sabe aquela vez em que você acordou de madrugada com a sensação de que alguém tinha acabado de sair do seu quarto? A porta um pouquinho mais aberta do que você deixou?",
@@ -108,19 +115,19 @@ LINES = [
     ('nar', "Quem finge aperta os olhos. Quem dorme deixa as pálpebras moles. Quem finge prende a respiração. Quem dorme respira devagar, fundo, com a boca um pouquinho aberta.",
      S('cama', deitado(mouth='o'), cam=close(1.3, 1.4))),
     ('nar', "Conta as respirações. Puxa o ar em quatro. Solta em seis. E não engole saliva quando ela chegar perto. Ela escuta quem engole.",
-     S('cama', deitado(mouth='o'), C('coisa', 'lado', None, facing=1, mouth='grin'), cam=dict(zoom=1.05, to=1.15))),
+     S('cama', deitado(mouth='o'), C(Q, 'lado', None, facing=1, mouth='grin'), cam=dict(zoom=1.05, to=1.15))),
     ('nar', "Se ela encostar a mão no seu peito pra sentir o coração, não tem problema. Coração acelerado é normal. Tem gente que sonha correndo.",
-     S('cama', deitado(sweat=True), C('coisa', 'lado', None, facing=1, mouth='flat', arms='point'), cam=dict(zoom=1.15, to=1.25, cx=700, cy=560))),
+     S('cama', deitado(sweat=True), C(Q, 'lado', None, facing=1, mouth='flat', arms='point'), cam=dict(zoom=1.15, to=1.25, cx=700, cy=560))),
 
     # ---------------------------------------------------------------- REGRA 2
     ('nar', "Regra número dois.",
      S('preto', fx=[{'regra': (2, 'NÃO DIGA **AMÉM**')}])),
     ('nar', "Quando a reza terminar, ela vai ficar parada do lado da cama. Esperando.",
-     S('cama', deitado(), C('coisa', 'lado', None, facing=1, mouth='flat'), cam=dict(zoom=1.2, to=1.35, cx=520, cy=560))),
+     S('cama', deitado(), C(Q, 'lado', None, facing=1, mouth='flat'), cam=dict(zoom=1.2, to=1.35, cx=520, cy=560))),
     ('nar', "Você passou a vida inteira respondendo amém pra sua vó. Na mesa, na missa, no portão. A sua boca vai querer responder sozinha.",
      S('cama', deitado(sweat=True), cam=close())),
     ('coisa', "Fala amém, meu anjo. Fala amém pra vó.",
-     S('cama', deitado(sweat=True), cam=dict(zoom=1.2, to=1.3, cx=700, cy=520), fx=[{'voz': VL}])),
+     S('cama', deitado(sweat=True), C(Q, 'lado', None, facing=1, mouth='grin', arms='point'), cam=dict(zoom=1.15, to=1.25, cx=700, cy=540))),
     ('nar', "Não fala. Quem dorme não diz amém. Quem diz amém tá dizendo: eu tô aqui, eu ouvi, eu aceito. E o que ela tá oferecendo não é bênção.",
      S('cama', deitado(), cam=close(1.5, 1.6))),
     ('nar', "E, se você escorregar e um som sair da sua boca, transforma em ronco. Um ronco feio, desajeitado, de boca aberta. Ronco ela entende como sono.",
@@ -130,13 +137,13 @@ LINES = [
     ('nar', "Regra número três.",
      S('preto', fx=[{'regra': (3, 'NÃO SE **MEXA**')}])),
     ('nar', "Ela vai passar o raminho de novo. No rosto. No pescoço. Na palma da sua mão.",
-     S('cama', deitado(), C('coisa', 'lado', None, facing=1, mouth='grin', arms='point'), cam=dict(zoom=1.1, to=1.2, cx=700, cy=560))),
+     S('cama', deitado(), C(Q, 'lado', None, facing=1, mouth='grin', arms='point'), cam=dict(zoom=1.1, to=1.2, cx=700, cy=560))),
     ('nar', "A arruda da sua vó é verde, cheira a quintal depois da chuva. Essa não. Essa é fria, molhada, e tem cheiro de lugar fechado, de porão que ninguém abre faz anos.",
      S('quarto_vo', cam=dict(zoom=1.4, to=1.6, cx=1110, cy=580))),
     ('nar', "Vai dar coceira. Vai dar vontade de virar pro lado. Não vira. Quem dorme pesado não sente cócega. Deixa a mão aberta em cima da coberta, do jeitinho que tava.",
      S('cama', deitado(), cam=dict(zoom=1.1, to=1.2, cx=1100, cy=620))),
     ('nar', "Se ela segurar a sua mão, deixa ela segurar. Mão mole, dedo solto. Dormindo, ninguém aperta de volta.",
-     S('cama', deitado(), C('coisa', 'lado', None, facing=1, mouth='grin', arms='hold'), cam=dict(zoom=1.05, to=1.15))),
+     S('cama', deitado(), C(Q, 'lado', None, facing=1, mouth='grin', arms='hold'), cam=dict(zoom=1.05, to=1.15))),
 
     # ---------------------------------------------------------------- REGRA 4
     ('nar', "Regra número quatro.",
@@ -144,7 +151,7 @@ LINES = [
     ('nar', "Debaixo da cama, o Tição vai acordar. Primeiro vem um rosnado baixo, que você sente vibrando no colchão.",
      S('quarto_vo', cam=dict(zoom=1.2, to=1.35, cx=1500, cy=720), fx=[{'cachorro': (1720, 830, 'rosna')}])),
     ('nar', "Não acalma ele. Não estala os dedos, não chama, não faz psiu. Bicho rosnando é bicho acordado. E é isso que ela vai achar que tá ali: um bicho. Ela não liga pra bicho.",
-     S('quarto_vo', cam=dict(zoom=1.0, to=1.1), fx=[{'cachorro': (1720, 830, 'rosna')}, {'olhos': (875, 420)}])),
+     S('quarto_vo', cam=dict(zoom=1.0, to=1.1), fx=[{'monstro': 'fundo', 'quem': Q, 'pos': (640, 1000), 's': 0.78, 'escuro': 0.5}, {'cachorro': (1720, 830, 'rosna')}])),
     ('nar', "Ela só liga pra você. E você, essa noite, é um travesseiro.",
      S('cama', deitado(), cam=close(1.4, 1.5))),
 
@@ -152,9 +159,9 @@ LINES = [
     ('nar', "Regra número cinco.",
      S('preto', fx=[{'regra': (5, 'SE ELA DISSER QUE SABE, **DUVIDE**')}])),
     ('nar', "Quando nada funcionar, ela vai chegar bem perto do seu ouvido. Tão perto que você vai perceber que a respiração dela não é quente. É gelada.",
-     S('cama', deitado(sweat=True), C('coisa', 'lado', None, facing=1, mouth='grin'), cam=dict(zoom=1.25, to=1.4, cx=700, cy=520))),
+     S('cama', deitado(sweat=True), C(Q, 'lado', None, facing=1, mouth='grin'), cam=dict(zoom=1.25, to=1.4, cx=700, cy=520))),
     ('coisa', "Eu sei que você tá acordado. Eu vi teu olho mexer.",
-     S('cama', deitado(sweat=True), cam=close(1.6, 1.7), fx=[{'voz': (760, 420)}, 'zoom_punch'])),
+     S('preto', fx=[{'monstro': 'rosto', 'quem': Q, 's': 3.1}, 'zoom_punch'])),
     ('nar', "Ela não viu nada. Ela não enxerga quem dorme, lembra? Ela tá chutando. Ela fala isso em todo quarto, pra todo mundo, só pra ver quem se assusta.",
      S('preto', fx=[{'olhos': (960, 520)}])),
     ('nar', "Se o seu olho mexeu, mexeu dormindo. Gente dormindo mexe o olho o tempo todo. Continua respirando. Quatro. Seis.",
@@ -168,7 +175,7 @@ LINES = [
     ('nar', "Em algum momento, ela vai apagar. Sem vento. Sem sopro. E o quarto vai ficar tão escuro que, mesmo de olho fechado, você vai sentir a diferença.",
      S('quarto_vo_escuro', cam=dict(zoom=1.5, to=1.6, cx=1330, cy=400), fx=['piscar'])),
     ('nar', "Ela não apagou por acaso. Ela quer saber se alguém vai levantar pra acender. Fica deitado. No escuro, você e o travesseiro são exatamente iguais.",
-     S('cama_escuro', deitado(), cam=dict(zoom=1.0, to=1.1), fx=[{'olhos': (420, 330), 'surge': True}])),
+     S('cama_escuro', deitado(), cam=dict(zoom=1.0, to=1.1), fx=[{'monstro': 'fundo', 'quem': Q, 'pos': (400, 1000), 's': 0.9, 'escuro': 0.8, 'surge': True}])),
     ('nar', "Se a tela do seu celular acender com uma notificação, deixa. Não estica a mão. A tela apaga sozinha em trinta segundos. Trinta segundos vão parecer uma hora. Mas apaga.",
      S('cama_escuro', deitado(sweat=True), cam=close(1.3, 1.4))),
 
@@ -178,15 +185,15 @@ LINES = [
     ('nar', "Lá pelas quatro e meia, o ronco no fim do corredor vai parar.",
      S('corredor', cam=dict(zoom=1.05, to=1.2, cx=1300, cy=560), fx=[{'texto': ['04:30'], 'pos': 'centro', 'cor': '#E5262B'}])),
     ('nar', "E a voz da sua vó vai sair de dentro do quarto dela. Fraca. Cansada.",
-     S('corredor', cam=dict(zoom=1.2, to=1.4, cx=1520, cy=540))),
+     S('corredor', cam=dict(zoom=1.2, to=1.4, cx=1520, cy=540), fx=[dict(PORTA_VO, abre=0.2, surge=True)])),
     ('coisa', "Meu anjo... a vó tá sem ar. Vem cá, liga pra alguém.",
-     S('corredor', cam=dict(zoom=1.35, to=1.5, cx=1520, cy=500), fx=[{'voz': VC}])),
+     S('corredor', cam=dict(zoom=1.3, to=1.45, cx=1520, cy=520), fx=[dict(PORTA_VO, boca='flat')])),
     ('nar', "Dessa vez a voz não vem do lado da sua cama. Vem de longe. Do lugar exato onde a sua vó de verdade deveria estar dormindo.",
-     S('corredor', cam=dict(zoom=1.15, to=1.3, cx=1520, cy=560), fx=[{'olhos': (1520, 470), 'surge': True}])),
+     S('corredor', cam=dict(zoom=1.15, to=1.3, cx=1520, cy=560), fx=[PORTA_VO])),
     ('nar', "Esse é o pior momento da noite. Porque agora você não sabe mais qual das duas é a sua vó. E porque você ama ela.",
      S('cama_escuro', deitado(eyes='sad', mouth='frown', sweat=True), cam=close())),
     ('nar', "Mas pensa. A sua vó nunca chamou ninguém de madrugada. Quando ela passa mal, ela bate a bengala no chão, três vezes. Foi isso que ela combinou com o seu pai. Não tem batida nenhuma. Só a voz.",
-     S('quarto_vo_escuro', sentado(eyes='angry', mouth='flat'), cam=dict(zoom=1.1, to=1.2))),
+     S('quarto_vo_escuro', sentado(eyes='angry', mouth='flat'), cam=dict(zoom=1.0, to=1.1), fx=[dict(JANELA_QVO, surge=True)])),
     ('nar', "Fica na cama. Continua respirando. E escuta o Tição. Ele parou de rosnar. Isso quer dizer que, do lado da sua cama, não tem mais ninguém.",
      S('quarto_vo_escuro', cam=dict(zoom=1.2, to=1.3, cx=1500, cy=720), fx=[{'cachorro': (1720, 830, 'parado')}])),
 
@@ -220,11 +227,11 @@ LINES = [
     ('nar', "Você pega o raminho na mão. Ele tá frio. Mesmo com o sol entrando pela janela.",
      S('quarto_vo_manha', sentado(eyes='wide', mouth='o', arms='hold'), cam=dict(focus='voce', zoom=1.5, to=1.6))),
     ('nar', "Você não fala nada. Mas, lá da cozinha, sem você perguntar, a sua vó grita:",
-     S('corredor', C('voce', 'p1', None, eyes='wide', mouth='flat', sweat=True), cam=dict(zoom=1.05, to=1.15))),
+     S('corredor', C('voce', 'p1', None, eyes='wide', mouth='flat', sweat=True), cam=dict(zoom=1.05, to=1.15), fx=[dict(PORTA_VO, abre=0.15, surge=True)])),
     ('vo', "Não joga fora, não! Ela deixa quando vai voltar. Hoje a gente benze a casa inteira.",
      S('cozinha', C('vo', 'b', None, facing=-1, eyes='half', mouth='flat', arms='hold', prop='caneca'), cam=dict(focus='vo', zoom=1.5, to=1.65))),
     ('nar', "Você ainda tem vinte e três dias de férias.",
-     S('preto', fx=[{'olhos': (960, 520), 'surge': True}, 'zoom_punch'])),
+     S('preto', fx=[{'monstro': 'rosto', 'quem': Q, 's': 3.0, 'surge': True}, 'zoom_punch'])),
 
     # ---------------------------------------------------------------- CTA
     ('nar', "Agora você conhece as regras. Se inscreve antes que a luz apague. E me conta nos comentários: você ia conseguir fingir que dorme até o café ficar pronto?",
