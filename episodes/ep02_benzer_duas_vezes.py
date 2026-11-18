@@ -13,6 +13,8 @@ TAIL = 20.0
 THUMB = dict(ordem='FINJA QUE **DORME**', esquerda=('voce', dict(eyes='wide', mouth='o', arms='face', sweat=True)),
              criatura_porta=True, criatura='coisa_vo', balao='Tá dormindo?')
 
+CORTES_TIKTOK = (137.1, 234.3, 347.3, 489.8)   # partes para o TikTok (tools/vertical.py): antes de cartões de regra / depois de sustos
+
 VOICES = {
     'nar': 'f22a680983644e699676e5b8879923c6',    # MM Narrador
     'coisa': '045e4a2e57434943bd3bb5db714aad75',  # ESE Vó Cida (com efeito)

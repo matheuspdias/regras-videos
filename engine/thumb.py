@@ -208,7 +208,8 @@ def mm(spec, out):
         if ctx.text_extents(spec['ordem'].replace('*', '')).x_advance < W - 160:
             break
         fs -= 8
-    rich_text(ctx, spec['ordem'], 960, 190, fs)
+    if not spec.get('sem_ordem'):
+        rich_text(ctx, spec['ordem'], 960, 190, fs)
     surf.write_to_png(out)
 
 

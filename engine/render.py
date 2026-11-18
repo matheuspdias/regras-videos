@@ -261,6 +261,9 @@ def mini_head(ctx, cid, x, y, r):
     draw_head(ctx, cid, c, Pose(mouth='smile'), x, y, r)
 
 
+VERT = os.environ.get('MM_VERT') == '1'   # versão para TikTok: sem legenda/HUD (o tools/vertical.py põe por cima)
+
+
 def caption_chunks(txt, maxw=5):
     import re
     txt = re.sub(r'\[[a-z ]+\]\s*', '', txt)
@@ -347,7 +350,7 @@ def overlay_mm(ctx, fx, u, dur, t):
             fs = 110
             while fs > 60:
                 ctx.set_font_size(fs)
-                if ctx.text_extents(frase.replace('*', '')).x_advance < 1600:
+                if ctx.text_extents(frase.replace('*', '')).x_advance < (1300 if VERT else 1600):
                     break
                 fs -= 6
             ctx.save(); ctx.translate(960, 560); s_ = 0.9 + 0.1 * a; ctx.scale(s_, s_)
@@ -1216,9 +1219,10 @@ def draw_frame(ctx, ep, clips, shots, envs, t):
     SC.vignette(ctx, 0.55)
     overlay_mm(ctx, fx, u, dur, t)
     grain(ctx, t)
-    draw_hud(ctx, getattr(_G['ep'], 'NOITE', 1), shot.get('regra'))
+    if not VERT:
+        draw_hud(ctx, getattr(_G['ep'], 'NOITE', 1), shot.get('regra'))
     cap, csp = current_caption(clips, t)
-    if not any(isinstance(i, dict) and ('regra' in i or 'cta_mm' in i) for i in fx):
+    if not VERT and not any(isinstance(i, dict) and ('regra' in i or 'cta_mm' in i) for i in fx):
         draw_caption(ctx, cap, csp)
     if thinking and thinking['a'] > 0.01:
         if tb:
@@ -1407,7 +1411,7 @@ def main():
     _init(ep_mod, ep_id)
     total = _G['total']
     nframes = int(total * FPS)
-    bdir = f'build/{ep_id}'
+    bdir = f'build/{ep_id}' + ('_v' if VERT else '')
     os.makedirs(bdir, exist_ok=True)
     if '--stills' in args:
         times = [float(x) for x in args[args.index('--stills') + 1].split(',')]

@@ -13,6 +13,8 @@ TAIL = 20.0
 THUMB = dict(ordem='NÃO **RESPONDA**', cena='corredor', esquerda=('voce', dict(eyes='wide', mouth='o', arms='face', sweat=True)),
              criatura_porta=True, balao='Lucas Henrique?')
 
+CORTES_TIKTOK = (126.2, 233.6, 358.0)   # partes para o TikTok (tools/vertical.py): antes de cartões de regra / depois de sustos
+
 VOICES = {
     'nar': 'f22a680983644e699676e5b8879923c6',    # MM Narrador
     'coisa': '914de72ccc244decb2fd1572808fa7e0',  # MM Mãe (com efeito)
