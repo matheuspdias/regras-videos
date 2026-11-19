@@ -1,0 +1,30 @@
+name: tts
+on:
+  push:
+    paths: ['tts_in/*.json']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: tts
+  cancel-in-progress: false
+jobs:
+  tts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Gerar vozes pela API do HeyGen
+        id: gen
+        env:
+          HEYGEN_API_KEY: ${{ secrets.HEYGEN_API_KEY }}
+        run: python3 -u tools/tts_api.py || echo "falhou=1" >> "$GITHUB_OUTPUT"
+      - name: Commit
+        run: |
+          git config user.name "tts-bot"
+          git config user.email "actions@github.com"
+          for d in media episodes tts_in tts_out; do [ -e "$d" ] && git add -A "$d"; done; true
+          git diff --cached --quiet || git commit -m "vozes geradas pela API"
+          git pull --rebase -q && git push
+      - name: Falhou?
+        if: steps.gen.outputs.falhou == '1'
+        run: exit 1
