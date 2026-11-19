@@ -1,4 +1,4 @@
-"""Roda DENTRO da GitHub Action `tts`: gera cada fala pela API do HeyGen (POST /v3/voices/speech),
+"""Roda DENTRO da GitHub Action `tts`: gera cada fala pela API do HeyGen (POST /v3/models/audio/tts, heygen-voice-1),
 salva media/<ep>/audio/NNN.mp3 e acrescenta a linha em episodes/<ep>/tts.tsv.
 Precisa do segredo HEYGEN_API_KEY. Erros vão para tts_out/<ep>_erros.txt (e a Action termina com falha)."""
 import json
@@ -9,17 +9,18 @@ import urllib.error
 import urllib.request
 
 KEY = os.environ['HEYGEN_API_KEY']
-API = 'https://api.heygen.com/v3/voices/speech'
+API = 'https://api.heygen.com/v3/models/audio/tts'   # HeyGen Voice 1 (o mesmo modelo que a assinatura usava)
 
 
 def speech(voice, text):
-    body = json.dumps({'text': text, 'voice_id': voice, 'input_type': 'text', 'speed': 1, 'language': 'pt'}).encode()
+    body = json.dumps({'text': text, 'voice_id': voice, 'model': 'heygen-voice-1', 'language': 'pt',
+                       'output_format': {'encoding': 'mp3', 'sample_rate_hertz': 44100, 'bitrate_bps': 128000}}).encode()
     for attempt in range(5):
         req = urllib.request.Request(API, data=body, method='POST',
                                      headers={'X-Api-Key': KEY, 'Content-Type': 'application/json', 'Accept': 'application/json'})
         try:
             with urllib.request.urlopen(req, timeout=120) as r:
-                return json.load(r)['data']
+                j = json.load(r); return j.get('data', j)
         except urllib.error.HTTPError as e:
             msg = e.read().decode(errors='replace')[:400]
             if e.code in (429, 500, 502, 503, 504) and attempt < 4:
