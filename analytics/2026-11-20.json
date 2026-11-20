@@ -39,9 +39,7 @@
  ],
  "diario": [],
  "trafego": [],
- "erros": [
-  "impressões/CTR indisponíveis: GET https://youtubereporting.googleapis.com/v1/jobs -> 403: {\n  \"error\": {\n    \"code\": 403,\n    \"message\": \"YouTube Reporting API has not been used in project 56828188456 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/youtubereporting.googleapis.com/overview?project=56828188456 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.\",\n    \"status\": \"PERMISSION_DENIED\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.ErrorInfo\",\n        \"reason\": \"SERVICE_DISABLED\",\n        \"domain\": \"googleapis.com\",\n        \"metadata"
- ],
+ "erros": [],
  "legenda": {
   "retencao": "[fração do vídeo, audienceWatchRatio, relativeRetentionPerformance]",
   "ctr": "% de cliques nas impressões da thumbnail (Reporting API)"

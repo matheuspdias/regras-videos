@@ -9,17 +9,3 @@ Inscritos: 0 · views totais: 0 · vídeos: 0
 
 ## Fontes de tráfego (canal)
 
-
-## Avisos
-
-- impressões/CTR indisponíveis: GET https://youtubereporting.googleapis.com/v1/jobs -> 403: {
-  "error": {
-    "code": 403,
-    "message": "YouTube Reporting API has not been used in project 56828188456 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/youtubereporting.googleapis.com/overview?project=56828188456 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.",
-    "status": "PERMISSION_DENIED",
-    "details": [
-      {
-        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
-        "reason": "SERVICE_DISABLED",
-        "domain": "googleapis.com",
-        "metadata
