@@ -107,6 +107,8 @@ def draw_char(ctx, cid, x, y, s=1.0, pose=None):
     hip_y = -leg_h + by
     sh_y = hip_y - body_h
     head_cy = sh_y - head_r * 0.82
+    neck = c.get('pescoco', 0) * H          # criatura: pescoço comprido demais (fração da altura)
+    head_cy -= neck
     body_w_top = 120 * (0.9 + 0.1 * hs)
     body_w_bot = 140 * (0.9 + 0.1 * hs)
 
@@ -163,7 +165,7 @@ def draw_char(ctx, cid, x, y, s=1.0, pose=None):
         ax = side * (body_w_top / 2 - 6)
         ay = sh_y + 26
         pts = []
-        ak = 1.6 if c.get('face') == 'creature' else 1.0
+        ak = c.get('bracos', 1.6) if c.get('face') == 'creature' else 1.0
         if kind == 'down':
             pts = [(ax, ay), (ax + side * 34, ay + 70), (ax + side * 30, ay + 140)]
         elif kind == 'hip':
@@ -263,7 +265,18 @@ def draw_char(ctx, cid, x, y, s=1.0, pose=None):
         draw_head(ctx, cid, c, p, 0, head_cy, head_r)
         ctx.restore()
     else:
+        if neck > 0:
+            ctx.set_line_cap(cairo.LINE_CAP_BUTT)
+            ctx.set_source_rgba(*OUT); ctx.set_line_width(46)
+            ctx.move_to(0, sh_y + 12); ctx.line_to(0, head_cy + head_r * 0.7); ctx.stroke()
+            setc(ctx, c['skin']); ctx.set_line_width(34)
+            ctx.move_to(0, sh_y + 14); ctx.line_to(0, head_cy + head_r * 0.72); ctx.stroke()
+        tilt = c.get('inclina', 0)              # criatura: cabeça torta (radianos)
+        if tilt:
+            ctx.save(); ctx.translate(0, head_cy + head_r * 0.8); ctx.rotate(tilt * f); ctx.translate(0, -(head_cy + head_r * 0.8))
         draw_head(ctx, cid, c, p, 0, head_cy, head_r)
+        if tilt:
+            ctx.restore()
 
     # props
     if p.extra_prop and (1 in hands or -1 in hands):
@@ -685,17 +698,61 @@ def _face_custom(ctx, c, p, hx, hy, r):
         else:
             ctx.move_to(mx - r * 0.1, my); ctx.line_to(mx + r * 0.1, my); ctx.stroke()
     elif style == 'creature':
-        # olhos amarelos brilhando e sorriso largo demais
-        for side in (-1, 1):
-            ex = hx + side * r * 0.33
-            ey = hy - r * 0.08
+        # olhos: 'dois' (padrão) | 'quatro' | 'um' | 'vazios' | 'fechados' ; boca: 'sorriso' | 'vertical' | 'costurada' | 'aberta'
+        olhos = c.get('olhos', 'dois')
+
+        def glow_eye(ex, ey, rr, a=1.0):
             for k in range(6, 0, -1):
-                ctx.arc(ex, ey, r * (0.14 + k * 0.05), 0, TAU)
-                ctx.set_source_rgba(1, 0.85, 0.2, 0.05)
-                ctx.fill()
-            ctx.arc(ex, ey, r * 0.15, 0, TAU); ctx.set_source_rgba(1, 0.88, 0.25, 1); ctx.fill()
-            ctx.arc(ex, ey, r * 0.05, 0, TAU); ctx.set_source_rgba(0.1, 0.05, 0, 1); ctx.fill()
-        if p.mouth != 'flat':
+                ctx.arc(ex, ey, rr * (1 + k * 0.35), 0, TAU)
+                ctx.set_source_rgba(1, 0.85, 0.2, 0.05 * a); ctx.fill()
+            ctx.arc(ex, ey, rr, 0, TAU); ctx.set_source_rgba(1, 0.88, 0.25, a); ctx.fill()
+            ctx.arc(ex, ey, rr * 0.33, 0, TAU); ctx.set_source_rgba(0.1, 0.05, 0, a); ctx.fill()
+        if olhos == 'quatro':
+            for side in (-1, 1):
+                glow_eye(hx + side * r * 0.36, hy - r * 0.22, r * 0.12)
+                glow_eye(hx + side * r * 0.22, hy + r * 0.05, r * 0.09)
+        elif olhos == 'um':
+            glow_eye(hx, hy - r * 0.12, r * 0.26)
+        elif olhos == 'vazios':
+            for side in (-1, 1):
+                ex, ey = hx + side * r * 0.33, hy - r * 0.08
+                ctx.save(); ctx.translate(ex, ey); ctx.scale(1, 1.35); ctx.arc(0, 0, r * 0.19, 0, TAU); ctx.restore()
+                ctx.set_source_rgba(0.02, 0.02, 0.025, 1); ctx.fill()
+                glow_eye(ex, ey + r * 0.03, r * 0.035)
+        elif olhos == 'fechados':
+            ctx.set_source_rgba(*FACE); ctx.set_line_width(7)
+            for side in (-1, 1):
+                ex, ey = hx + side * r * 0.33, hy - r * 0.08
+                ctx.arc(ex, ey - r * 0.06, r * 0.13, 0.15 * math.pi, 0.85 * math.pi); ctx.stroke()
+        else:
+            for side in (-1, 1):
+                glow_eye(hx + side * r * 0.33, hy - r * 0.08, r * 0.15)
+        boca = c.get('boca', 'sorriso')
+        if p.mouth == 'flat' and boca == 'sorriso':
+            ctx.set_source_rgba(*FACE); ctx.set_line_width(6)
+            ctx.move_to(hx - r * 0.1, hy + r * 0.4); ctx.line_to(hx + r * 0.1, hy + r * 0.4); ctx.stroke()
+        elif boca == 'vertical':
+            my = hy + r * 0.45
+            ctx.save(); ctx.translate(hx, my); ctx.scale(0.32, 1); ctx.arc(0, 0, r * 0.42, 0, TAU); ctx.restore()
+            ctx.set_source_rgba(0.05, 0.05, 0.06, 1); ctx.fill()
+            ctx.set_source_rgba(0.95, 0.95, 0.9, 1); ctx.set_line_width(3)
+            for i in range(-4, 5):
+                yy = my + i * r * 0.085
+                ww = r * 0.13 * (1 - abs(i) / 5.5)
+                ctx.move_to(hx - ww, yy); ctx.line_to(hx - ww * 0.3, yy); ctx.stroke()
+                ctx.move_to(hx + ww, yy); ctx.line_to(hx + ww * 0.3, yy); ctx.stroke()
+        elif boca == 'costurada':
+            w = r * 0.62; my = hy + r * 0.42
+            ctx.set_source_rgba(*FACE); ctx.set_line_width(6)
+            ctx.move_to(hx - w, my - r * 0.08); ctx.curve_to(hx - w * 0.4, my + r * 0.12, hx + w * 0.4, my + r * 0.12, hx + w, my - r * 0.08); ctx.stroke()
+            ctx.set_source_rgba(0.9, 0.15, 0.17, 1); ctx.set_line_width(4)
+            for i in range(-5, 6):
+                x = hx + i * w / 6
+                ctx.move_to(x, my - r * 0.04); ctx.line_to(x, my + r * 0.14); ctx.stroke()
+        elif boca == 'aberta':
+            ctx.save(); ctx.translate(hx, hy + r * 0.5); ctx.scale(1, 1.25); ctx.arc(0, 0, r * 0.3, 0, TAU); ctx.restore()
+            ctx.set_source_rgba(0.03, 0.03, 0.035, 1); ctx.fill()
+        else:
             w = r * 0.72
             my = hy + r * 0.36
             ctx.move_to(hx - w, my - r * 0.1)
@@ -707,9 +764,7 @@ def _face_custom(ctx, c, p, hx, hy, r):
             for i in range(-6, 7):
                 x = hx + i * w / 7
                 ctx.move_to(x, my + r * 0.02); ctx.line_to(x, my + r * 0.16 - abs(i) * r * 0.012); ctx.stroke()
-        else:
-            ctx.set_source_rgba(*FACE); ctx.set_line_width(6)
-            ctx.move_to(hx - r * 0.1, hy + r * 0.4); ctx.line_to(hx + r * 0.1, hy + r * 0.4); ctx.stroke()
+
 
 def draw_prop(ctx, prop, x, y, f):
     ctx.save()

@@ -128,6 +128,22 @@ ela imita, sempre alta, com olhos amarelos, sorriso largo e **um** detalhe verme
 | `coisa_crianca` | criança desconhecida (festa junina, esconde-esconde) | presilha |
 | `coisa_sombra` | nada — um vulto escuro e muito alto (mata, folclore, ônibus) | — (só os olhos) |
 
+**Cada episódio tem o SEU monstro** (pedido do Matheus: "capriche nos monstros e nas capas, não deixe tudo igual").
+Antes de desenhar, leia `episodes/monstros.md` (o que já foi usado + ideias para a fila). Crie no `CAST` uma variante
+própria do episódio (ex.: `coisa_ep03`) combinando os traços disponíveis — a silhueta e o rosto têm que ser diferentes
+dos 2 episódios anteriores:
+- `olhos`: `'dois'` (padrão), `'quatro'`, `'um'` (ciclope), `'vazios'` (buracos pretos com pontinho amarelo), `'fechados'` (sorrindo de olhos fechados)
+- `boca`: `'sorriso'` (padrão, largo demais), `'vertical'` (fenda com dentes), `'costurada'` (pontos vermelhos), `'aberta'` (buraco preto)
+- `pescoco`: 0–0,35 (pescoço comprido demais) · `inclina`: 0–0,6 rad (cabeça torta) · `bracos`: 1,6–2,4 (braços compridos)
+- `h` (altura, 0,9–1,95), cabelo/roupa de quem ela imita e **um único detalhe vermelho** (presilha, laço, gravata, tênis, boné, costura)
+Ao terminar, acrescente a linha do episódio em `episodes/monstros.md` (monstro e composição da capa).
+
+**A capa também muda a cada episódio:** composição diferente das 3 últimas de `episodes/monstros.md`, mostrando a
+cena do tema (portão, banheiro, cozinha, TV, garagem…) com o monstro grande e bem visível, o protagonista reagindo e o
+balão vermelho. Crie a função da capa em `engine/thumb.py` no padrão de `mm_cama` (cenário do episódio + zoom +
+escurecer bordas + ordem no topo) e chame-a por `THUMB['cena']`. Confira a capa nova lado a lado com as 2 anteriores
+(`ffmpeg ... hstack`) antes de entregar: se parecer a mesma, refaça.
+
 Precisa de um monstro novo para a história (ex.: imitando a vizinha, um vulto da mata com chapéu)? Crie uma variante
 em `CAST` de `engine/chars.py` copiando uma dessas (`face='creature'`, `h` entre 1.3 e 1.9, um único detalhe vermelho)
 e confira numa still antes de seguir. Use a mesma variante no `THUMB` com `criatura='<id>'`.
