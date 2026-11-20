@@ -990,7 +990,7 @@ def muro_portao(ctx, t, manha=False):
         y = 470 - h
         ctx.move_to(x, y + 40); ctx.line_to(x + w / 2, y - 10); ctx.line_to(x + w, y + 40); ctx.line_to(x + w, 470); ctx.line_to(x, 470); ctx.close_path()
         setc(ctx, '#101012'); ctx.fill_preserve(); ctx.set_source_rgba(0.6, 0.6, 0.64, 0.5); ctx.set_line_width(3); ctx.stroke()
-    lr(ctx, 1290, 360, 70, 60, fill='#0A0A0C')                                # janela da vizinha da frente
+    lr(ctx, 1270, 330, 110, 100, fill='#0A0A0C')                              # janela da vizinha da frente
     # poste com luz âmbar
     lr(ctx, 1505, 120, 18, 360, fill=DARK3)
     lr(ctx, 1460, 110, 110, 22, fill=DARK3, r=8)

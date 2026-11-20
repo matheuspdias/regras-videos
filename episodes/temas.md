@@ -14,7 +14,7 @@ com um detalhe errado]… [ORDEM EM MAIÚSCULAS]**. Os temas de família/casa à
 | --- | --- | --- | --- | --- | --- |
 | 1 | Se sua mãe te chamar pelo nome completo de dentro de um quarto vazio… NÃO RESPONDA | NÃO **RESPONDA** | família (3 mi) | mãe de plantão, voz no quarto vazio | feito — ep01, 14/11 |
 | 2 | Se sua vó te benzer duas vezes na mesma noite… FINJA QUE DORME | FINJA QUE **DORME** | família + benzedeira | férias na casa da vó no interior; a primeira bênção é dela, a segunda não | feito — ep02, 15/11 |
-| 3 | Se o seu pai bater palma no portão de madrugada… NÃO ATENDA | NÃO **ATENDA** | família (pai) + casa brasileira | palma no portão, mas ele tem a chave; cachorro quieto demais | pendente |
+| 3 | Se o seu pai bater palma no portão de madrugada… NÃO ATENDA | NÃO **ATENDA** | família (pai) + casa brasileira | palma no portão, mas ele tem a chave; cachorro quieto demais | feito — ep03, 20/11 |
 | 4 | Se a sua irmã estiver cantando no banheiro de madrugada… NÃO BATA NA PORTA | NÃO **BATA** | família (irmã) + casa | chuveiro desligado, a música que ela cantava pequena; a irmã de verdade dormindo | pendente |
 | 5 | Se o seu irmão te chamar pelo apelido que só a vó usava… NÃO OLHE PRA TRÁS | NÃO **OLHE** | família (padrão de 851 mil) | irmão mais novo no corredor | pendente |
 | 6 | Se o seu cachorro rosnar para o seu pai na porta de casa… NÃO ABRA | NÃO **ABRA** | família + cachorro | pai chega do turno da fábrica cedo demais | pendente |
