@@ -221,7 +221,8 @@ def _cli():
     elif arg and arg.startswith('episodes.'):
         import importlib
         spec = importlib.import_module(arg).THUMB
-        (mm_cama if spec.get('cena') == 'cama' else mm if 'ordem' in spec else generic)(spec, out)
+        fn = globals().get(f"mm_{spec.get('cena')}") if spec.get('cena') else None   # capa própria: def mm_<cena>(spec, out)
+        (fn or (mm if 'ordem' in spec else generic))(spec, out)
     else:
         main(out)
 
