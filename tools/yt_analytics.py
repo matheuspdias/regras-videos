@@ -45,6 +45,7 @@ def access_token():
     r = http('POST', 'https://oauth2.googleapis.com/token', form=dict(
         client_id=os.environ['YT_CLIENT_ID'], client_secret=os.environ['YT_CLIENT_SECRET'],
         refresh_token=os.environ['YT_REFRESH_TOKEN'], grant_type='refresh_token'))
+    print('escopos do token:', r.get('scope'))
     return r['access_token']
 
 
