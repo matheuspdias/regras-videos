@@ -1,0 +1,49 @@
+{
+ "data": "2026-11-20",
+ "canal": {
+  "id": "UCOYAXMdOMmpYxBDPmoBsWLQ",
+  "nome": "Manual da Madrugada",
+  "inscritos": 0,
+  "views": 0,
+  "videos": 0
+ },
+ "videos": [
+  {
+   "id": "0Vn4bpbl3xo",
+   "titulo": "Se sua mãe te chamar pelo nome completo de dentro de um quarto vazio… NÃO RESPONDA",
+   "publicado": "2026-11-15T18:42:35Z",
+   "status": "private",
+   "agendado": "2026-11-20T23:00:00Z",
+   "duracao": "PT8M1S",
+   "views": 0,
+   "likes": 0,
+   "comentarios": 0,
+   "segundos": 481,
+   "analytics": {},
+   "alcance": {}
+  },
+  {
+   "id": "3ILnx4xYAwU",
+   "titulo": "Se sua vó te benzer duas vezes na mesma noite… FINJA QUE DORME",
+   "publicado": "2026-11-20T04:25:03Z",
+   "status": "private",
+   "agendado": "2026-11-21T23:00:00Z",
+   "duracao": "PT10M20S",
+   "views": 0,
+   "likes": 0,
+   "comentarios": 0,
+   "segundos": 620,
+   "analytics": {},
+   "alcance": {}
+  }
+ ],
+ "diario": [],
+ "trafego": [],
+ "erros": [
+  "impressões/CTR indisponíveis: GET https://youtubereporting.googleapis.com/v1/jobs -> 403: {\n  \"error\": {\n    \"code\": 403,\n    \"message\": \"YouTube Reporting API has not been used in project 56828188456 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/youtubereporting.googleapis.com/overview?project=56828188456 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.\",\n    \"status\": \"PERMISSION_DENIED\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.ErrorInfo\",\n        \"reason\": \"SERVICE_DISABLED\",\n        \"domain\": \"googleapis.com\",\n        \"metadata"
+ ],
+ "legenda": {
+  "retencao": "[fração do vídeo, audienceWatchRatio, relativeRetentionPerformance]",
+  "ctr": "% de cliques nas impressões da thumbnail (Reporting API)"
+ }
+}
