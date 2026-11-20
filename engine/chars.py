@@ -63,6 +63,8 @@ CAST = {
     'coisa_irmao':  dict(skin='#E4E4E4', name='A coisa (irmão)', shirt='#DADADA', pants='#8A8A8A', shoes='#E5262B', kind='tee', hair='short', hair_c='#6A6A6A', extra=None, face='creature', h=1.05),
     'coisa_vizinho': dict(skin='#E4E4E4', name='A coisa (vizinho)', shirt='#BDBDBD', pants='#5A5A5A', shoes='#2A2A2A', kind='tee', hair='cap', hair_c='#E5262B', extra=None, face='creature', h=1.55),
     'coisa_crianca': dict(skin='#E4E4E4', name='A coisa (criança)', shirt='#D6D6D6', pants='#D6D6D6', shoes='#3A3A3A', kind='dress', hair='pigtails', hair_c='#4A4A4A', extra='presilha_red', face='creature', h=0.95),
+    # noite 03: imita o pai, pescoço comprido demais (espia por cima do muro), olhos vazios, braços longos; gravata vermelha
+    'coisa_ep03':   dict(tie='#E5262B', skin='#E4E4E4', name='A coisa (pai, noite 03)', shirt='#C4C4C4', pants='#4A4A4A', shoes='#2A2A2A', kind='shirt', hair='short', hair_c='#3A3A3A', extra=None, face='creature', h=1.6, pescoco=0.3, olhos='vazios', bracos=2.1, inclina=0.12),
     'coisa_sombra': dict(skin='#2E2E33', name='A coisa (sombra)', shirt='#1E1E22', pants='#1E1E22', shoes='#111113', kind='tee', hair='none', hair_c='#1E1E22', extra='olhos_red', face='creature', h=1.85),
     'vizinho': dict(skin='#ECECEC', name='Vizinho', shirt='#BDBDBD', pants='#6A6A6A', shoes='#2A2A2A', kind='tee', hair='cap', hair_c='#5A5A5A', extra=None, face='min', h=1.02),
 }

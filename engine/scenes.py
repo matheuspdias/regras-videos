@@ -974,6 +974,127 @@ def fg_mm_cama(ctx, t, lit=True):
         ctx.rectangle(0, 0, W, H); ctx.set_source_rgba(0, 0, 0, 0.45); ctx.fill()
 
 
+# ---------------------------------------------------------------- quintal e portão (noite 03)
+def muro_portao(ctx, t, manha=False):
+    """céu, casas do outro lado da rua, poste, muro com cacos de vidro e portão de grade (as grades vão no fg)"""
+    g = cairo.LinearGradient(0, 0, 0, 470)
+    if manha:
+        g.add_color_stop_rgba(0, 0.16, 0.2, 0.3, 1); g.add_color_stop_rgba(1, 0.42, 0.42, 0.48, 1)
+    else:
+        g.add_color_stop_rgba(0, 0.03, 0.035, 0.05, 1); g.add_color_stop_rgba(1, 0.07, 0.075, 0.09, 1)
+    ctx.rectangle(0, 0, W, 480); ctx.set_source(g); ctx.fill()
+    if not manha:
+        ctx.arc(330, 130, 30, 0, TAU); ctx.set_source_rgba(0.85, 0.86, 0.9, 0.85); ctx.fill()
+    # casas do outro lado da rua (silhuetas com telhado)
+    for x, w, h in ((-20, 360, 170), (380, 300, 210), (1240, 330, 190), (1600, 360, 160)):
+        y = 470 - h
+        ctx.move_to(x, y + 40); ctx.line_to(x + w / 2, y - 10); ctx.line_to(x + w, y + 40); ctx.line_to(x + w, 470); ctx.line_to(x, 470); ctx.close_path()
+        setc(ctx, '#101012'); ctx.fill_preserve(); ctx.set_source_rgba(0.6, 0.6, 0.64, 0.5); ctx.set_line_width(3); ctx.stroke()
+    lr(ctx, 1290, 360, 70, 60, fill='#0A0A0C')                                # janela da vizinha da frente
+    # poste com luz âmbar
+    lr(ctx, 1505, 120, 18, 360, fill=DARK3)
+    lr(ctx, 1460, 110, 110, 22, fill=DARK3, r=8)
+    ctx.arc(1480, 140, 13, 0, TAU); ctx.set_source_rgba(1, 0.75, 0.35, 0.95 if not manha else 0.3); ctx.fill()
+    if not manha:
+        amber(ctx, 1480, 150, 330, 0.32, t)
+    # chão do quintal (cimento)
+    ctx.rectangle(0, 820, W, H - 820); setc(ctx, DARK3); ctx.fill()
+    # muro
+    for x0, x1 in ((0, 760), (1160, W)):
+        lr(ctx, x0 - 6, 470, x1 - x0 + 12, 350, fill='#19191C')
+        ctx.set_source_rgba(0.6, 0.6, 0.64, 0.22); ctx.set_line_width(2)
+        for yy in range(530, 820, 60):
+            ctx.move_to(x0, yy); ctx.line_to(x1, yy)
+        ctx.stroke()
+        # cacos de vidro em cima do muro
+        random.seed(x0 + 3)
+        x = x0 + 10
+        while x < x1 - 20:
+            hh = 14 + random.random() * 22
+            ctx.move_to(x, 470); ctx.line_to(x + 7 + random.random() * 6, 470 - hh); ctx.line_to(x + 18, 470); ctx.close_path()
+            ctx.set_source_rgba(0.62, 0.68, 0.66, 0.85); ctx.fill()
+            x += 26 + random.random() * 22
+    # vão do portão: rua escura
+    ctx.rectangle(760, 470, 400, 350); setc(ctx, '#0B0B0D'); ctx.fill()
+    ctx.set_source_rgba(*LINE); ctx.set_line_width(5); ctx.move_to(0, 820); ctx.line_to(W, 820); ctx.stroke()
+    # casinha da Paçoca
+    ctx.move_to(170, 760); ctx.line_to(290, 660); ctx.line_to(410, 760); ctx.close_path()
+    setc(ctx, '#232326'); ctx.fill_preserve(); ctx.set_source_rgba(*LINE); ctx.set_line_width(4); ctx.stroke()
+    lr(ctx, 190, 760, 200, 140, fill='#1E1E21')
+    lr(ctx, 250, 800, 80, 100, fill='#060607', r=30)
+    # vaso de espada-de-são-jorge
+    lr(ctx, 1640, 840, 90, 80, fill='#202024', r=6)
+    ctx.set_source_rgba(0.5, 0.56, 0.5, 1); ctx.set_line_width(7)
+    for a in (-0.3, -0.1, 0.12, 0.3):
+        ctx.move_to(1685, 840); ctx.line_to(1685 + math.sin(a) * 150, 840 - math.cos(a) * 150); ctx.stroke()
+    if manha:
+        ctx.rectangle(0, 0, W, H); ctx.set_source_rgba(0.55, 0.62, 0.75, 0.12); ctx.fill()
+
+
+def grade_portao(ctx, t, manha=False):
+    """grades do portão por cima de quem está atrás dele, com corrente e cadeado"""
+    ctx.set_source_rgba(0.68, 0.68, 0.72, 1)
+    ctx.set_line_width(9)
+    ctx.rectangle(760, 440, 400, 380); ctx.stroke()
+    ctx.set_line_width(7)
+    for x in range(800, 1160, 40):
+        ctx.move_to(x, 440); ctx.line_to(x, 820)
+    ctx.move_to(760, 560); ctx.line_to(1160, 560)
+    ctx.move_to(760, 700); ctx.line_to(1160, 700)
+    ctx.stroke()
+    for x in range(800, 1160, 40):                                           # pontas de lança
+        ctx.move_to(x - 9, 446); ctx.line_to(x, 418); ctx.line_to(x + 9, 446); ctx.close_path(); ctx.fill()
+    ctx.move_to(960, 440); ctx.line_to(960, 820); ctx.set_line_width(10); ctx.stroke()   # junção das folhas
+    # corrente + cadeado
+    ctx.set_line_width(5)
+    for k in range(6):
+        ctx.save(); ctx.translate(925 + k * 14, 640 + (k % 2) * 4); ctx.scale(1.0, 0.6)
+        ctx.arc(0, 0, 9, 0, TAU); ctx.restore(); ctx.stroke()
+    lr(ctx, 948, 652, 40, 46, fill='#4A4A50', r=6)
+    ctx.arc(968, 652, 13, math.pi, 0); ctx.set_line_width(5); ctx.set_source_rgba(0.68, 0.68, 0.72, 1); ctx.stroke()
+
+
+def bg_mm_quintal(ctx, t):
+    muro_portao(ctx, t)
+
+
+def bg_mm_quintal_manha(ctx, t):
+    muro_portao(ctx, t, manha=True)
+
+
+def bg_mm_cortina(ctx, t):
+    """de dentro da sala: janela da frente grande, com o quintal e o portão lá fora (o fg põe as cortinas)"""
+    ctx.rectangle(0, 0, W, H); setc(ctx, DARK); ctx.fill()
+    ctx.save()
+    ctx.rectangle(520, 140, 880, 620); ctx.clip()
+    ctx.translate(520, 140); ctx.scale(880 / W, 880 / W); ctx.translate(0, -150)
+    muro_portao(ctx, t)
+    grade_portao(ctx, t)
+    ctx.restore()
+    ctx.rectangle(0, 860, W, H - 860); setc(ctx, DARK3); ctx.fill()
+    ctx.set_source_rgba(*LINE); ctx.set_line_width(5); ctx.move_to(0, 860); ctx.line_to(W, 860); ctx.stroke()
+    lr(ctx, 500, 120, 920, 660, fill=(0, 0, 0, 0), lw=10)                   # batente
+    ctx.set_source_rgba(*LINE); ctx.set_line_width(6)
+    ctx.move_to(960, 140); ctx.line_to(960, 760); ctx.stroke()
+    lr(ctx, 470, 770, 980, 30, fill=DARK3)                                   # parapeito
+    lr(ctx, 1560, 620, 260, 240, r=6)                                        # aparador
+    lr(ctx, 1610, 520, 70, 100, fill='#2C2C30', r=8)                         # telefone fixo / rádio
+
+
+def fg_mm_cortina(ctx, t):
+    sw = 8 * math.sin(t * 0.7)
+    for x0, side in ((430, 1), (1490, -1)):
+        ctx.move_to(x0 - side * 30, 90)
+        ctx.line_to(x0 + side * 150 + sw, 90)
+        ctx.curve_to(x0 + side * 120 + sw, 400, x0 + side * 170 + sw, 650, x0 + side * 130 + sw, 840)
+        ctx.line_to(x0 - side * 30, 840); ctx.close_path()
+        setc(ctx, '#1F1D22'); ctx.fill_preserve(); ctx.set_source_rgba(*LINE); ctx.set_line_width(4); ctx.stroke()
+        ctx.set_source_rgba(0.6, 0.6, 0.64, 0.3); ctx.set_line_width(3)
+        for k in (40, 85):
+            ctx.move_to(x0 + side * k, 100); ctx.curve_to(x0 + side * (k - 10), 400, x0 + side * (k + 20), 650, x0 + side * k, 830); ctx.stroke()
+    lr(ctx, 360, 78, 1200, 18, fill=DARK3, r=8)                               # varão
+
+
 BG = {
     'quarto': (bg_mm_quarto, None),
     'corredor': (bg_mm_corredor, None),
@@ -990,6 +1111,9 @@ BG = {
     'quarto_vo_ramo': (lambda c, t: (bg_mm_quarto_vo(c, t, manha=True), ramo_seco(c, 1260, 735)), None),
     'cama': (bg_mm_cama, fg_mm_cama),
     'cama_escuro': (lambda c, t: bg_mm_cama(c, t, lit=False), lambda c, t: fg_mm_cama(c, t, lit=False)),
+    'quintal': (bg_mm_quintal, grade_portao),
+    'quintal_manha': (bg_mm_quintal_manha, lambda c, t: grade_portao(c, t, manha=True)),
+    'cortina': (bg_mm_cortina, fg_mm_cortina),
 }
 
 SLOTS = {
@@ -1008,4 +1132,7 @@ SLOTS = {
     'quarto_vo_ramo': dict(cama=(1420, 830, 0.95), porta=(875, 960, 0.95), centro=(560, 1000, 1.0)),
     'cama': dict(deitado=(1250, 625, 0.85), lado=(400, 1000, 0.9)),
     'cama_escuro': dict(deitado=(1250, 625, 0.85), lado=(400, 1000, 0.9)),
+    'quintal': dict(a=(560, 1010, 0.95), b=(1420, 1010, 0.95), portao=(960, 830, 0.8)),
+    'quintal_manha': dict(a=(560, 1010, 0.95), b=(1420, 1010, 0.95), portao=(960, 830, 0.8)),
+    'cortina': dict(lado=(330, 1010, 1.0), centro=(960, 1010, 1.0), dir=(1640, 1010, 0.95)),
 }
