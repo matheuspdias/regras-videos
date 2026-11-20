@@ -157,6 +157,10 @@ claro fino, uma luz âmbar fraca. Registre em `BG` e `SLOTS` e confira com still
 **Thumbnail (`THUMB`)** — padrão do Lullorin: só a ordem do título no topo, enorme, branco + palavra-chave vermelha;
 protagonista com medo à esquerda; criatura espiando da porta à direita; balão vermelho com uma frase curta da coisa
 (o nome, "abre pra mim", "vem cá"). Confira o `thumb.jpg` com Read.
+**Não repita a mesma composição de capa em episódios seguidos** (o Matheus pediu): além da porta (`criatura_porta=True`),
+existe `cena='cama'` (protagonista fingindo dormir e a criatura debruçada atrás da cama, ver ep02). Se o tema pedir outra
+cena (portão, janela, corredor, celular), crie uma função nova em `engine/thumb.py` no mesmo estilo, com a cena do
+episódio, a criatura bem visível e o balão vermelho.
 
 ## 3. Vozes (HeyGen, pela API)
 

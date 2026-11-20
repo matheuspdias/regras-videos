@@ -10,8 +10,8 @@ GAP_NAR = 0.75      # pausas de terror entre falas
 PAUSA_REGRA = 2.0   # segura o cartão da regra
 PAUSA_VOZ = 1.2     # respiro depois de cada voz da criatura
 TAIL = 20.0
-THUMB = dict(ordem='FINJA QUE **DORME**', esquerda=('voce', dict(eyes='wide', mouth='o', arms='face', sweat=True)),
-             criatura_porta=True, criatura='coisa_vo', balao='Tá dormindo?')
+THUMB = dict(ordem='FINJA QUE **DORME**', cena='cama', criatura='coisa_vo', balao='Tá dormindo?',
+             esquerda=('voce', dict(eyes='wide', mouth='o', arms='face', sweat=True)), criatura_porta=True)
 
 CORTES_TIKTOK = (137.1, 234.3, 347.3, 489.8)   # partes para o TikTok (tools/vertical.py): antes de cartões de regra / depois de sustos
 

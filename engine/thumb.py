@@ -221,9 +221,69 @@ def _cli():
     elif arg and arg.startswith('episodes.'):
         import importlib
         spec = importlib.import_module(arg).THUMB
-        (mm if 'ordem' in spec else generic)(spec, out)
+        (mm_cama if spec.get('cena') == 'cama' else mm if 'ordem' in spec else generic)(spec, out)
     else:
         main(out)
+
+
+
+def mm_cama(spec, out):
+    """Capa 'na cama': protagonista fingindo que dorme e a criatura ao lado da cama, com balão vermelho.
+    spec: ordem, criatura, balao, cena='cama', zoom (opcional)"""
+    from .render import rich_text
+    from .scenes import BG
+    from .chars import rrect
+    surf = cairo.ImageSurface(cairo.FORMAT_RGB24, W, H)
+    ctx = cairo.Context(surf)
+    bg, fg = BG['cama']
+    z = spec.get('zoom', 1.22)
+    cx, cy = spec.get('foco', (1080, 640))
+    ctx.save()
+    ctx.translate(W / 2, H / 2 + 200); ctx.scale(z, z); ctx.translate(-cx, -cy)
+    bg(ctx, 0.0)
+    q = spec.get('criatura', 'coisa')
+    # a criatura atrás da cama, debruçada sobre o travesseiro (pés escondidos pela colcha)
+    fx_, fy_ = spec.get('pos', (1180, 880))
+    ctx.save(); ctx.rectangle(-500, -500, 4000, 500 + 740); ctx.clip()   # pernas somem atrás da cama
+    ctx.translate(fx_, fy_); ctx.rotate(spec.get('incl', -0.16))
+    info = draw_char(ctx, q, 0, 0, spec.get('cs', 1.0), Pose(mouth='grin', facing=-1, arms='point'))
+    hl = ctx.user_to_device(*info['head']); tl = ctx.user_to_device(info['head'][0], info['top'][1])
+    ctx.restore()
+    from .scenes import big_bed
+    big_bed(ctx)                                   # a cama na frente: a criatura fica atrás dela
+    draw_char(ctx, 'voce', 1250, 625, 0.85, Pose(lie=True, eyes='closed', mouth='flat', sweat=True))
+    if fg:
+        fg(ctx, 0.0)
+    ctx.restore()
+    hx, top = hl[0], tl[1]
+    # escurece as bordas e deixa a cena mais sinistra
+    g = cairo.RadialGradient(W / 2, H / 2 + 120, 320, W / 2, H / 2 + 120, 1150)
+    g.add_color_stop_rgba(0, 0, 0, 0, 0); g.add_color_stop_rgba(1, 0, 0, 0, 0.75)
+    ctx.rectangle(0, 0, W, H); ctx.set_source(g); ctx.fill()
+    g2 = cairo.LinearGradient(0, 0, 0, 330)
+    g2.add_color_stop_rgba(0, 0.02, 0.02, 0.025, 0.95); g2.add_color_stop_rgba(1, 0.02, 0.02, 0.025, 0)
+    ctx.rectangle(0, 0, W, 330); ctx.set_source(g2); ctx.fill()
+    # posição da cabeça da criatura no quadro final
+    sx, sy = hx, top
+    if spec.get('balao'):
+        msg = spec['balao']
+        ctx.select_font_face('Courier New', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+        ctx.set_font_size(66)
+        w_ = ctx.text_extents(msg).width + 80
+        bx, by = sx + 400, sy + 250
+        rrect(ctx, bx - w_ / 2, by - 70, w_, 108, 40)
+        ctx.set_source_rgba(0.9, 0.15, 0.17, 1); ctx.fill()
+        ctx.move_to(bx - w_ / 2 + 40, by + 20); ctx.line_to(sx + 70, sy + 60); ctx.line_to(bx - w_ / 2 + 110, by + 30); ctx.fill()
+        ctx.move_to(bx - w_ / 2 + 40, by + 8); ctx.set_source_rgba(1, 1, 1, 1); ctx.show_text(msg)
+    ctx.select_font_face('Poppins', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+    fs = 170
+    while fs > 90:
+        ctx.set_font_size(fs)
+        if ctx.text_extents(spec['ordem'].replace('*', '')).x_advance < W - 160:
+            break
+        fs -= 8
+    rich_text(ctx, spec['ordem'], 960, 170, fs)
+    surf.write_to_png(out)
 
 
 if __name__ == '__main__':
