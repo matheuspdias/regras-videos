@@ -1095,6 +1095,156 @@ def fg_mm_cortina(ctx, t):
     lr(ctx, 360, 78, 1200, 18, fill=DARK3, r=8)                               # varão
 
 
+# ---------------------------------------------------------------- banheiro (noite 04)
+def vapor(ctx, x, y, w, t, a=0.12, n=6):
+    """fiapos de vapor subindo"""
+    for k in range(n):
+        ph = (t * 0.25 + k / n) % 1.0
+        xx = x + (k + 0.5) * w / n + 30 * math.sin(t * 0.8 + k * 1.7)
+        yy = y - ph * 260
+        rr_ = 40 + ph * 70
+        g = cairo.RadialGradient(xx, yy, 2, xx, yy, rr_)
+        g.add_color_stop_rgba(0, 0.85, 0.87, 0.9, a * (1 - ph)); g.add_color_stop_rgba(1, 0.85, 0.87, 0.9, 0)
+        ctx.rectangle(xx - rr_, yy - rr_, 2 * rr_, 2 * rr_); ctx.set_source(g); ctx.fill()
+
+
+def bg_mm_corredor_banho(ctx, t, agua=False, manha=False):
+    """corredor: porta da irmã (esq., entreaberta), banheiro no meio com luz por baixo e vapor, seu quarto (dir.)"""
+    mm_room(ctx, fy=820)
+    door(ctx, 240, 280, 240, 540, open_frac=0.25)
+    door(ctx, 820, 280, 240, 540, light=not manha, t=t)
+    door(ctx, 1400, 280, 240, 540, open_frac=0.3)
+    # plaquinha da porta do banheiro
+    lr(ctx, 905, 360, 70, 44, fill=DARK3, r=8)
+    ctx.set_source_rgba(*LINE); ctx.set_line_width(3)
+    ctx.arc(940, 382, 9, 0, TAU); ctx.stroke()
+    for x in (630, 1210):
+        ctx.arc(x, 380, 18, 0, TAU); ctx.set_source_rgba(1, 0.75, 0.35, 0.8 if not manha else 0.25); ctx.fill()
+        if not manha:
+            amber(ctx, x, 380, 110, 0.45, t)
+    if agua:
+        # poça saindo por baixo da porta do banheiro, refletindo a luz
+        ctx.move_to(800, 822)
+        ctx.curve_to(760, 900, 640, 960, 700, 1040); ctx.curve_to(820, 1090, 1100, 1090, 1220, 1030)
+        ctx.curve_to(1290, 970, 1150, 900, 1080, 822); ctx.close_path()
+        g = cairo.LinearGradient(0, 822, 0, 1080)
+        g.add_color_stop_rgba(0, 1, 0.78, 0.4, 0.45); g.add_color_stop_rgba(1, 0.6, 0.65, 0.75, 0.18)
+        ctx.set_source(g); ctx.fill_preserve()
+        ctx.set_source_rgba(0.8, 0.82, 0.86, 0.5); ctx.set_line_width(3); ctx.stroke()
+        for k in range(3):
+            rr_ = 30 + ((t * 40 + k * 50) % 150)
+            ctx.save(); ctx.translate(950, 960); ctx.scale(1, 0.25); ctx.arc(0, 0, rr_, 0, TAU); ctx.restore()
+            ctx.set_source_rgba(0.9, 0.9, 0.95, 0.25 * (1 - rr_ / 180)); ctx.set_line_width(3); ctx.stroke()
+    if not manha:
+        vapor(ctx, 830, 830, 220, t, a=0.14)
+    else:
+        ctx.rectangle(0, 0, W, H); ctx.set_source_rgba(0.55, 0.62, 0.75, 0.12); ctx.fill()
+
+
+def bg_mm_banheiro(ctx, t, manha=False):
+    """banheiro por dentro: azulejo, espelho embaçado e pia (esq.), vaso, vitrô no alto, box de vidro (dir.; o vidro vai no fg)"""
+    ctx.rectangle(0, 0, W, H); setc(ctx, '#161618'); ctx.fill()
+    ctx.set_source_rgba(0.6, 0.6, 0.64, 0.13); ctx.set_line_width(2)
+    for x in range(0, W, 80):
+        ctx.move_to(x, 0); ctx.line_to(x, 840)
+    for y in range(0, 840, 80):
+        ctx.move_to(0, y); ctx.line_to(W, y)
+    ctx.stroke()
+    ctx.rectangle(0, 840, W, H - 840); setc(ctx, DARK3); ctx.fill()
+    ctx.set_source_rgba(0.6, 0.6, 0.64, 0.18); ctx.set_line_width(2)
+    for x in range(-400, W + 400, 140):
+        ctx.move_to(x, 840); ctx.line_to(x + (x - 960) * 0.35, H)
+    ctx.stroke()
+    ctx.set_source_rgba(*LINE); ctx.set_line_width(5); ctx.move_to(0, 840); ctx.line_to(W, 840); ctx.stroke()
+    # vitrô basculante
+    lr(ctx, 1180, 90, 320, 130, fill='#0F1218' if not manha else '#5A6470')
+    ctx.set_source_rgba(*LINE); ctx.set_line_width(3)
+    for k in range(1, 4):
+        ctx.move_to(1180, 90 + k * 32); ctx.line_to(1500, 90 + k * 32)
+    ctx.stroke()
+    # espelho e pia
+    lr(ctx, 220, 240, 320, 320, fill='#1E2126', r=10)
+    ctx.rectangle(232, 252, 296, 296); ctx.set_source_rgba(0.8, 0.82, 0.86, 0.10); ctx.fill()
+    lr(ctx, 190, 590, 380, 70, r=14)
+    lr(ctx, 330, 660, 100, 180, fill=DARK3)
+    lr(ctx, 368, 560, 24, 34, fill='#3A3A40', r=4)
+    # vaso
+    lr(ctx, 720, 560, 150, 180, fill=DARK2, r=12)
+    ctx.save(); ctx.translate(800, 760); ctx.scale(1, 0.45); ctx.arc(0, 0, 105, 0, TAU); ctx.restore()
+    setc(ctx, DARK2); ctx.fill_preserve(); ctx.set_source_rgba(*LINE); ctx.set_line_width(4); ctx.stroke()
+    lr(ctx, 745, 780, 110, 60, fill=DARK2)
+    # cabide com toalha (vazio: a toalha ficou no quarto)
+    lr(ctx, 600, 320, 80, 14, fill='#3A3A40', r=6)
+    # box: fundo, chuveiro e ralo
+    lr(ctx, 1060, 200, 760, 660, fill='#121214')
+    ctx.set_source_rgba(*LINE); ctx.set_line_width(6)
+    ctx.move_to(1440, 200); ctx.line_to(1440, 250); ctx.line_to(1400, 270); ctx.stroke()
+    ctx.save(); ctx.translate(1380, 280); ctx.rotate(0.4); ctx.scale(1, 0.4); ctx.arc(0, 0, 50, 0, TAU); ctx.restore()
+    setc(ctx, '#3A3A40'); ctx.fill_preserve(); ctx.set_source_rgba(*LINE); ctx.set_line_width(4); ctx.stroke()
+    lr(ctx, 1640, 500, 60, 60, fill='#2A2A2E', r=30)                              # registro
+    ctx.save(); ctx.translate(1430, 850); ctx.scale(1, 0.3); ctx.arc(0, 0, 40, 0, TAU); ctx.restore()
+    setc(ctx, '#050506'); ctx.fill()
+    # lâmpada acesa
+    ctx.arc(960, 40, 22, 0, TAU); ctx.set_source_rgba(1, 0.8, 0.45, 0.95 if not manha else 0.2); ctx.fill()
+    if not manha:
+        amber(ctx, 960, 60, 520, 0.22, t)
+    else:
+        ctx.rectangle(0, 0, W, H); ctx.set_source_rgba(0.55, 0.62, 0.75, 0.12); ctx.fill()
+
+
+def fg_mm_banheiro(ctx, t, manha=False):
+    """vidro do box embaçado por cima de quem está dentro"""
+    ctx.rectangle(1080, 210, 720, 640)
+    ctx.set_source_rgba(0.72, 0.75, 0.8, 0.16 if manha else 0.24); ctx.fill()
+    if not manha:
+        vapor(ctx, 1090, 760, 700, t, a=0.16, n=7)
+    ctx.set_source_rgba(0.78, 0.78, 0.82, 1); ctx.set_line_width(7)
+    ctx.rectangle(1070, 200, 740, 660); ctx.stroke()
+    ctx.move_to(1440, 200); ctx.line_to(1440, 860); ctx.set_line_width(5); ctx.stroke()
+    # gotas escorrendo no vidro
+    ctx.set_source_rgba(0.9, 0.92, 0.96, 0.35); ctx.set_line_width(3)
+    for k, x in enumerate((1130, 1250, 1520, 1700)):
+        y0 = 260 + k * 90
+        ctx.move_to(x, y0); ctx.line_to(x + 4, y0 + 120 + 40 * math.sin(t + k)); ctx.stroke()
+
+
+def bg_mm_banheiro_porta(ctx, t):
+    """close na porta do banheiro, vista do corredor: luz por baixo, vapor saindo pela fresta, fechadura"""
+    mm_room(ctx, fy=800)
+    door(ctx, 640, 40, 640, 760, light=True, t=t)
+    lr(ctx, 1180, 430, 50, 70, fill='#2A2A2E', r=8)
+    ctx.arc(1205, 410, 16, 0, TAU); ctx.set_source_rgba(*LINE); ctx.fill()
+    lr(ctx, 870, 200, 180, 110, fill=DARK3, r=12)
+    ctx.set_source_rgba(*LINE); ctx.set_line_width(4)
+    ctx.arc(960, 255, 24, 0, TAU); ctx.stroke()
+    for x in (330, 1590):                                                    # arandelas do corredor
+        lr(ctx, x - 30, 300, 60, 40, fill=DARK3, r=10)
+        ctx.arc(x, 330, 14, 0, TAU); ctx.set_source_rgba(1, 0.75, 0.35, 0.8); ctx.fill()
+        amber(ctx, x, 330, 160, 0.4, t)
+    lr(ctx, 760, 830, 400, 60, fill='#202024', r=20)                        # tapetinho
+    vapor(ctx, 660, 830, 600, t, a=0.26, n=7)
+    vapor(ctx, 660, 100, 600, t + 3, a=0.12, n=5)
+
+
+def bg_mm_cama_duda(ctx, t):
+    """quarto da irmã: cama grande, janela com lua, varal de luzinhas e pôsteres"""
+    mm_room(ctx, wall_c='#141417', fy=880)
+    moon_window(ctx, 880, 110, 280, 240)
+    for k, (x, y, w, h) in enumerate(((1300, 150, 150, 200), (1490, 190, 170, 130), (300, 170, 160, 210))):
+        lr(ctx, x, y, w, h, fill='#1E1E22', r=4)
+        ctx.set_source_rgba(0.6, 0.6, 0.64, 0.3); ctx.set_line_width(3)
+        ctx.arc(x + w / 2, y + h * 0.45, min(w, h) * 0.22, 0, TAU); ctx.stroke()
+    ctx.set_source_rgba(0.6, 0.6, 0.64, 0.6); ctx.set_line_width(2)
+    ctx.move_to(240, 70); ctx.curve_to(700, 150, 1300, 150, 1780, 70); ctx.stroke()
+    for k in range(14):
+        u = k / 13
+        x = 240 + u * 1540
+        y = 70 + 4 * u * (1 - u) * 80 + 8
+        ctx.arc(x, y, 7, 0, TAU); ctx.set_source_rgba(1, 0.8, 0.45, 0.85); ctx.fill()
+        amber(ctx, x, y, 40, 0.25, t)
+    big_bed(ctx)
+
+
 BG = {
     'quarto': (bg_mm_quarto, None),
     'corredor': (bg_mm_corredor, None),
@@ -1114,6 +1264,13 @@ BG = {
     'quintal': (bg_mm_quintal, grade_portao),
     'quintal_manha': (bg_mm_quintal_manha, lambda c, t: grade_portao(c, t, manha=True)),
     'cortina': (bg_mm_cortina, fg_mm_cortina),
+    'corredor_banho': (bg_mm_corredor_banho, None),
+    'corredor_agua': (lambda c, t: bg_mm_corredor_banho(c, t, agua=True), None),
+    'corredor_banho_manha': (lambda c, t: bg_mm_corredor_banho(c, t, manha=True), None),
+    'banho': (bg_mm_banheiro, fg_mm_banheiro),
+    'banho_manha': (lambda c, t: bg_mm_banheiro(c, t, manha=True), lambda c, t: fg_mm_banheiro(c, t, manha=True)),
+    'banheiro_porta': (bg_mm_banheiro_porta, None),
+    'cama_duda': (bg_mm_cama_duda, fg_mm_cama),
 }
 
 SLOTS = {
@@ -1135,4 +1292,11 @@ SLOTS = {
     'quintal': dict(a=(560, 1010, 0.95), b=(1420, 1010, 0.95), portao=(960, 830, 0.8)),
     'quintal_manha': dict(a=(560, 1010, 0.95), b=(1420, 1010, 0.95), portao=(960, 830, 0.8)),
     'cortina': dict(lado=(330, 1010, 1.0), centro=(960, 1010, 1.0), dir=(1640, 1010, 0.95)),
+    'corredor_banho': dict(p1=(360, 1000, 0.9), p2=(940, 1000, 0.9), p3=(1520, 1000, 0.9), meio=(650, 1010, 0.95), dir=(1250, 1010, 0.95)),
+    'corredor_agua': dict(p1=(360, 1000, 0.9), p2=(940, 1000, 0.9), p3=(1520, 1000, 0.9), meio=(650, 1010, 0.95), dir=(1250, 1010, 0.95)),
+    'corredor_banho_manha': dict(p1=(360, 1000, 0.9), p2=(940, 1000, 0.9), p3=(1520, 1000, 0.9), meio=(650, 1010, 0.95), dir=(1250, 1010, 0.95)),
+    'banho': dict(porta=(680, 1020, 0.95), pia=(380, 1010, 0.95), box=(1430, 860, 0.9)),
+    'banho_manha': dict(porta=(680, 1020, 0.95), pia=(380, 1010, 0.95), box=(1430, 860, 0.9)),
+    'banheiro_porta': dict(esq=(380, 1040, 1.05), dir=(1540, 1040, 1.05)),
+    'cama_duda': dict(deitado=(1250, 625, 0.85), lado=(400, 1000, 0.9)),
 }

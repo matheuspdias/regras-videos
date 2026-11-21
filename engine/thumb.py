@@ -351,5 +351,86 @@ def mm_portao(spec, out):
     surf.write_to_png(out)
 
 
+def mm_banheiro(spec, out):
+    """Capa 'no banheiro' (noite 04): o box de vidro embaçado à direita, com a criatura de pé lá dentro, as mãos
+    espalmadas no vidro e o rosto aparecendo numa faixa que ela limpou no vapor; protagonista apavorado à esquerda;
+    balão vermelho. spec: ordem, criatura, balao, cena='banheiro'"""
+    from .render import rich_text
+    from .scenes import bg_mm_banheiro, vapor
+    from .chars import rrect, setc
+    surf = cairo.ImageSurface(cairo.FORMAT_RGB24, W, H)
+    ctx = cairo.Context(surf)
+    q = spec.get('criatura', 'coisa')
+    z = spec.get('zoom', 1.3)
+    ctx.save()
+    ctx.translate(1230, 600); ctx.scale(z, z); ctx.translate(-1430, -560)
+    bg_mm_banheiro(ctx, 0.0)
+    ctx.save(); ctx.translate(1430, 862)
+    info = draw_char(ctx, q, 0, 0, spec.get('cs', 0.84), Pose(mouth='grin', facing=-1, arms='down'))
+    hx_, hy_ = info['head']; hr = info['head_r']
+    ctx.restore()
+    hx_, hy_ = hx_ + 1430, hy_ + 862
+    # vidro embaçado com uma faixa limpa na altura do rosto
+    ctx.set_fill_rule(cairo.FILL_RULE_EVEN_ODD)
+    ctx.rectangle(1080, 210, 720, 640)
+    ctx.save(); ctx.translate(hx_, hy_ + hr * 0.15); ctx.rotate(-0.12); ctx.scale(1.0, 0.62)
+    ctx.arc(0, 0, hr * 1.35, 0, TAU); ctx.restore()
+    ctx.set_source_rgba(0.72, 0.75, 0.8, 0.3); ctx.fill()
+    ctx.set_fill_rule(cairo.FILL_RULE_WINDING)
+    vapor(ctx, 1090, 760, 700, 0.0, a=0.18, n=7)
+    # marcas de mão no vidro
+    for mx, my, a in ((hx_ - hr * 2.3, hy_ + hr * 0.9, -0.3), (hx_ + hr * 2.1, hy_ - hr * 0.1, 0.25)):
+        ctx.save(); ctx.translate(mx, my); ctx.rotate(a)
+        ctx.set_source_rgba(0.08, 0.08, 0.1, 0.4)
+        ctx.save(); ctx.scale(1, 1.15); ctx.arc(0, 0, hr * 0.42, 0, TAU); ctx.restore(); ctx.fill()
+        for k in range(5):
+            ang = -2.4 + k * 0.42
+            ctx.save(); ctx.translate(math.cos(ang) * hr * 0.6, math.sin(ang) * hr * 0.7); ctx.rotate(ang + math.pi / 2)
+            ctx.scale(0.35, 1); ctx.arc(0, 0, hr * 0.32, 0, TAU); ctx.restore(); ctx.fill()
+        ctx.restore()
+    ctx.set_source_rgba(0.9, 0.92, 0.96, 0.4); ctx.set_line_width(3)
+    for k, x in enumerate((1130, 1250, 1540, 1700)):
+        ctx.move_to(x, 300 + k * 60); ctx.line_to(x + 4, 470 + k * 60); ctx.stroke()
+    ctx.set_source_rgba(0.78, 0.78, 0.82, 1); ctx.set_line_width(7)
+    ctx.rectangle(1070, 200, 740, 660); ctx.stroke()
+    top_dev = ctx.user_to_device(hx_, hy_ - hr)
+    head_dev = ctx.user_to_device(hx_, hy_)
+    ctx.restore()
+    # escurece bordas
+    g = cairo.RadialGradient(1230, H / 2 + 60, 280, 1230, H / 2 + 60, 1250)
+    g.add_color_stop_rgba(0, 0, 0, 0, 0); g.add_color_stop_rgba(1, 0, 0, 0, 0.8)
+    ctx.rectangle(0, 0, W, H); ctx.set_source(g); ctx.fill()
+    g2 = cairo.LinearGradient(0, 0, 0, 300)
+    g2.add_color_stop_rgba(0, 0.02, 0.02, 0.025, 0.95); g2.add_color_stop_rgba(1, 0.02, 0.02, 0.025, 0)
+    ctx.rectangle(0, 0, W, 300); ctx.set_source(g2); ctx.fill()
+    # protagonista em primeiro plano, à esquerda
+    draw_char(ctx, 'voce', 400, 1230, 1.45, Pose(eyes='wide', mouth='o', arms='face', sweat=True, facing=1))
+    ctx.set_source_rgba(0.9, 0.9, 0.92, 1); ctx.set_line_width(8); ctx.set_line_cap(cairo.LINE_CAP_ROUND)
+    for a in (-0.9, -0.5, -0.1):
+        ctx.move_to(400 + math.cos(a - 1.2) * 270, 640 + math.sin(a - 1.2) * 270)
+        ctx.line_to(400 + math.cos(a - 1.2) * 320, 640 + math.sin(a - 1.2) * 320)
+        ctx.stroke()
+    if spec.get('balao'):
+        msg = spec['balao']
+        ctx.select_font_face('Courier New', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+        ctx.set_font_size(66)
+        w_ = ctx.text_extents(msg).width + 80
+        hx, top = head_dev
+        bx, by = max(w_ / 2 + 40, min(hx - 560, W - w_ / 2 - 40)), top_dev[1] + 40
+        rrect(ctx, bx - w_ / 2, by - 70, w_, 108, 40)
+        ctx.set_source_rgba(0.9, 0.15, 0.17, 1); ctx.fill()
+        ctx.move_to(bx + w_ / 2 - 110, by + 30); ctx.line_to(hx - 170, top_dev[1] + 130); ctx.line_to(bx + w_ / 2 - 40, by + 20); ctx.fill()
+        ctx.move_to(bx - w_ / 2 + 40, by + 8); ctx.set_source_rgba(1, 1, 1, 1); ctx.show_text(msg)
+    ctx.select_font_face('Poppins', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+    fs = 170
+    while fs > 90:
+        ctx.set_font_size(fs)
+        if ctx.text_extents(spec['ordem'].replace('*', '')).x_advance < W - 160:
+            break
+        fs -= 8
+    rich_text(ctx, spec['ordem'], 960, 170, fs)
+    surf.write_to_png(out)
+
+
 if __name__ == '__main__':
     _cli()

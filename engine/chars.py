@@ -65,7 +65,10 @@ CAST = {
     'coisa_crianca': dict(skin='#E4E4E4', name='A coisa (criança)', shirt='#D6D6D6', pants='#D6D6D6', shoes='#3A3A3A', kind='dress', hair='pigtails', hair_c='#4A4A4A', extra='presilha_red', face='creature', h=0.95),
     # noite 03: imita o pai, pescoço comprido demais (espia por cima do muro), olhos vazios, braços longos; gravata vermelha
     'coisa_ep03':   dict(tie='#E5262B', skin='#E4E4E4', name='A coisa (pai, noite 03)', shirt='#C4C4C4', pants='#4A4A4A', shoes='#2A2A2A', kind='shirt', hair='short', hair_c='#3A3A3A', extra=None, face='creature', h=1.6, pescoco=0.3, olhos='vazios', bracos=2.1, inclina=0.12),
+    # noite 04: imita a irmã de camisola, cabelo molhado cobrindo metade do rosto, cabeça torta, boca vertical, braços compridos; xuxinha vermelha
+    'coisa_ep04':   dict(skin='#E4E4E4', name='A coisa (irmã, noite 04)', shirt='#D2D2D4', pants='#D2D2D4', shoes='#3A3A3A', kind='dress', hair='mecha', hair_c='#2E2E33', extra='xuxinha_red', face='creature', h=1.55, boca='vertical', bracos=2.25, inclina=0.38),
     'coisa_sombra': dict(skin='#2E2E33', name='A coisa (sombra)', shirt='#1E1E22', pants='#1E1E22', shoes='#111113', kind='tee', hair='none', hair_c='#1E1E22', extra='olhos_red', face='creature', h=1.85),
+    'irma':  dict(skin='#ECECEC', name='Irmã', shirt='#D8D8DA', pants='#7E7E84', shoes='#F2F2F2', kind='tee', hair='long', hair_c='#3A3A3E', extra=None, face='min', h=0.95),
     'vizinho': dict(skin='#ECECEC', name='Vizinho', shirt='#BDBDBD', pants='#6A6A6A', shoes='#2A2A2A', kind='tee', hair='cap', hair_c='#5A5A5A', extra=None, face='min', h=1.02),
 }
 
@@ -305,7 +308,7 @@ def draw_head(ctx, cid, c, p, hx, hy, r):
     hair = c.get('hair')
     hc = c.get('hair_c', '#222')
     # cabelo atrás
-    if hair == 'long':
+    if hair in ('long', 'mecha'):
         ctx.move_to(hx - r * 1.02, hy - r * 0.1)
         ctx.curve_to(hx - r * 1.15, hy + r * 0.9, hx - r * 0.9, hy + r * 1.45, hx - r * 0.55, hy + r * 1.4)
         ctx.line_to(hx + r * 0.55, hy + r * 1.4)
@@ -372,7 +375,7 @@ def draw_head(ctx, cid, c, p, hx, hy, r):
     ctx.fill()
 
     # cabelo na frente
-    if hair == 'long' or hair == 'ponytail':
+    if hair in ('long', 'ponytail', 'mecha'):
         ctx.move_to(hx - r * 0.98, hy - r * 0.15)
         ctx.curve_to(hx - r * 0.9, hy - r * 1.15, hx + r * 0.9, hy - r * 1.15, hx + r * 0.98, hy - r * 0.15)
         ctx.curve_to(hx + r * 0.6, hy - r * 0.62, hx + r * 0.1, hy - r * 0.5, hx - r * 0.2 * f, hy - r * 0.78)
@@ -424,6 +427,22 @@ def draw_head(ctx, cid, c, p, hx, hy, r):
         _face_custom(ctx, c, p, hx, hy, r)
     else:
         _face_std(ctx, cid, c, p, f, hx, hy, r)
+    if hair == 'mecha':                         # noite 04: cabelo molhado caindo por cima de metade do rosto
+        ctx.move_to(hx - r * 1.04, hy - r * 0.2)
+        ctx.curve_to(hx - r * 0.7, hy - r * 1.1, hx + r * 0.1, hy - r * 1.05, hx + r * 0.05, hy - r * 0.5)
+        ctx.curve_to(hx - r * 0.02, hy + r * 0.2, hx - r * 0.12, hy + r * 1.0, hx - r * 0.05, hy + r * 1.75)
+        ctx.line_to(hx - r * 0.3, hy + r * 1.6)
+        ctx.line_to(hx - r * 0.5, hy + r * 1.8)
+        ctx.line_to(hx - r * 0.72, hy + r * 1.55)
+        ctx.line_to(hx - r * 0.95, hy + r * 1.7)
+        ctx.curve_to(hx - r * 1.15, hy + r * 0.9, hx - r * 1.12, hy + r * 0.3, hx - r * 1.04, hy - r * 0.2)
+        ctx.close_path()
+        fill_stroke(ctx, hc)
+        ctx.set_source_rgba(0.6, 0.6, 0.64, 0.35); ctx.set_line_width(3)   # fios molhados
+        for k in (0.25, 0.5, 0.75):
+            ctx.move_to(hx - r * (0.15 + k * 0.8), hy - r * 0.6)
+            ctx.curve_to(hx - r * (0.1 + k * 0.8), hy + r * 0.3, hx - r * (0.2 + k * 0.75), hy + r * 0.9, hx - r * (0.15 + k * 0.75), hy + r * 1.5)
+            ctx.stroke()
     # bigode
     if c.get('extra') == 'bigode' or p.mustache:
         ctx.save()
@@ -467,6 +486,13 @@ def draw_head(ctx, cid, c, p, hx, hy, r):
         rrect(ctx, -26, -9, 52, 18, 9)
         ctx.restore()
         fill_stroke(ctx, '#E5262B', 4)
+    if ext == 'xuxinha_red':                   # xuxinha vermelha (a que a irmã perdeu no ralo)
+        ctx.save(); ctx.translate(hx + r * 0.9, hy + r * 0.55); ctx.scale(0.7, 1.0)
+        ctx.arc(0, 0, r * 0.2, 0, TAU); ctx.restore()
+        fill_stroke(ctx, '#E5262B', 4)
+        ctx.save(); ctx.translate(hx + r * 0.9, hy + r * 0.55); ctx.scale(0.7, 1.0)
+        ctx.arc(0, 0, r * 0.08, 0, TAU); ctx.restore()
+        fill_stroke(ctx, '#7A1012', 3)
     if ext == 'laco_red':                      # laço vermelho no coque
         for side in (-1, 1):
             ctx.move_to(hx, hy - r * 1.32)

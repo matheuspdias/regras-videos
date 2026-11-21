@@ -1194,6 +1194,7 @@ def draw_frame(ctx, ep, clips, shots, envs, t):
             ctx.select_font_face('Courier New', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
             ctx.set_font_size(40)
             w_ = ctx.text_extents(msg).width + 60
+            bx = min(max(bx, w_ / 2 + 30), W - w_ / 2 - 30)     # balão sempre inteiro na tela
             rrect(ctx, bx - w_ / 2, by - 50, w_, 76, 30)
             if c['sp'] == 'coisa':
                 ctx.set_source_rgba(0.9, 0.15, 0.17, 1)
