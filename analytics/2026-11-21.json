@@ -1,0 +1,77 @@
+{
+ "data": "2026-11-21",
+ "canal": {
+  "id": "UCOYAXMdOMmpYxBDPmoBsWLQ",
+  "nome": "Manual da Madrugada",
+  "inscritos": 0,
+  "views": 0,
+  "videos": 1
+ },
+ "videos": [
+  {
+   "id": "3ILnx4xYAwU",
+   "titulo": "Se sua vó te benzer duas vezes na mesma noite… FINJA QUE DORME",
+   "publicado": "2026-11-20T04:25:03Z",
+   "status": "private",
+   "agendado": "2026-11-21T23:00:00Z",
+   "duracao": "PT10M20S",
+   "views": 0,
+   "likes": 0,
+   "comentarios": 0,
+   "segundos": 620,
+   "analytics": {},
+   "alcance": {}
+  },
+  {
+   "id": "cx4KMdhs5_Q",
+   "titulo": "Se o seu pai bater palma no portão de madrugada… NÃO ATENDA",
+   "publicado": "2026-11-20T15:59:22Z",
+   "status": "private",
+   "agendado": "2026-11-22T23:00:00Z",
+   "duracao": "PT9M55S",
+   "views": 0,
+   "likes": 0,
+   "comentarios": 0,
+   "segundos": 595,
+   "analytics": {},
+   "alcance": {}
+  },
+  {
+   "id": "0Vn4bpbl3xo",
+   "titulo": "Se sua mãe te chamar pelo nome completo de dentro de um quarto vazio… NÃO RESPONDA",
+   "publicado": "2026-11-20T23:00:01Z",
+   "status": "public",
+   "agendado": null,
+   "duracao": "PT8M1S",
+   "views": 22,
+   "likes": 0,
+   "comentarios": 0,
+   "segundos": 481,
+   "analytics": {},
+   "alcance": {},
+   "retencao": [],
+   "trafego": {}
+  },
+  {
+   "id": "oCtOQOZ_vuY",
+   "titulo": "Se a sua irmã estiver cantando no banheiro de madrugada… NÃO BATA NA PORTA",
+   "publicado": "2026-11-21T16:17:14Z",
+   "status": "private",
+   "agendado": "2026-11-23T23:00:00Z",
+   "duracao": "PT10M14S",
+   "views": 0,
+   "likes": 0,
+   "comentarios": 0,
+   "segundos": 614,
+   "analytics": {},
+   "alcance": {}
+  }
+ ],
+ "diario": [],
+ "trafego": [],
+ "erros": [],
+ "legenda": {
+  "retencao": "[fração do vídeo, audienceWatchRatio, relativeRetentionPerformance]",
+  "ctr": "% de cliques nas impressões da thumbnail (Reporting API)"
+ }
+}
