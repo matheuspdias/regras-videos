@@ -240,8 +240,12 @@ canal são ficção." e hashtags `#ManualDaMadrugada #Terror #HistóriasDeTerror
 bloco "Ao publicar" (agendar 20h).
 
 ```bash
-tools/produce.sh episodes.epNN_<slug> epNN     # ~10–15 min: render, legenda, thumbnail, pacote em build/epNN/entrega
+tools/produce.sh episodes.epNN_<slug> epNN     # ~25–40 min (render em 2560x1440): rode com nohup e acompanhe o log
 ```
+
+O vídeo sai em **1440p (2560x1440, 24 fps)**: o YouTube usa o codificador VP9 para 1440p e a imagem fica mais nítida
+até em 1080p. A cópia de entrega tem o bitrate calculado para caber nos 400 MiB do envio pelo chat.
+`MM_RES=1080` volta ao Full HD se o render ficar lento demais.
 
 Confira `build/epNN/conferencia.png` (12 quadros do vídeo final) e `build/epNN/thumb.jpg` com Read.
 

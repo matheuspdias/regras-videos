@@ -262,6 +262,11 @@ def mini_head(ctx, cid, x, y, r):
 
 
 VERT = os.environ.get('MM_VERT') == '1'   # versão para TikTok: sem legenda/HUD (o tools/vertical.py põe por cima)
+# resolução de saída: desenha-se sempre em 1920x1080 e o quadro é ampliado na hora (vetorial, sem perder nitidez).
+# 1440p faz o YouTube usar o codificador VP9 (imagem mais nítida até para quem assiste em 1080p). MM_RES=1080 volta ao Full HD.
+OUT_H = 1080 if VERT else int(os.environ.get('MM_RES', '1440'))
+OUT_K = OUT_H / H
+OW, OH = int(round(W * OUT_K)) // 2 * 2, OUT_H
 
 
 def caption_chunks(txt, maxw=5):
@@ -1210,7 +1215,7 @@ def draw_frame(ctx, ep, clips, shots, envs, t):
             hx, hy = info['head']
             # converte para tela
             sxp, syp = ctx.user_to_device(hx, hy - info['head_r'])
-            tb = (sxp, syp)
+            tb = (sxp / OUT_K, syp / OUT_K)
     ctx.restore()
     overlay(ctx, fx, u, dur, t, shot)
     if 'piscar' in fx:
@@ -1284,9 +1289,10 @@ def _render_range(args):
     ep_mod, ep_id, f0, f1, out = args
     if not _G:
         _init(ep_mod, ep_id)
-    surf = cairo.ImageSurface(cairo.FORMAT_RGB24, W, H)
+    surf = cairo.ImageSurface(cairo.FORMAT_RGB24, OW, OH)
     ctx = cairo.Context(surf)
-    proc = subprocess.Popen(['ffmpeg', '-v', 'error', '-y', '-f', 'rawvideo', '-pix_fmt', 'bgra', '-s', f'{W}x{H}', '-r', str(FPS), '-i', '-',
+    ctx.scale(OUT_K, OUT_K)
+    proc = subprocess.Popen(['ffmpeg', '-v', 'error', '-y', '-f', 'rawvideo', '-pix_fmt', 'bgra', '-s', f'{OW}x{OH}', '-r', str(FPS), '-i', '-',
                              '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '20', '-pix_fmt', 'yuv420p', out], stdin=subprocess.PIPE)
     for f in range(f0, f1):
         ctx.save()
@@ -1416,8 +1422,9 @@ def main():
     os.makedirs(bdir, exist_ok=True)
     if '--stills' in args:
         times = [float(x) for x in args[args.index('--stills') + 1].split(',')]
-        surf = cairo.ImageSurface(cairo.FORMAT_RGB24, W, H)
+        surf = cairo.ImageSurface(cairo.FORMAT_RGB24, OW, OH)
         ctx = cairo.Context(surf)
+        ctx.scale(OUT_K, OUT_K)
         for tt in times:
             ctx.save(); draw_frame(ctx, _G['ep'], _G['clips'], _G['shots'], _G['envs'], tt); ctx.restore()
             surf.write_to_png(f'{bdir}/still_{tt:07.2f}.png')
