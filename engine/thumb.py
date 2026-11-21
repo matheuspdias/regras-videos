@@ -363,7 +363,7 @@ def mm_banheiro(spec, out):
     q = spec.get('criatura', 'coisa')
     z = spec.get('zoom', 1.3)
     ctx.save()
-    ctx.translate(1230, 600); ctx.scale(z, z); ctx.translate(-1430, -560)
+    ctx.translate(1230, 660); ctx.scale(z, z); ctx.translate(-1430, -560)
     bg_mm_banheiro(ctx, 0.0)
     ctx.save(); ctx.translate(1430, 862)
     info = draw_char(ctx, q, 0, 0, spec.get('cs', 0.84), Pose(mouth='grin', facing=-1, arms='down'))
@@ -404,7 +404,7 @@ def mm_banheiro(spec, out):
     g2.add_color_stop_rgba(0, 0.02, 0.02, 0.025, 0.95); g2.add_color_stop_rgba(1, 0.02, 0.02, 0.025, 0)
     ctx.rectangle(0, 0, W, 300); ctx.set_source(g2); ctx.fill()
     # protagonista em primeiro plano, à esquerda
-    draw_char(ctx, 'voce', 400, 1230, 1.45, Pose(eyes='wide', mouth='o', arms='face', sweat=True, facing=1))
+    draw_char(ctx, 'voce', 380, 1250, 1.45, Pose(eyes='wide', mouth='flat', arms='point', sweat=True, facing=1, look=1))
     ctx.set_source_rgba(0.9, 0.9, 0.92, 1); ctx.set_line_width(8); ctx.set_line_cap(cairo.LINE_CAP_ROUND)
     for a in (-0.9, -0.5, -0.1):
         ctx.move_to(400 + math.cos(a - 1.2) * 270, 640 + math.sin(a - 1.2) * 270)

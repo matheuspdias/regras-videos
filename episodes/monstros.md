@@ -9,6 +9,7 @@ episódio ao terminar.
 | 01 | `coisa` — imita a mãe: rabo de cavalo, presilha vermelha, 2 olhos, sorriso largo | Porta entreaberta à direita com a criatura espiando + protagonista em pânico à esquerda + balão "Lucas Henrique?" |
 | 02 | `coisa_vo` — imita a vó: coque grisalho, laço vermelho, 2 olhos, sorriso largo | Cama: protagonista deitado fingindo dormir + criatura debruçada atrás da cama, mão na cabeça dele + balão "Tá dormindo?" |
 | 03 | `coisa_ep03` — imita o pai: camisa social, gravata vermelha, `pescoco=0.3` (espia por cima do muro), `olhos='vazios'`, `bracos=2.1`, `inclina=0.12`, h=1.6 | Portão (`mm_portao`): de dentro de casa, protagonista com medo à esquerda na frente da cortina; lá fora, a criatura atrás da grade do portão com os braços para cima (batendo palma) + balão "Abre, filho." |
+| 04 | `coisa_ep04` — imita a irmã (Duda) de camisola: cabelo molhado `hair='mecha'` cobrindo metade do rosto (só um olho aparece), `boca='vertical'`, `inclina=0.38`, `bracos=2.25`, h=1.55; detalhe vermelho: a xuxinha que a irmã perdeu no ralo (`xuxinha_red`) | Banheiro (`mm_banheiro`): box de vidro embaçado à direita com a criatura de pé lá dentro, rosto numa faixa limpa do vapor e marcas de mão no vidro + protagonista apavorado à esquerda + balão "Canta comigo?" |
 
 ## Ideias de monstro para a fila (sugestão; adapte ao roteiro)
 
