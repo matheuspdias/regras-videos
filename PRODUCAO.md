@@ -70,7 +70,7 @@ coisa que imita alguém (ou algo) da sua casa. Quase todo o texto é do narrador
 from engine.dsl import S, C
 TITLE = "Se … … NÃO RESPONDA"
 NOITE = 2
-LEAD = 2.0; GAP_NAR = 0.75; PAUSA_REGRA = 2.0; PAUSA_VOZ = 1.2; TAIL = 20.0
+LEAD = 2.0; GAP_NAR = 0.75; PAUSA_REGRA = 2.0; PAUSA_VOZ = 1.2; TAIL = 8.0   # tela final: 8 s (de 5 a 10) depois da última fala
 THUMB = dict(ordem='NÃO **RESPONDA**',                 # ordem do título; palavra-chave entre ** fica vermelha
              esquerda=('voce', dict(eyes='wide', mouth='o', arms='face', sweat=True)),
              criatura_porta=True, criatura='coisa',         # a mesma variante que aparece no vídeo
@@ -229,6 +229,10 @@ texto estourando, cenário vazio demais, monstro cortado/escondido demais ou apa
 (máx. 1.0) / `PAUSA_REGRA` (máx. 2.5) ou acrescente falas **antes** de gerar vozes.
 
 ## 6. Produzir
+
+**Tela final curta** (pedido do Matheus, a partir do ep05): `TAIL = 8.0` — de 5 a 10 s de "inscreva-se" depois da
+última fala, nunca os 20 s dos episódios 01–04 (não mexa no `TAIL` deles). No `youtube.md`, a linha "Tela final" fica
+"~8 s de encerramento" (os elementos de tela final do YouTube precisam de no mínimo 5 s).
 
 Escreva antes `episodes/epNN/youtube.md` no modelo de `episodes/ep01/youtube.md`: título, descrição (gancho de 2–3
 parágrafos curtos em "você", a pergunta do CTA, "Se inscreve antes que a luz apague.", "Todas as histórias deste

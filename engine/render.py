@@ -22,7 +22,7 @@ FPS = 24
 GAP_NAR = 0.28
 GAP_DIALOG = 0.35
 LEAD = 0.4
-TAIL = 18.0
+TAIL = 8.0          # tela final (inscreva-se) depois da última fala; o YouTube pede no mínimo 5 s para a tela final
 
 
 _GRAIN = []
