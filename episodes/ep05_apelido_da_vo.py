@@ -205,7 +205,7 @@ LINES = [
     ('irmao', "Você virar.",
      S('cozinha', C('irmao', 'b', None, facing=-1, mouth='flat', eyes='closed', arms='hold', prop='caderno'), cam=dict(focus='irmao', zoom=1.7, to=1.8))),
     ('nar', "Não vira.",
-     S('preto', fx=[{'monstro': 'rosto', 'quem': QO, 's': 3.0, 'surge': True}, 'zoom_punch'])),
+     S('preto', fx=[{'monstro': 'rosto', 'quem': QO, 's': 3.0}, 'zoom_punch'])),
 
     # ---------------------------------------------------------------- CTA
     ('nar', "Agora você conhece as regras. Se inscreve antes que a luz apague. E me conta nos comentários: qual apelido só a sua vó usava?",
