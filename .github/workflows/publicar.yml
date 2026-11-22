@@ -1,0 +1,81 @@
+name: publicar
+# Renderiza e envia ao YouTube (Programado, 20h) cada publicar/epNN.json ainda sem video_id.
+on:
+  push:
+    branches: [main]
+    paths: ['publicar/*.json']
+  workflow_dispatch:
+    inputs:
+      teste:
+        description: 'só testar se o projeto pode publicar (sobe 5 s não listado e apaga)'
+        type: boolean
+        default: false
+      ensaio:
+        description: 'só renderizar este módulo (ex.: episodes.ep05_apelido_da_vo ep05), sem enviar'
+        required: false
+permissions:
+  contents: write
+concurrency:
+  group: publicar
+  cancel-in-progress: false
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+      - name: Dependências
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q ffmpeg libcairo2-dev pkg-config fontconfig fonts-liberation
+          pip install -q pycairo numpy google-api-python-client google-auth
+          mkdir -p ~/.fonts && cp fonts/*.ttf ~/.fonts/ && fc-cache -f
+          fc-match "Poppins:bold"; fc-match "Courier New:bold"; nproc
+      - name: Teste do projeto
+        if: inputs.teste
+        env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
+        run: python3 -u tools/publicar.py --teste
+      - name: Ensaio (só render)
+        if: inputs.ensaio != ''
+        env:
+          SEM_ENTREGA: '1'
+        run: bash tools/produce.sh ${{ inputs.ensaio }}
+      - name: Renderizar e enviar
+        if: ${{ !inputs.teste && inputs.ensaio == '' }}
+        env:
+          SEM_ENTREGA: '1'
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
+        run: |
+          shopt -s nullglob
+          for f in publicar/ep*.json; do
+            if python3 -c "import json,sys; sys.exit(0 if json.load(open('$f')).get('video_id') else 1)"; then continue; fi
+            ep=$(python3 -c "import json; print(json.load(open('$f'))['ep'])")
+            mod=$(python3 -c "import json; print(json.load(open('$f'))['mod'])")
+            echo "::group::$ep"
+            bash tools/produce.sh "$mod" "$ep"
+            python3 -u tools/publicar.py "$f"
+            echo "::endgroup::"
+          done
+      - name: Guardar conferência e capa (14 dias)
+        if: always() && !inputs.teste
+        uses: actions/upload-artifact@v4
+        with:
+          name: conferencia
+          path: |
+            build/*/conferencia.png
+            build/*/entrega/
+          retention-days: 14
+          if-no-files-found: ignore
+      - name: Commit
+        if: always() && !inputs.teste && inputs.ensaio == ''
+        run: |
+          git config user.name "publicar-bot"
+          git config user.email "actions@github.com"
+          git add -A publicar episodes/agenda.md
+          git diff --cached --quiet || git commit -m "publicador: episódio agendado no YouTube [skip ci]"
+          for i in 1 2 3; do git pull --rebase -q && git push && break; sleep 5; done

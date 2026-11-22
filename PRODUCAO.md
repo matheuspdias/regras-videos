@@ -249,11 +249,26 @@ até em 1080p. A cópia de entrega tem o bitrate calculado para caber nos 400 Mi
 
 Confira `build/epNN/conferencia.png` (12 quadros do vídeo final) e `build/epNN/thumb.jpg` com Read.
 
-## 7. Entregar
+## 7. Publicar e entregar
 
-1. Atualize `episodes/temas.md` (status `feito — epNN, DD/MM`) e `episodes/agenda.md`. Commit e push (sem `build/`).
-2. Envie com **SendUserFile** os arquivos de `build/epNN/entrega/` (vídeo, thumb, legenda, título/descrição).
-3. Mande com **SendUserMessage** um resumo curto: título, data/horário em que deve ser agendado (20h), duração,
-   e qualquer coisa que ele deva olhar. Se algo falhou, diga o que e em que passo parou.
+O vídeo vai para o YouTube **sozinho**, como Programado para as **20h** da data da agenda, pela Action `publicar`
+(renderiza de novo no runner com `SEM_ENTREGA=1 tools/produce.sh` e envia com título, descrição, tags, thumbnail,
+legenda pt-BR, "conteúdo sintético: sim" e "não é para crianças"). O Matheus só revisa no Studio e pode barrar até o
+horário. O render em 1440p no runner leva de 30 a 90 min.
 
-Lembretes que vão na mensagem: legenda "Com tempo", "Conteúdo alterado ou sintético: Sim", agendar (não Estreia).
+1. Atualize `episodes/temas.md` (status `feito — epNN, DD/MM`) e `episodes/agenda.md` (status `entregue`).
+2. Crie `publicar/epNN.json`:
+   `{"ep": "epNN", "mod": "episodes.epNN_<slug>", "publicar_em": "AAAA-MM-DDT20:00:00-03:00"}`
+3. Commit e push (sem `build/`). O push do JSON dispara a Action. Acompanhe a execução (ferramentas
+   `mcp__github__actions_list` / `get_job_logs`, workflow `publicar.yml`) até terminar e dê `git pull`: o JSON volta
+   com `video_id`, `link`, `status` e `avisos`, e a agenda passa a `agendado (auto)`.
+4. Mande com **SendUserMessage** um resumo curto: título, link do vídeo no YouTube, data/horário em que publica,
+   duração e os avisos (thumbnail ou legenda recusada, agendamento não mantido). Envie com **SendUserFile** só a
+   thumb e a `conferencia.png` (as de `build/epNN/` geradas aqui). Se a Action falhou, envie o pacote de
+   `build/epNN/entrega/` (rode `tools/produce.sh` sem `SEM_ENTREGA`) e diga para agendar à mão (legenda "Com tempo",
+   "Conteúdo alterado ou sintético: Sim", Programar, não Estreia).
+5. Confira no JSON mais recente de `analytics/` os vídeos enviados: um vídeo `private` sem agendamento antes da data
+   dele travou — avise o Matheus para agendar à mão.
+
+Teste do projeto (se suspeitar de trava): dispare a Action `publicar` com o input `teste=true` (sobe 5 s não listado,
+confere e apaga).
