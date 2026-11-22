@@ -67,6 +67,9 @@ CAST = {
     'coisa_ep03':   dict(tie='#E5262B', skin='#E4E4E4', name='A coisa (pai, noite 03)', shirt='#C4C4C4', pants='#4A4A4A', shoes='#2A2A2A', kind='shirt', hair='short', hair_c='#3A3A3A', extra=None, face='creature', h=1.6, pescoco=0.3, olhos='vazios', bracos=2.1, inclina=0.12),
     # noite 04: imita a irmã de camisola, cabelo molhado cobrindo metade do rosto, cabeça torta, boca vertical, braços compridos; xuxinha vermelha
     'coisa_ep04':   dict(skin='#E4E4E4', name='A coisa (irmã, noite 04)', shirt='#D2D2D4', pants='#D2D2D4', shoes='#3A3A3A', kind='dress', hair='mecha', hair_c='#2E2E33', extra='xuxinha_red', face='creature', h=1.55, boca='vertical', bracos=2.25, inclina=0.38),
+    # noite 05: imita o irmão (Bento) de pijama, alto demais, cabeça muito torta, sorrindo de olhos fechados; touca de tricô vermelha que a vó fez
+    'coisa_ep05':   dict(skin='#E4E4E4', name='A coisa (irmão, noite 05)', shirt='#D4D4D8', pants='#B8B8BE', shoes='#3A3A3A', kind='tee', hair='touca', hair_c='#E5262B', extra=None, face='creature', h=1.5, olhos='fechados', inclina=0.5, bracos=2.3, pescoco=0.1),
+    'coisa_ep05_olhos': dict(skin='#E4E4E4', name='A coisa (irmão, noite 05, olhos abertos)', shirt='#D4D4D8', pants='#B8B8BE', shoes='#3A3A3A', kind='tee', hair='touca', hair_c='#E5262B', extra=None, face='creature', h=1.5, olhos='dois', inclina=0.5, bracos=2.3, pescoco=0.1),
     'coisa_sombra': dict(skin='#2E2E33', name='A coisa (sombra)', shirt='#1E1E22', pants='#1E1E22', shoes='#111113', kind='tee', hair='none', hair_c='#1E1E22', extra='olhos_red', face='creature', h=1.85),
     'irma':  dict(skin='#ECECEC', name='Irmã', shirt='#D8D8DA', pants='#7E7E84', shoes='#F2F2F2', kind='tee', hair='long', hair_c='#3A3A3E', extra=None, face='min', h=0.95),
     'vizinho': dict(skin='#ECECEC', name='Vizinho', shirt='#BDBDBD', pants='#6A6A6A', shoes='#2A2A2A', kind='tee', hair='cap', hair_c='#5A5A5A', extra=None, face='min', h=1.02),
@@ -417,6 +420,18 @@ def draw_head(ctx, cid, c, p, hx, hy, r):
         ctx.scale(1.0, 0.28)
         ctx.arc(0, 0, r * 0.62, 0, TAU)
         ctx.restore()
+        fill_stroke(ctx, hc, 5)
+    if hair == 'touca':                         # noite 05: touca de tricô (com barra dobrada e pompom)
+        ctx.move_to(hx - r * 1.02, hy - r * 0.25)
+        ctx.curve_to(hx - r * 1.05, hy - r * 1.35, hx + r * 1.05, hy - r * 1.35, hx + r * 1.02, hy - r * 0.25)
+        ctx.close_path()
+        fill_stroke(ctx, hc)
+        ctx.set_source_rgba(0.35, 0.05, 0.06, 0.6); ctx.set_line_width(3)
+        for k in range(-3, 4):
+            ctx.move_to(hx + k * r * 0.26, hy - r * 0.45); ctx.line_to(hx + k * r * 0.22, hy - r * 1.0); ctx.stroke()
+        rrect(ctx, hx - r * 1.08, hy - r * 0.48, r * 2.16, r * 0.3, r * 0.12)
+        fill_stroke(ctx, hc, 5)
+        ctx.arc(hx, hy - r * 1.18, r * 0.24, 0, TAU)
         fill_stroke(ctx, hc, 5)
     if hair == 'bald':
         for side in (-1, 1):

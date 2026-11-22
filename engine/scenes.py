@@ -1245,6 +1245,65 @@ def bg_mm_cama_duda(ctx, t):
     big_bed(ctx)
 
 
+
+def guarda_roupa(ctx, x, y, w=380, h=560, t=0, espelho_luz=0.10):
+    """guarda-roupa antigo da vó: duas portas, a da direita com espelho oval, paninho de crochê em cima"""
+    lr(ctx, x, y, w, h, fill='#1A1714', r=6)
+    lr(ctx, x + 12, y + 14, w / 2 - 18, h - 70, fill='#16130F', r=4)
+    lr(ctx, x + w / 2 + 6, y + 14, w / 2 - 18, h - 70, fill='#16130F', r=4)
+    for k in (-1, 1):
+        ctx.arc(x + w / 2 + k * 20, y + h * 0.5, 7, 0, TAU); ctx.set_source_rgba(*LINE); ctx.fill()
+    # espelho oval na porta direita
+    ex, ey = x + w * 0.75, y + h * 0.42
+    ctx.save(); ctx.translate(ex, ey); ctx.scale(1, 1.9); ctx.arc(0, 0, w * 0.17, 0, TAU); ctx.restore()
+    g = cairo.LinearGradient(ex - 60, ey - 160, ex + 60, ey + 160)
+    g.add_color_stop_rgba(0, 0.55, 0.6, 0.7, 0.10 + espelho_luz); g.add_color_stop_rgba(1, 0.05, 0.06, 0.08, 1)
+    ctx.set_source(g); ctx.fill_preserve(); ctx.set_source_rgba(*LINE); ctx.set_line_width(4); ctx.stroke()
+    ctx.set_source_rgba(0.85, 0.88, 0.95, 0.25); ctx.set_line_width(3)
+    ctx.move_to(ex - 30, ey - 90); ctx.line_to(ex - 10, ey - 120); ctx.stroke()
+    # gavetão e pés
+    lr(ctx, x + 12, y + h - 48, w - 24, 36, fill=DARK3, r=4)
+    lr(ctx, x + 10, y + h, 24, 20); lr(ctx, x + w - 34, y + h, 24, 20)
+    # paninho de crochê e uma foto da vó em cima
+    ctx.move_to(x + 40, y); 
+    for k in range(9):
+        ctx.arc(x + 60 + k * 32, y + 4, 14, 0, math.pi)
+    ctx.set_source_rgba(0.85, 0.84, 0.8, 0.55); ctx.set_line_width(3); ctx.stroke()
+    lr(ctx, x + w * 0.55, y - 92, 70, 88, fill='#22201C', r=4)
+    ctx.arc(x + w * 0.55 + 35, y - 58, 16, 0, TAU); ctx.set_source_rgba(0.6, 0.6, 0.64, 0.5); ctx.fill()
+    ctx.arc(x + w * 0.55 + 35, y - 72, 9, 0, TAU); ctx.fill()
+
+
+def bg_mm_corredor_vo(ctx, t, manha=False):
+    """corredor: seu quarto (esq.), quarto do Bento (meio, entreaberto), guarda-roupa da vó no fim (dir.)"""
+    mm_room(ctx, fy=820)
+    door(ctx, 240, 280, 240, 540)
+    door(ctx, 820, 280, 240, 540, open_frac=0.22)
+    guarda_roupa(ctx, 1380, 260, t=t)
+    for x in (630, 1210):
+        ctx.arc(x, 380, 18, 0, TAU); ctx.set_source_rgba(1, 0.75, 0.35, 0.8 if not manha else 0.25); ctx.fill()
+        if not manha:
+            amber(ctx, x, 380, 110, 0.4, t)
+    if manha:
+        ctx.rectangle(0, 0, W, H); ctx.set_source_rgba(0.55, 0.62, 0.75, 0.12); ctx.fill()
+
+
+def bg_mm_quarto_bento(ctx, t):
+    """quarto do irmão: cama baixa, estrelinhas que brilham no escuro no teto, luz de tomada, janela"""
+    mm_room(ctx, wall_c='#131418')
+    moon_window(ctx, 1420, 170, 280, 260)
+    door(ctx, 760, 260, 230, 540, open_frac=0.2)
+    rnd = random.Random(5)
+    for k in range(16):
+        x, y = rnd.uniform(120, 1800), rnd.uniform(40, 150)
+        star(ctx, x, y, rnd.uniform(9, 15), '#C9E6B8')
+    bed(ctx, 140, 800, 560, made=False)
+    lr(ctx, 1150, 690, 210, 110, fill=DARK3, r=8)                     # baú de brinquedos
+    ctx.arc(1255, 690, 22, math.pi, 0); ctx.set_source_rgba(*LINE); ctx.set_line_width(3); ctx.stroke()
+    ctx.arc(1080, 720, 12, 0, TAU); ctx.set_source_rgba(1, 0.75, 0.35, 0.9); ctx.fill()   # luz de tomada
+    amber(ctx, 1080, 720, 170, 0.35, t)
+
+
 BG = {
     'quarto': (bg_mm_quarto, None),
     'corredor': (bg_mm_corredor, None),
@@ -1271,6 +1330,9 @@ BG = {
     'banho_manha': (lambda c, t: bg_mm_banheiro(c, t, manha=True), lambda c, t: fg_mm_banheiro(c, t, manha=True)),
     'banheiro_porta': (bg_mm_banheiro_porta, None),
     'cama_duda': (bg_mm_cama_duda, fg_mm_cama),
+    'corredor_vo': (bg_mm_corredor_vo, None),
+    'corredor_vo_manha': (lambda c, t: bg_mm_corredor_vo(c, t, manha=True), None),
+    'quarto_bento': (bg_mm_quarto_bento, None),
 }
 
 SLOTS = {
@@ -1299,4 +1361,7 @@ SLOTS = {
     'banho_manha': dict(porta=(680, 1020, 0.95), pia=(380, 1010, 0.95), box=(1430, 860, 0.9)),
     'banheiro_porta': dict(esq=(380, 1040, 1.05), dir=(1540, 1040, 1.05)),
     'cama_duda': dict(deitado=(1250, 625, 0.85), lado=(400, 1000, 0.9)),
+    'corredor_vo': dict(p1=(360, 1000, 0.9), p2=(940, 1000, 0.9), meio=(650, 1010, 0.95), dir=(1250, 1010, 0.95)),
+    'corredor_vo_manha': dict(p1=(360, 1000, 0.9), p2=(940, 1000, 0.9), meio=(650, 1010, 0.95), dir=(1250, 1010, 0.95)),
+    'quarto_bento': dict(cama=(540, 765, 0.9), porta=(875, 960, 0.95), centro=(1000, 1000, 1.0), dir=(1560, 1000, 0.95)),
 }

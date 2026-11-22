@@ -432,5 +432,67 @@ def mm_banheiro(spec, out):
     surf.write_to_png(out)
 
 
+def mm_atras(spec, out):
+    """Capa 'atrás de você' (noite 05): no corredor, o protagonista em primeiro plano, de frente pra câmera,
+    paralisado; a criatura enorme logo atrás dele, debruçada por cima do ombro, cabeça torta, sorrindo de olhos
+    fechados, a mão comprida quase no ombro; o guarda-roupa da vó ao fundo; balão vermelho.
+    spec: ordem, criatura, balao, cena='atras'"""
+    from .render import rich_text
+    from .scenes import bg_mm_corredor_vo
+    from .chars import rrect
+    surf = cairo.ImageSurface(cairo.FORMAT_RGB24, W, H)
+    ctx = cairo.Context(surf)
+    q = spec.get('criatura', 'coisa')
+    z = spec.get('zoom', 1.25)
+    ctx.save()
+    ctx.translate(W / 2, H / 2 + 80); ctx.scale(z, z); ctx.translate(-1150, -560)
+    bg_mm_corredor_vo(ctx, 0.0)
+    ctx.restore()
+    # escurece tudo e as bordas
+    ctx.rectangle(0, 0, W, H); ctx.set_source_rgba(0, 0, 0, 0.35); ctx.fill()
+    g = cairo.RadialGradient(1000, H / 2 + 80, 300, 1000, H / 2 + 80, 1200)
+    g.add_color_stop_rgba(0, 0, 0, 0, 0); g.add_color_stop_rgba(1, 0, 0, 0, 0.8)
+    ctx.rectangle(0, 0, W, H); ctx.set_source(g); ctx.fill()
+    # a criatura atrás, debruçada por cima do ombro direito do protagonista
+    ctx.save(); ctx.translate(spec.get('cx', 1230), 1560); ctx.rotate(spec.get('incl', -0.28))
+    info = draw_char(ctx, q, 0, 0, spec.get('cs', 1.7), Pose(mouth='grin', facing=-1, arms='point'))
+    hd = ctx.user_to_device(*info['head']); tp = ctx.user_to_device(info['head'][0], info['top'][1])
+    ctx.restore()
+    # luz fria vinda de baixo no rosto do protagonista
+    g3 = cairo.RadialGradient(700, 700, 50, 700, 700, 520)
+    g3.add_color_stop_rgba(0, 0.6, 0.65, 0.8, 0.10); g3.add_color_stop_rgba(1, 0, 0, 0, 0)
+    ctx.rectangle(0, 0, W, H); ctx.set_source(g3); ctx.fill()
+    draw_char(ctx, 'voce', 600, 1330, 1.5, Pose(eyes='wide', mouth='flat', arms='down', sweat=True, facing=1))
+    # linhas de susto
+    ctx.set_source_rgba(0.9, 0.9, 0.92, 1); ctx.set_line_width(8); ctx.set_line_cap(cairo.LINE_CAP_ROUND)
+    for a in (-0.9, -0.5, -0.1):
+        ctx.move_to(470 + math.cos(a - 1.9) * 260, 620 + math.sin(a - 1.9) * 260)
+        ctx.line_to(470 + math.cos(a - 1.9) * 310, 620 + math.sin(a - 1.9) * 310)
+        ctx.stroke()
+    g2 = cairo.LinearGradient(0, 0, 0, 300)
+    g2.add_color_stop_rgba(0, 0.02, 0.02, 0.025, 0.95); g2.add_color_stop_rgba(1, 0.02, 0.02, 0.025, 0)
+    ctx.rectangle(0, 0, W, 300); ctx.set_source(g2); ctx.fill()
+    if spec.get('balao'):
+        msg = spec['balao']
+        ctx.select_font_face('Courier New', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+        ctx.set_font_size(66)
+        w_ = ctx.text_extents(msg).width + 80
+        hx, top = tp
+        bx, by = min(hx + 470, W - w_ / 2 - 40), max(top + 60, 380)
+        rrect(ctx, bx - w_ / 2, by - 70, w_, 108, 40)
+        ctx.set_source_rgba(0.9, 0.15, 0.17, 1); ctx.fill()
+        ctx.move_to(bx - w_ / 2 + 40, by + 20); ctx.line_to(hx + 150, top + 140); ctx.line_to(bx - w_ / 2 + 110, by + 30); ctx.fill()
+        ctx.move_to(bx - w_ / 2 + 40, by + 8); ctx.set_source_rgba(1, 1, 1, 1); ctx.show_text(msg)
+    ctx.select_font_face('Poppins', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+    fs = 170
+    while fs > 90:
+        ctx.set_font_size(fs)
+        if ctx.text_extents(spec['ordem'].replace('*', '')).x_advance < W - 160:
+            break
+        fs -= 8
+    rich_text(ctx, spec['ordem'], 960, 170, fs)
+    surf.write_to_png(out)
+
+
 if __name__ == '__main__':
     _cli()

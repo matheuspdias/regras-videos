@@ -918,7 +918,7 @@ def _creature(ctx, quem, x, y, s, pose, escuro=0.0, alpha=1.0):
         ctx.set_operator(cairo.OPERATOR_OVER)
     ctx.pop_group_to_source()
     ctx.paint_with_alpha(alpha)
-    if escuro > 0.2:
+    if escuro > 0.2 and CAST[quem].get('olhos') != 'fechados':   # olhos fechados não acendem no escuro
         _eyes_glow(ctx, info, alpha)
     return info
 
