@@ -1,0 +1,96 @@
+{
+ "data": "2026-11-22",
+ "canal": {
+  "id": "UCOYAXMdOMmpYxBDPmoBsWLQ",
+  "nome": "Manual da Madrugada",
+  "inscritos": 0,
+  "views": 0,
+  "videos": 2
+ },
+ "videos": [
+  {
+   "id": "cx4KMdhs5_Q",
+   "titulo": "Se o seu pai bater palma no portão de madrugada… NÃO ATENDA",
+   "publicado": "2026-11-20T15:59:22Z",
+   "status": "private",
+   "agendado": "2026-11-22T23:00:00Z",
+   "duracao": "PT9M55S",
+   "views": 0,
+   "likes": 0,
+   "comentarios": 0,
+   "segundos": 595,
+   "analytics": {},
+   "alcance": {}
+  },
+  {
+   "id": "0Vn4bpbl3xo",
+   "titulo": "Se sua mãe te chamar pelo nome completo de dentro de um quarto vazio… NÃO RESPONDA",
+   "publicado": "2026-11-20T23:00:01Z",
+   "status": "public",
+   "agendado": null,
+   "duracao": "PT8M1S",
+   "views": 41,
+   "likes": 0,
+   "comentarios": 0,
+   "segundos": 481,
+   "analytics": {},
+   "alcance": {
+    "impressoes": 220,
+    "ctr": 1.36
+   },
+   "retencao": [],
+   "trafego": {}
+  },
+  {
+   "id": "oCtOQOZ_vuY",
+   "titulo": "Se a sua irmã estiver cantando no banheiro de madrugada… NÃO BATA NA PORTA",
+   "publicado": "2026-11-21T16:17:14Z",
+   "status": "private",
+   "agendado": "2026-11-23T23:00:00Z",
+   "duracao": "PT10M14S",
+   "views": 0,
+   "likes": 0,
+   "comentarios": 0,
+   "segundos": 614,
+   "analytics": {},
+   "alcance": {}
+  },
+  {
+   "id": "3ILnx4xYAwU",
+   "titulo": "Se sua vó te benzer duas vezes na mesma noite… FINJA QUE DORME",
+   "publicado": "2026-11-21T23:00:15Z",
+   "status": "public",
+   "agendado": null,
+   "duracao": "PT10M20S",
+   "views": 22,
+   "likes": 1,
+   "comentarios": 0,
+   "segundos": 620,
+   "analytics": {},
+   "alcance": {},
+   "retencao": [],
+   "trafego": {}
+  },
+  {
+   "id": "mZ0uJpmeSB4",
+   "titulo": "Se o seu irmão te chamar pelo apelido que só a vó usava… NÃO OLHE PRA TRÁS",
+   "publicado": "2026-11-22T17:03:29Z",
+   "status": "private",
+   "agendado": "2026-11-24T23:00:00Z",
+   "duracao": "PT9M38S",
+   "views": 0,
+   "likes": 0,
+   "comentarios": 0,
+   "segundos": 578,
+   "analytics": {},
+   "alcance": {}
+  }
+ ],
+ "diario": [],
+ "trafego": [],
+ "erros": [],
+ "legenda": {
+  "retencao": "[fração do vídeo, audienceWatchRatio, relativeRetentionPerformance]",
+  "ctr": "% de cliques nas impressões da thumbnail (Reporting API)"
+ }
+}
