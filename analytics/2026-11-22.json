@@ -4,7 +4,7 @@
   "id": "UCOYAXMdOMmpYxBDPmoBsWLQ",
   "nome": "Manual da Madrugada",
   "inscritos": 0,
-  "views": 0,
+  "views": 40,
   "videos": 2
  },
  "videos": [
@@ -62,9 +62,9 @@
    "status": "public",
    "agendado": null,
    "duracao": "PT10M20S",
-   "views": 22,
-   "likes": 1,
-   "comentarios": 0,
+   "views": 40,
+   "likes": 2,
+   "comentarios": 1,
    "segundos": 620,
    "analytics": {},
    "alcance": {},
