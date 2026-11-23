@@ -494,5 +494,57 @@ def mm_atras(spec, out):
     surf.write_to_png(out)
 
 
+def mm_olho(spec, out):
+    """Capa 'olho mágico' (noite 06): de dentro de casa, no escuro, a lente redonda e enorme do olho mágico à direita
+    com a criatura curvada colada nela lá fora (capacete vermelho, quatro olhos); à esquerda o protagonista encostado
+    na porta, apavorado, e o cachorro em primeiro plano rosnando pra porta; balão vermelho.
+    spec: ordem, criatura, balao, cena='olho'"""
+    from .render import rich_text, draw_monstro, dog
+    from .chars import rrect, setc
+    surf = cairo.ImageSurface(cairo.FORMAT_RGB24, W, H)
+    ctx = cairo.Context(surf)
+    q = spec.get('criatura', 'coisa')
+    R = spec.get('r', 400)
+    c0 = spec.get('centro', (1360, 650))
+    top = draw_monstro(ctx, {'monstro': 'olho', 'quem': q, 'perto': spec.get('perto', 0.95), 'incl': spec.get('incl', -0.28),
+                             'centro': c0, 'r': R, 'escuro': spec.get('escuro', 0.18)}, 0.0, 1.0, 0.0)
+    # madeira da porta em volta da lente (de dentro, quase preta) e o batente à esquerda
+    ctx.set_source_rgba(0.6, 0.6, 0.64, 0.35); ctx.set_line_width(5)
+    ctx.rectangle(760, 120, 1200, 1100); ctx.stroke()
+    ctx.move_to(760, 120); ctx.line_to(760, H); ctx.stroke()
+    # protagonista encostado na porta, à esquerda
+    draw_char(ctx, 'voce', 350, 1260, 1.5, Pose(eyes='wide', mouth='o', arms='face', sweat=True, facing=1))
+    ctx.set_source_rgba(0.9, 0.9, 0.92, 1); ctx.set_line_width(8); ctx.set_line_cap(cairo.LINE_CAP_ROUND)
+    for a in (-0.9, -0.5, -0.1):
+        ctx.move_to(360 + math.cos(a - 1.2) * 270, 600 + math.sin(a - 1.2) * 270)
+        ctx.line_to(360 + math.cos(a - 1.2) * 320, 600 + math.sin(a - 1.2) * 320)
+        ctx.stroke()
+    # cachorro rosnando em primeiro plano
+    dog(ctx, spec.get('cao_x', 640), 1095, 'rosna', 0.3)
+    g2 = cairo.LinearGradient(0, 0, 0, 300)
+    g2.add_color_stop_rgba(0, 0.0, 0.0, 0.0, 0.9); g2.add_color_stop_rgba(1, 0.0, 0.0, 0.0, 0)
+    ctx.rectangle(0, 0, W, 300); ctx.set_source(g2); ctx.fill()
+    if spec.get('balao'):
+        msg = spec['balao']
+        ctx.select_font_face('Courier New', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+        ctx.set_font_size(66)
+        w_ = ctx.text_extents(msg).width + 80
+        bx, by = c0[0] - R * 0.95, c0[1] - R * 0.82
+        bx = min(max(bx, w_ / 2 + 40), W - w_ / 2 - 40)
+        rrect(ctx, bx - w_ / 2, by - 70, w_, 108, 40)
+        ctx.set_source_rgba(0.9, 0.15, 0.17, 1); ctx.fill()
+        ctx.move_to(bx + w_ / 2 - 150, by + 30); ctx.line_to(c0[0] - R * 0.35, c0[1] - R * 0.35); ctx.line_to(bx + w_ / 2 - 60, by + 30); ctx.fill()
+        ctx.move_to(bx - w_ / 2 + 40, by + 8); ctx.set_source_rgba(1, 1, 1, 1); ctx.show_text(msg)
+    ctx.select_font_face('Poppins', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+    fs = 170
+    while fs > 90:
+        ctx.set_font_size(fs)
+        if ctx.text_extents(spec['ordem'].replace('*', '')).x_advance < W - 160:
+            break
+        fs -= 8
+    rich_text(ctx, spec['ordem'], 960, 170, fs)
+    surf.write_to_png(out)
+
+
 if __name__ == '__main__':
     _cli()

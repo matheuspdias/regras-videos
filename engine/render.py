@@ -694,8 +694,8 @@ def overlay(ctx, fx, u, dur, t, shot):
             ctx.restore()
 
 
-def dog(ctx, x, y, modo, t):
-    ctx.save(); ctx.translate(x, y); ctx.scale(1.45, 1.45)
+def dog(ctx, x, y, modo, t, vira=1):
+    ctx.save(); ctx.translate(x, y); ctx.scale(1.45 * vira, 1.45)
     from .chars import rrect as rr_, fill_stroke as fs_
     wag = math.sin(t * 14) * 0.5 if modo == 'abana' else 0
     ctx.save(); ctx.translate(-95, -70); ctx.rotate(-0.8 + wag)
@@ -708,9 +708,22 @@ def dog(ctx, x, y, modo, t):
     ctx.arc(126, -132, 6, 0, TAU); ctx.set_source_rgba(0.05, 0.05, 0.06, 1); ctx.fill()
     ctx.arc(156, -118, 8, 0, TAU); ctx.fill()
     if modo == 'rosna':
+        # pelo das costas arrepiado e dentes à mostra (noite 06)
+        ctx.set_source_rgba(0.85, 0.85, 0.85, 1)
+        for k in range(7):
+            bx = -70 + k * 24
+            ctx.move_to(bx - 10, -106); ctx.line_to(bx + 2, -128 - 4 * math.sin(t * 20 + k)); ctx.line_to(bx + 12, -106); ctx.close_path()
+            fs_(ctx, '#D8D8D8', 4)
         ctx.set_source_rgba(0.05, 0.05, 0.06, 1); ctx.set_line_width(4)
-        ctx.move_to(120, -102); ctx.line_to(150, -100); ctx.stroke()
-        text(ctx, 'grrr', 210, -170, 40, '#E5262B')
+        ctx.move_to(116, -104); ctx.line_to(156, -100); ctx.stroke()
+        for k in range(4):
+            tx_ = 122 + k * 9
+            ctx.move_to(tx_, -103); ctx.line_to(tx_ + 4, -94); ctx.line_to(tx_ + 8, -103); ctx.close_path()
+            ctx.set_source_rgba(1, 1, 1, 1); ctx.fill()
+        ctx.save(); ctx.translate(210, -170); ctx.scale(vira, 1)
+        tremor = 3 * math.sin(t * 40)
+        text(ctx, 'grrr', tremor, 0, 40, '#E5262B')
+        ctx.restore()
     ctx.restore()
 
 
@@ -895,16 +908,27 @@ def char_pose(cid, pose, speaking_amp, t, fx, k):
 MONSTRO_TRAS = ('atras',)
 
 
-def _eyes_glow(ctx, info, a=1.0):
+def _eyes_glow(ctx, info, a=1.0, olhos='dois'):
     hx, hy = info['head']
     r = info['head_r']
-    for side in (-1, 1):
-        ex, ey = hx + side * r * 0.33, hy - r * 0.08
+    if olhos == 'quatro':          # noite 06: os quatro olhos acesos no escuro, na mesma posição do rosto
+        eyes = [(hx + sd * r * 0.36, hy - r * 0.22, 0.12) for sd in (-1, 1)] + [(hx + sd * r * 0.22, hy + r * 0.05, 0.09) for sd in (-1, 1)]
+    elif olhos == 'um':
+        eyes = [(hx, hy - r * 0.12, 0.26)]
+    else:
+        eyes = [(hx + sd * r * 0.33, hy - r * 0.08, 0.15) for sd in (-1, 1)]
+    tl = info.get('tilt', 0)
+    if tl:                         # cabeça torta: os olhos acesos giram junto com o rosto
+        px, py = info['pivot']
+        ca, sa = math.cos(tl), math.sin(tl)
+        eyes = [(px + (ex - px) * ca - (ey - py) * sa, py + (ex - px) * sa + (ey - py) * ca, rr) for ex, ey, rr in eyes]
+    for ex, ey, rr in eyes:
+        k0 = rr / 0.15
         for k in range(7, 0, -1):
-            ctx.arc(ex, ey, r * (0.14 + k * 0.07), 0, TAU)
+            ctx.arc(ex, ey, r * (rr - 0.01 + k * 0.07 * k0), 0, TAU)
             ctx.set_source_rgba(1, 0.85, 0.2, 0.06 * a); ctx.fill()
-        ctx.arc(ex, ey, r * 0.15, 0, TAU); ctx.set_source_rgba(1, 0.88, 0.25, a); ctx.fill()
-        ctx.arc(ex, ey, r * 0.05, 0, TAU); ctx.set_source_rgba(0.1, 0.05, 0, a); ctx.fill()
+        ctx.arc(ex, ey, r * rr, 0, TAU); ctx.set_source_rgba(1, 0.88, 0.25, a); ctx.fill()
+        ctx.arc(ex, ey, r * rr / 3, 0, TAU); ctx.set_source_rgba(0.1, 0.05, 0, a); ctx.fill()
 
 
 def _creature(ctx, quem, x, y, s, pose, escuro=0.0, alpha=1.0):
@@ -919,7 +943,7 @@ def _creature(ctx, quem, x, y, s, pose, escuro=0.0, alpha=1.0):
     ctx.pop_group_to_source()
     ctx.paint_with_alpha(alpha)
     if escuro > 0.2 and CAST[quem].get('olhos') != 'fechados':   # olhos fechados não acendem no escuro
-        _eyes_glow(ctx, info, alpha)
+        _eyes_glow(ctx, info, alpha, CAST[quem].get('olhos', 'dois'))
     return info
 
 
@@ -1009,6 +1033,45 @@ def draw_monstro(ctx, item, u, dur, t):
         pose.facing = -1 if lado == 'dir' else 1
         info = _creature(ctx, quem, 0, 0, s, pose, escuro=item.get('escuro', 0.2))
         top = ctx.user_to_device(info['top'][0], info['top'][1])
+    elif modo == 'olho':
+        # visto pelo olho mágico: tela preta, um círculo com a varanda distorcida e a criatura curvada, colada na lente
+        cx_, cy_ = item.get('centro', (W / 2, H / 2))
+        R = item.get('r', 430)
+        perto = item.get('perto', 0.5)          # 0: de corpo inteiro na varanda; 1: o rosto colado na lente
+        ctx.rectangle(-2000, -2000, 6000, 6000); ctx.set_source_rgba(0.0, 0.0, 0.0, 1); ctx.fill()
+        ctx.save()
+        ctx.arc(cx_, cy_, R, 0, TAU); ctx.clip()
+        ctx.rectangle(cx_ - R, cy_ - R, 2 * R, 2 * R); ctx.set_source_rgba(0.07, 0.07, 0.08, 1); ctx.fill()
+        # piso e parede da varanda, curvos como numa lente
+        ctx.set_source_rgba(0.13, 0.13, 0.15, 1)
+        ctx.move_to(cx_ - R, cy_ + R * 0.45); ctx.curve_to(cx_ - R * 0.4, cy_ + R * 0.25, cx_ + R * 0.4, cy_ + R * 0.25, cx_ + R, cy_ + R * 0.45)
+        ctx.line_to(cx_ + R, cy_ + R); ctx.line_to(cx_ - R, cy_ + R); ctx.close_path(); ctx.fill()
+        ctx.set_source_rgba(0.5, 0.5, 0.55, 0.6); ctx.set_line_width(3)
+        for k in (-0.55, 0.55):
+            ctx.move_to(cx_ + k * R * 0.8, cy_ - R); ctx.curve_to(cx_ + k * R * 0.6, cy_ - R * 0.2, cx_ + k * R * 0.6, cy_ + R * 0.1, cx_ + k * R * 0.9, cy_ + R * 0.4); ctx.stroke()
+        # lâmpada da varanda (amarelada, fraca)
+        lx_, ly_ = cx_ + R * 0.05, cy_ - R * 0.78
+        g = cairo.RadialGradient(lx_, ly_, 5, lx_, ly_, R * 1.1)
+        g.add_color_stop_rgba(0, 1, 0.78, 0.4, 0.5 if item.get('luz', True) else 0.05); g.add_color_stop_rgba(1, 1, 0.78, 0.4, 0)
+        ctx.rectangle(cx_ - R, cy_ - R, 2 * R, 2 * R); ctx.set_source(g); ctx.fill()
+        if item.get('luz', True):
+            ctx.arc(lx_, ly_, 16, 0, TAU); ctx.set_source_rgba(1, 0.9, 0.6, 1); ctx.fill()
+        s = item.get('s', 0.62 + 1.1 * perto)
+        rise = ease(u / 1.3) if item.get('surge') else 1.0
+        hd = 520 * hc * s * 0.80                     # da sola até o centro da cabeça
+        k = 1 + 0.08 * ease(u / max(dur, 0.01))      # chega mais perto da lente durante o plano
+        ctx.translate(cx_ + item.get('dx', 0), cy_ + R * (-0.25 + 0.35 * perto) + (1 - rise) * R * 1.2)
+        ctx.scale(k, k); ctx.rotate(item.get('incl', -0.22) + sway)
+        ctx.translate(0, hd)
+        info = _creature(ctx, quem, 0, 0, s, pose, escuro=item.get('escuro', 0.15), alpha=1.0)
+        top = ctx.user_to_device(info['top'][0], info['top'][1])
+        ctx.restore()
+        # vinheta da lente e o aro de metal
+        g = cairo.RadialGradient(cx_, cy_, R * 0.55, cx_, cy_, R)
+        g.add_color_stop_rgba(0, 0, 0, 0, 0); g.add_color_stop_rgba(1, 0, 0, 0, 0.92)
+        ctx.arc(cx_, cy_, R, 0, TAU); ctx.set_source(g); ctx.fill()
+        ctx.arc(cx_, cy_, R, 0, TAU); ctx.set_source_rgba(0.55, 0.55, 0.6, 1); ctx.set_line_width(10); ctx.stroke()
+        ctx.arc(cx_ - R * 0.35, cy_ - R * 0.4, R * 0.18, 0, TAU); ctx.set_source_rgba(1, 1, 1, 0.05); ctx.fill()
     elif modo == 'rosto':
         x, y = item.get('pos', (W / 2, H / 2))
         s = item.get('s', 3.2)
@@ -1146,8 +1209,9 @@ def draw_frame(ctx, ep, clips, shots, envs, t):
                 if not blink:
                     ctx.arc(ex, oy, 14, 0, TAU); ctx.set_source_rgba(1, 0.88, 0.25, a); ctx.fill()
         if isinstance(item, dict) and 'cachorro' in item:
-            dx, dy, modo = item['cachorro']
-            dog(ctx, dx, dy, modo, t)
+            dx, dy, modo = item['cachorro'][:3]
+            vira = item['cachorro'][3] if len(item['cachorro']) > 3 else 1   # -1: focinho pra esquerda
+            dog(ctx, dx, dy, modo, t, vira)
     if 'bolo' in fx and sc['bg'] == 'jantar':
         from .chars import draw_prop
         draw_prop(ctx, 'bolo', 1100, 752, 1)

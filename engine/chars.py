@@ -70,6 +70,8 @@ CAST = {
     # noite 05: imita o irmão (Bento) de pijama, alto demais, cabeça muito torta, sorrindo de olhos fechados; touca de tricô vermelha que a vó fez
     'coisa_ep05':   dict(skin='#E4E4E4', name='A coisa (irmão, noite 05)', shirt='#D4D4D8', pants='#B8B8BE', shoes='#3A3A3A', kind='tee', hair='touca', hair_c='#E5262B', extra=None, face='creature', h=1.5, olhos='fechados', inclina=0.5, bracos=2.3, pescoco=0.1),
     'coisa_ep05_olhos': dict(skin='#E4E4E4', name='A coisa (irmão, noite 05, olhos abertos)', shirt='#D4D4D8', pants='#B8B8BE', shoes='#3A3A3A', kind='tee', hair='touca', hair_c='#E5262B', extra=None, face='creature', h=1.5, olhos='dois', inclina=0.5, bracos=2.3, pescoco=0.1),
+    # noite 06: imita o pai de uniforme da fábrica, alto demais (curva pra caber na porta), quatro olhos, braços compridos; capacete vermelho (o do pai é branco)
+    'coisa_ep06':   dict(tie='#8E8E94', skin='#E4E4E4', name='A coisa (pai, noite 06)', shirt='#B0B0B6', pants='#46464C', shoes='#2A2A2A', kind='shirt', hair='capacete', hair_c='#E5262B', extra=None, face='creature', h=1.9, olhos='quatro', bracos=2.05, inclina=0.2, pescoco=0.06),
     'coisa_sombra': dict(skin='#2E2E33', name='A coisa (sombra)', shirt='#1E1E22', pants='#1E1E22', shoes='#111113', kind='tee', hair='none', hair_c='#1E1E22', extra='olhos_red', face='creature', h=1.85),
     'irma':  dict(skin='#ECECEC', name='Irmã', shirt='#D8D8DA', pants='#7E7E84', shoes='#F2F2F2', kind='tee', hair='long', hair_c='#3A3A3E', extra=None, face='min', h=0.95),
     'vizinho': dict(skin='#ECECEC', name='Vizinho', shirt='#BDBDBD', pants='#6A6A6A', shoes='#2A2A2A', kind='tee', hair='cap', hair_c='#5A5A5A', extra=None, face='min', h=1.02),
@@ -293,7 +295,9 @@ def draw_char(ctx, cid, x, y, s=1.0, pose=None):
     ctx.restore()
     if p.lie:
         return dict(head=(x + head_cy * s, y), head_r=head_r * s, top=(x + head_cy * s, y - head_r * s))
-    return dict(head=(x, y + head_cy * s), head_r=head_r * s, top=(x, y + (head_cy - head_r) * s))
+    return dict(head=(x, y + head_cy * s), head_r=head_r * s, top=(x, y + (head_cy - head_r) * s),
+                tilt=c.get('inclina', 0) * f if c.get('face') == 'creature' else 0,
+                pivot=(x, y + (head_cy + head_r * 0.8) * s))
 
 
 def star(ctx, x, y, r, col):
@@ -433,6 +437,17 @@ def draw_head(ctx, cid, c, p, hx, hy, r):
         fill_stroke(ctx, hc, 5)
         ctx.arc(hx, hy - r * 1.18, r * 0.24, 0, TAU)
         fill_stroke(ctx, hc, 5)
+    if hair == 'capacete':                      # noite 06: capacete de segurança da fábrica (aba em volta e friso no meio)
+        ctx.move_to(hx - r * 0.96, hy - r * 0.42)
+        ctx.curve_to(hx - r * 0.98, hy - r * 1.5, hx + r * 0.98, hy - r * 1.5, hx + r * 0.96, hy - r * 0.42)
+        ctx.close_path()
+        fill_stroke(ctx, hc)
+        rrect(ctx, hx - r * 1.22, hy - r * 0.54, r * 2.44, r * 0.2, r * 0.1)
+        fill_stroke(ctx, hc, 5)
+        rrect(ctx, hx - r * 0.13, hy - r * 1.26, r * 0.26, r * 0.74, r * 0.12)
+        fill_stroke(ctx, hc, 4)
+        ctx.set_source_rgba(1, 1, 1, 0.22); ctx.set_line_width(5)
+        ctx.arc(hx - r * 0.1, hy - r * 0.5, r * 0.62, 1.12 * math.pi, 1.38 * math.pi); ctx.stroke()
     if hair == 'bald':
         for side in (-1, 1):
             ctx.arc(hx + side * r * 0.95, hy - r * 0.05, r * 0.2, 0, TAU)

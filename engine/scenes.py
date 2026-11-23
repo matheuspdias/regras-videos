@@ -661,6 +661,57 @@ def fg_onibus(ctx, t):
         rr(ctx, x - 250, 800, 500, 90, 20, '#274472')
 
 
+# ---------------------------------------------------------------- noite 06: a porta da frente vista de fora
+def bg_mm_varanda(ctx, t, manha=False, jaqueta=True):
+    """varanda da frente, vista de fora: porta fechada com olho mágico, luz amarela fraca em cima, capacho,
+    janela com grade à esquerda e o gancho da jaqueta reserva do pai à direita"""
+    mm_room(ctx, fy=900)
+    for k in range(9):                                           # lajotas
+        ctx.move_to(k * 240 - 80, 900); ctx.line_to(k * 300 - 360, H)
+    ctx.set_source_rgba(LINE[0], LINE[1], LINE[2], 0.25); ctx.set_line_width(3); ctx.stroke()
+    lr(ctx, 790, 240, 340, 660, fill='#0E0E10', lw=6)          # porta
+    for yy in (330, 560):
+        lr(ctx, 830, yy, 260, 190, fill='#131316', lw=3)
+    ctx.arc(1080, 600, 13, 0, TAU); ctx.set_source_rgba(*LINE); ctx.fill()
+    ctx.arc(960, 300, 10, 0, TAU); ctx.set_source_rgba(0.75, 0.75, 0.8, 1); ctx.fill()   # olho mágico
+    lr(ctx, 330, 330, 300, 330, fill='#0F1218')                 # janela da sala
+    ctx.set_source_rgba(*LINE); ctx.set_line_width(4)
+    for k in range(1, 6):
+        ctx.move_to(330 + k * 50, 330); ctx.line_to(330 + k * 50, 660)
+    ctx.move_to(330, 495); ctx.line_to(630, 495); ctx.stroke()
+    ctx.save(); ctx.translate(960, 935); ctx.scale(1, 0.28)    # capacho
+    ctx.rectangle(-190, -60, 380, 120); ctx.restore()
+    setc(ctx, '#2A2622' if not manha else '#1C1A18'); ctx.fill()
+    if manha:                                                  # capacho molhado
+        ctx.save(); ctx.translate(960, 935); ctx.scale(1, 0.22); ctx.arc(0, 0, 150, 0, TAU); ctx.restore()
+        ctx.set_source_rgba(0.5, 0.6, 0.75, 0.18); ctx.fill()
+    ctx.arc(1340, 380, 10, 0, TAU); ctx.set_source_rgba(*LINE); ctx.fill()   # gancho
+    if jaqueta:
+        ctx.move_to(1340, 385); ctx.line_to(1270, 440); ctx.line_to(1250, 640); ctx.line_to(1430, 640); ctx.line_to(1410, 440)
+        ctx.close_path(); setc(ctx, '#2C2C31'); ctx.fill_preserve(); ctx.set_source_rgba(*LINE); ctx.set_line_width(4); ctx.stroke()
+        ctx.move_to(1340, 400); ctx.line_to(1340, 640); ctx.stroke()
+    lr(ctx, 930, 150, 60, 34, fill='#2A2A2E', r=8)              # luminária
+    if manha:
+        ctx.rectangle(0, 0, W, H); ctx.set_source_rgba(0.55, 0.62, 0.75, 0.12); ctx.fill()
+    else:
+        fl = 0.85 + 0.15 * math.sin(t * 9) * math.sin(t * 2.3)
+        ctx.arc(960, 194, 16, 0, TAU); ctx.set_source_rgba(1, 0.85, 0.5, 0.95 * fl); ctx.fill()
+        amber(ctx, 960, 260, 520, 0.22 * fl, t)
+
+
+def bg_mm_porta_manha(ctx, t):
+    bg_mm_porta(ctx, t)
+    ctx.rectangle(0, 0, W, H); ctx.set_source_rgba(0.55, 0.62, 0.75, 0.12); ctx.fill()
+
+
+def fita_olho(ctx, t):
+    """fita crepe em X tapando o olho mágico (cenário porta)"""
+    for a in (0.5, -0.5):
+        ctx.save(); ctx.translate(960, 300); ctx.rotate(a)
+        ctx.rectangle(-60, -13, 120, 26); setc(ctx, '#CFC6AE'); ctx.fill_preserve()
+        ctx.set_source_rgba(0.3, 0.28, 0.24, 1); ctx.set_line_width(2); ctx.stroke(); ctx.restore()
+
+
 BG = {
     'jantar': (bg_jantar, fg_jantar),
     'sala': (bg_sala, fg_sala),
@@ -1333,6 +1384,11 @@ BG = {
     'corredor_vo': (bg_mm_corredor_vo, None),
     'corredor_vo_manha': (lambda c, t: bg_mm_corredor_vo(c, t, manha=True), None),
     'quarto_bento': (bg_mm_quarto_bento, None),
+    'varanda': (bg_mm_varanda, None),
+    'varanda_manha': (lambda c, t: bg_mm_varanda(c, t, manha=True, jaqueta=False), None),
+    'varanda_jaqueta': (lambda c, t: bg_mm_varanda(c, t, jaqueta=False), None),
+    'porta_manha': (bg_mm_porta_manha, None),
+    'porta_fita': (lambda c, t: (bg_mm_porta(c, t), fita_olho(c, t)), None),
 }
 
 SLOTS = {
@@ -1364,4 +1420,9 @@ SLOTS = {
     'corredor_vo': dict(p1=(360, 1000, 0.9), p2=(940, 1000, 0.9), meio=(650, 1010, 0.95), dir=(1250, 1010, 0.95)),
     'corredor_vo_manha': dict(p1=(360, 1000, 0.9), p2=(940, 1000, 0.9), meio=(650, 1010, 0.95), dir=(1250, 1010, 0.95)),
     'quarto_bento': dict(cama=(540, 765, 0.9), porta=(875, 960, 0.95), centro=(1000, 1000, 1.0), dir=(1560, 1000, 0.95)),
+    'varanda': dict(a=(520, 1010, 1.0), porta=(960, 940, 0.95), b=(1500, 1010, 1.0)),
+    'varanda_manha': dict(a=(520, 1010, 1.0), porta=(960, 940, 0.95), b=(1500, 1010, 1.0)),
+    'varanda_jaqueta': dict(a=(520, 1010, 1.0), porta=(960, 940, 0.95), b=(1500, 1010, 1.0)),
+    'porta_manha': dict(a=(500, 1010, 1.0), porta=(960, 1000, 1.0), b=(1500, 1010, 1.0)),
+    'porta_fita': dict(a=(500, 1010, 1.0), porta=(960, 1000, 1.0), b=(1500, 1010, 1.0)),
 }
