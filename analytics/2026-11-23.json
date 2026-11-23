@@ -1,0 +1,688 @@
+{
+ "data": "2026-11-23",
+ "canal": {
+  "id": "UCOYAXMdOMmpYxBDPmoBsWLQ",
+  "nome": "Manual da Madrugada",
+  "inscritos": 0,
+  "views": 110,
+  "videos": 3
+ },
+ "videos": [
+  {
+   "id": "0Vn4bpbl3xo",
+   "titulo": "Se sua mãe te chamar pelo nome completo de dentro de um quarto vazio… NÃO RESPONDA",
+   "publicado": "2026-11-20T23:00:01Z",
+   "status": "public",
+   "agendado": null,
+   "duracao": "PT8M1S",
+   "views": 45,
+   "likes": 0,
+   "comentarios": 0,
+   "segundos": 481,
+   "analytics": {
+    "video": "0Vn4bpbl3xo",
+    "views": 40,
+    "estimatedMinutesWatched": 108,
+    "averageViewDuration": 169,
+    "averageViewPercentage": 35.22,
+    "subscribersGained": 0,
+    "subscribersLost": 0,
+    "likes": 0,
+    "comments": 0,
+    "shares": 0
+   },
+   "alcance": {
+    "impressoes": 1758,
+    "ctr": 1.54
+   },
+   "retencao": [
+    [
+     0.01,
+     0.971,
+     0.275
+    ],
+    [
+     0.02,
+     0.971,
+     0.274
+    ],
+    [
+     0.03,
+     0.882,
+     0.27
+    ],
+    [
+     0.04,
+     0.882,
+     0.262
+    ],
+    [
+     0.05,
+     0.853,
+     0.255
+    ],
+    [
+     0.06,
+     0.735,
+     0.25
+    ],
+    [
+     0.07,
+     0.618,
+     0.246
+    ],
+    [
+     0.08,
+     0.559,
+     0.242
+    ],
+    [
+     0.09,
+     0.559,
+     0.238
+    ],
+    [
+     0.1,
+     0.559,
+     0.234
+    ],
+    [
+     0.11,
+     0.5,
+     0.231
+    ],
+    [
+     0.12,
+     0.5,
+     0.227
+    ],
+    [
+     0.13,
+     0.5,
+     0.224
+    ],
+    [
+     0.14,
+     0.5,
+     0.22
+    ],
+    [
+     0.15,
+     0.5,
+     0.216
+    ],
+    [
+     0.16,
+     0.5,
+     0.212
+    ],
+    [
+     0.17,
+     0.5,
+     0.207
+    ],
+    [
+     0.18,
+     0.5,
+     0.202
+    ],
+    [
+     0.19,
+     0.471,
+     0.198
+    ],
+    [
+     0.2,
+     0.441,
+     0.195
+    ],
+    [
+     0.21,
+     0.441,
+     0.19
+    ],
+    [
+     0.22,
+     0.441,
+     0.183
+    ],
+    [
+     0.23,
+     0.441,
+     0.176
+    ],
+    [
+     0.24,
+     0.412,
+     0.17
+    ],
+    [
+     0.25,
+     0.382,
+     0.165
+    ],
+    [
+     0.26,
+     0.353,
+     0.162
+    ],
+    [
+     0.27,
+     0.353,
+     0.161
+    ],
+    [
+     0.28,
+     0.353,
+     0.162
+    ],
+    [
+     0.29,
+     0.324,
+     0.165
+    ],
+    [
+     0.3,
+     0.324,
+     0.171
+    ],
+    [
+     0.31,
+     0.324,
+     0.178
+    ],
+    [
+     0.32,
+     0.324,
+     0.188
+    ],
+    [
+     0.33,
+     0.324,
+     0.198
+    ],
+    [
+     0.34,
+     0.324,
+     0.21
+    ],
+    [
+     0.35,
+     0.324,
+     0.222
+    ],
+    [
+     0.36,
+     0.324,
+     0.235
+    ],
+    [
+     0.37,
+     0.324,
+     0.248
+    ],
+    [
+     0.38,
+     0.324,
+     0.261
+    ],
+    [
+     0.39,
+     0.324,
+     0.274
+    ],
+    [
+     0.4,
+     0.294,
+     0.286
+    ],
+    [
+     0.41,
+     0.294,
+     0.299
+    ],
+    [
+     0.42,
+     0.294,
+     0.312
+    ],
+    [
+     0.43,
+     0.294,
+     0.325
+    ],
+    [
+     0.44,
+     0.294,
+     0.337
+    ],
+    [
+     0.45,
+     0.294,
+     0.35
+    ],
+    [
+     0.46,
+     0.294,
+     0.362
+    ],
+    [
+     0.47,
+     0.294,
+     0.374
+    ],
+    [
+     0.48,
+     0.294,
+     0.387
+    ],
+    [
+     0.49,
+     0.294,
+     0.399
+    ],
+    [
+     0.5,
+     0.294,
+     0.416
+    ],
+    [
+     0.51,
+     0.294,
+     0.437
+    ],
+    [
+     0.52,
+     0.294,
+     0.458
+    ],
+    [
+     0.53,
+     0.294,
+     0.476
+    ],
+    [
+     0.54,
+     0.294,
+     0.488
+    ],
+    [
+     0.55,
+     0.294,
+     0.494
+    ],
+    [
+     0.56,
+     0.294,
+     0.5
+    ],
+    [
+     0.57,
+     0.294,
+     0.51
+    ],
+    [
+     0.58,
+     0.294,
+     0.523
+    ],
+    [
+     0.59,
+     0.294,
+     0.537
+    ],
+    [
+     0.6,
+     0.294,
+     0.559
+    ],
+    [
+     0.61,
+     0.294,
+     0.602
+    ],
+    [
+     0.62,
+     0.294,
+     0.664
+    ],
+    [
+     0.63,
+     0.324,
+     0.721
+    ],
+    [
+     0.64,
+     0.324,
+     0.744
+    ],
+    [
+     0.65,
+     0.324,
+     0.722
+    ],
+    [
+     0.66,
+     0.294,
+     0.665
+    ],
+    [
+     0.67,
+     0.294,
+     0.603
+    ],
+    [
+     0.68,
+     0.294,
+     0.561
+    ],
+    [
+     0.69,
+     0.294,
+     0.539
+    ],
+    [
+     0.7,
+     0.294,
+     0.53
+    ],
+    [
+     0.71,
+     0.294,
+     0.528
+    ],
+    [
+     0.72,
+     0.294,
+     0.53
+    ],
+    [
+     0.73,
+     0.294,
+     0.538
+    ],
+    [
+     0.74,
+     0.294,
+     0.56
+    ],
+    [
+     0.75,
+     0.294,
+     0.602
+    ],
+    [
+     0.76,
+     0.294,
+     0.665
+    ],
+    [
+     0.77,
+     0.324,
+     0.725
+    ],
+    [
+     0.78,
+     0.324,
+     0.756
+    ],
+    [
+     0.79,
+     0.324,
+     0.749
+    ],
+    [
+     0.8,
+     0.324,
+     0.703
+    ],
+    [
+     0.81,
+     0.294,
+     0.627
+    ],
+    [
+     0.82,
+     0.294,
+     0.544
+    ],
+    [
+     0.83,
+     0.294,
+     0.477
+    ],
+    [
+     0.84,
+     0.294,
+     0.424
+    ],
+    [
+     0.85,
+     0.294,
+     0.377
+    ],
+    [
+     0.86,
+     0.294,
+     0.329
+    ],
+    [
+     0.87,
+     0.294,
+     0.277
+    ],
+    [
+     0.88,
+     0.294,
+     0.232
+    ],
+    [
+     0.89,
+     0.294,
+     0.196
+    ],
+    [
+     0.9,
+     0.294,
+     0.168
+    ],
+    [
+     0.91,
+     0.294,
+     0.145
+    ],
+    [
+     0.92,
+     0.294,
+     0.12
+    ],
+    [
+     0.93,
+     0.294,
+     0.094
+    ],
+    [
+     0.94,
+     0.294,
+     0.076
+    ],
+    [
+     0.95,
+     0.294,
+     0.067
+    ],
+    [
+     0.96,
+     0.294,
+     0.063
+    ],
+    [
+     0.97,
+     0.294,
+     0.062
+    ],
+    [
+     0.98,
+     0.147,
+     0.061
+    ],
+    [
+     0.99,
+     0.118,
+     0.061
+    ],
+    [
+     1,
+     0.088,
+     0.061
+    ]
+   ],
+   "trafego": {
+    "RELATED_VIDEO": 33,
+    "NO_LINK_OTHER": 2,
+    "SUBSCRIBER": 2,
+    "YT_SEARCH": 2,
+    "YT_CHANNEL": 1
+   }
+  },
+  {
+   "id": "oCtOQOZ_vuY",
+   "titulo": "Se a sua irmã estiver cantando no banheiro de madrugada… NÃO BATA NA PORTA",
+   "publicado": "2026-11-21T16:17:14Z",
+   "status": "private",
+   "agendado": "2026-11-23T23:00:00Z",
+   "duracao": "PT10M14S",
+   "views": 0,
+   "likes": 0,
+   "comentarios": 0,
+   "segundos": 614,
+   "analytics": {},
+   "alcance": {}
+  },
+  {
+   "id": "3ILnx4xYAwU",
+   "titulo": "Se sua vó te benzer duas vezes na mesma noite… FINJA QUE DORME",
+   "publicado": "2026-11-21T23:00:15Z",
+   "status": "public",
+   "agendado": null,
+   "duracao": "PT10M20S",
+   "views": 64,
+   "likes": 2,
+   "comentarios": 1,
+   "segundos": 620,
+   "analytics": {
+    "video": "3ILnx4xYAwU",
+    "views": 7,
+    "estimatedMinutesWatched": 13,
+    "averageViewDuration": 148,
+    "averageViewPercentage": 23.89,
+    "subscribersGained": 0,
+    "subscribersLost": 0,
+    "likes": 0,
+    "comments": 0,
+    "shares": 0
+   },
+   "alcance": {
+    "impressoes": 292,
+    "ctr": 1.71
+   },
+   "retencao": [],
+   "trafego": {
+    "RELATED_VIDEO": 7,
+    "NO_LINK_OTHER": 0
+   }
+  },
+  {
+   "id": "mZ0uJpmeSB4",
+   "titulo": "Se o seu irmão te chamar pelo apelido que só a vó usava… NÃO OLHE PRA TRÁS",
+   "publicado": "2026-11-22T17:03:29Z",
+   "status": "private",
+   "agendado": "2026-11-24T23:00:00Z",
+   "duracao": "PT9M38S",
+   "views": 0,
+   "likes": 0,
+   "comentarios": 0,
+   "segundos": 578,
+   "analytics": {},
+   "alcance": {}
+  },
+  {
+   "id": "cx4KMdhs5_Q",
+   "titulo": "Se o seu pai bater palma no portão de madrugada… NÃO ATENDA",
+   "publicado": "2026-11-22T23:00:16Z",
+   "status": "public",
+   "agendado": null,
+   "duracao": "PT9M55S",
+   "views": 70,
+   "likes": 2,
+   "comentarios": 0,
+   "segundos": 595,
+   "analytics": {},
+   "alcance": {},
+   "retencao": [],
+   "trafego": {}
+  },
+  {
+   "id": "pgdFA71m1xI",
+   "titulo": "Se o seu cachorro rosnar para o seu pai na porta de casa… NÃO ABRA",
+   "publicado": "2026-11-23T15:41:40Z",
+   "status": "private",
+   "agendado": "2026-11-25T23:00:00Z",
+   "duracao": "PT9M44S",
+   "views": 0,
+   "likes": 0,
+   "comentarios": 0,
+   "segundos": 584,
+   "analytics": {},
+   "alcance": {}
+  }
+ ],
+ "diario": [
+  {
+   "day": "2026-11-20",
+   "views": 4,
+   "estimatedMinutesWatched": 9,
+   "averageViewDuration": 142,
+   "subscribersGained": 0
+  },
+  {
+   "day": "2026-11-21",
+   "views": 43,
+   "estimatedMinutesWatched": 111,
+   "averageViewDuration": 169,
+   "subscribersGained": 0
+  }
+ ],
+ "trafego": [
+  {
+   "insightTrafficSourceType": "RELATED_VIDEO",
+   "views": 40,
+   "estimatedMinutesWatched": 104
+  },
+  {
+   "insightTrafficSourceType": "NO_LINK_OTHER",
+   "views": 2,
+   "estimatedMinutesWatched": 0
+  },
+  {
+   "insightTrafficSourceType": "SUBSCRIBER",
+   "views": 2,
+   "estimatedMinutesWatched": 15
+  },
+  {
+   "insightTrafficSourceType": "YT_SEARCH",
+   "views": 2,
+   "estimatedMinutesWatched": 0
+  },
+  {
+   "insightTrafficSourceType": "YT_CHANNEL",
+   "views": 1,
+   "estimatedMinutesWatched": 0
+  }
+ ],
+ "erros": [],
+ "legenda": {
+  "retencao": "[fração do vídeo, audienceWatchRatio, relativeRetentionPerformance]",
+  "ctr": "% de cliques nas impressões da thumbnail (Reporting API)"
+ }
+}
