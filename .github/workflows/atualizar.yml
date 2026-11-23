@@ -1,0 +1,40 @@
+name: atualizar
+# Troca título/thumbnail de vídeos já publicados (testes A/B): aplica cada ajustes/*.json ainda sem "aplicado_em".
+on:
+  push:
+    branches: [main]
+    paths: ['ajustes/*.json']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: atualizar
+  cancel-in-progress: false
+jobs:
+  atualizar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Dependências
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q ffmpeg libcairo2-dev pkg-config fontconfig
+          pip install -q pycairo numpy google-api-python-client google-auth
+          mkdir -p ~/.fonts && cp fonts/*.ttf ~/.fonts/ && fc-cache -f
+      - name: Aplicar
+        env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
+        run: |
+          shopt -s nullglob
+          python3 -u tools/atualizar.py ajustes/*.json
+      - name: Commit
+        if: always()
+        run: |
+          git config user.name "atualizar-bot"
+          git config user.email "actions@github.com"
+          git add -A ajustes
+          git diff --cached --quiet || git commit -m "atualizar: ajuste aplicado no YouTube [skip ci]"
+          for i in 1 2 3; do git pull --rebase -q && git push && break; sleep 5; done
