@@ -180,7 +180,7 @@ LINES = [
     ('nar', "Mesmo assim, espera. Deixa ele abrir sozinho. A coisa não tem chave. O seu pai tem."),
     ('nar', "E olha pro Bidu uma última vez. Se o rabo parar no meio do caminho, se a orelha baixar, se o ronco voltar, volta pro corredor e espera mais."),
     ('nar', "Quando a porta abrir por fora, com o seu pai cheirando a graxa e a café de garrafa térmica, o capacete branco debaixo do braço, o Bidu vai pular nele chorando de alegria. Aí sim. Aí pode abraçar.",
-     S('sala_manha', C('pai', 'porta', None, facing=-1, mouth='smile', eyes='half', arms='up'), C('voce', 'centro', None, arms='up', eyes='happy', mouth='grin'), cam=dict(zoom=1.0, to=1.08), fx=[{'cachorro': (1380, 990, 'abana')}])),
+     S('sala_manha', C('pai', 'sofa2', None, facing=-1, mouth='smile', eyes='half', arms='up'), C('voce', 'centro', None, arms='up', eyes='happy', mouth='grin'), cam=dict(zoom=1.0, to=1.08), fx=[{'cachorro': (1500, 990, 'abana', -1)}])),
     ('pai', "Que festa é essa? Parece que eu fiquei um mês fora.",
      S('sala_manha', C('pai', 'sofa2', None, facing=-1, mouth='grin'), C('voce', 'sofa', None, facing=1, eyes='closed', mouth='smile'), cam=dict(zoom=1.3, to=1.4, cx=940, cy=560))),
     ('nar', "Na varanda, o capacho tá molhado. E a jaqueta reserva do seu pai, a que ficava pendurada no gancho do lado da porta, sumiu. Ninguém fala nada.",
