@@ -565,8 +565,8 @@ def mm_vassoura(spec, out):
     ctx.restore()
     chinelo(ctx, 1030, 990, 1.1)
     # a criatura curvada à direita, varrendo pra baixo da cama
-    ctx.save(); ctx.translate(spec.get('cx', 1430), 1005); ctx.rotate(spec.get('incl', -0.14))
-    info = draw_char(ctx, q, 0, 0, spec.get('cs', 0.88), Pose(mouth='grin', facing=-1, arms='hold', varre=spec.get('varre', 0.9)))
+    ctx.save(); ctx.translate(spec.get('cx', 1440), 1020); ctx.rotate(spec.get('incl', -0.2))
+    info = draw_char(ctx, q, 0, 0, spec.get('cs', 0.92), Pose(mouth='grin', facing=-1, arms='hold', varre=spec.get('varre', 0.9)))
     tp = ctx.user_to_device(info['head'][0], info['top'][1])
     ctx.restore()
     # escurece as bordas
