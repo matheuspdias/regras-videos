@@ -1355,6 +1355,164 @@ def bg_mm_quarto_bento(ctx, t):
     amber(ctx, 1080, 720, 170, 0.35, t)
 
 
+# ---------------------------------------------------------------- casa da vó no interior (noite 07)
+def chinelo(ctx, x, y, s=1.0, virado=False):
+    """par de chinelos de dedo no chão (y = chão)"""
+    for k, dx in enumerate((-34, 34)):
+        ctx.save(); ctx.translate(x + dx * s, y - 8 * s); ctx.rotate(0.12 * (k * 2 - 1)); ctx.scale(s, s * 0.42)
+        rrect(ctx, -26, -70, 52, 140, 26)
+        setc(ctx, '#3A3A40' if virado else '#2C2C32'); ctx.fill_preserve()
+        ctx.set_source_rgba(*LINE); ctx.set_line_width(4 / s); ctx.stroke()
+        if not virado:
+            ctx.set_source_rgba(0.75, 0.75, 0.8, 1); ctx.set_line_width(7 / s)
+            ctx.move_to(0, -40); ctx.line_to(-20, 10); ctx.move_to(0, -40); ctx.line_to(20, 10); ctx.stroke()
+        ctx.restore()
+
+
+def maquina_costura(ctx, x, y):
+    """máquina de costura de pedal (y = chão)"""
+    lr(ctx, x, y - 300, 300, 26, fill=DARK3, r=4)                     # tampo
+    ctx.set_source_rgba(*LINE); ctx.set_line_width(5)
+    for xx in (x + 30, x + 270):                                       # pés de ferro em X
+        ctx.move_to(xx - 20, y - 274); ctx.line_to(xx + 20, y); ctx.move_to(xx + 20, y - 274); ctx.line_to(xx - 20, y)
+    ctx.stroke()
+    ctx.arc(x + 150, y - 120, 60, 0, TAU); ctx.stroke()                # volante
+    lr(ctx, x + 90, y - 34, 120, 20, fill=DARK3, r=4)                   # pedal
+    # a máquina em cima
+    ctx.move_to(x + 60, y - 300); ctx.line_to(x + 60, y - 400); ctx.curve_to(x + 70, y - 430, x + 220, y - 430, x + 230, y - 400)
+    ctx.line_to(x + 230, y - 350); ctx.line_to(x + 200, y - 350); ctx.line_to(x + 200, y - 300); ctx.close_path()
+    setc(ctx, '#1E1E22'); ctx.fill_preserve(); ctx.set_source_rgba(*LINE); ctx.set_line_width(4); ctx.stroke()
+    ctx.arc(x + 90, y - 380, 14, 0, TAU); ctx.stroke()
+
+
+def fuxico(ctx, x, y, w, h):
+    """colcha de fuxico dobrada: florzinhas redondas de retalho"""
+    lr(ctx, x, y, w, h, fill='#2A2724', r=10)
+    ctx.save(); ctx.rectangle(x, y, w, h); ctx.clip()
+    for i in range(int(w / 34) + 1):
+        for j in range(int(h / 34) + 1):
+            ctx.arc(x + 17 + i * 34, y + 17 + j * 34, 13, 0, TAU)
+            ctx.set_source_rgba(0.6, 0.6, 0.64, 0.30 + 0.12 * ((i + j) % 2)); ctx.set_line_width(3); ctx.stroke()
+    ctx.restore()
+
+
+def cama_ferro(ctx, x, y, w):
+    """cama de ferro alta, com grade na cabeceira e nos pés"""
+    ctx.set_source_rgba(*LINE); ctx.set_line_width(6)
+    for xx, top in ((x, y - 190), (x + w, y - 120)):
+        ctx.move_to(xx, y + 120); ctx.line_to(xx, top); ctx.stroke()
+    ctx.move_to(x, y - 190); ctx.curve_to(x + 30, y - 220, x + 60, y - 220, x + 90, y - 190); ctx.line_to(x + 90, y - 30); ctx.stroke()
+    for k in range(1, 4):
+        ctx.move_to(x + k * 22, y - 195); ctx.line_to(x + k * 22, y - 30); ctx.stroke()
+    ctx.move_to(x + w, y - 120); ctx.curve_to(x + w - 30, y - 150, x + w - 60, y - 150, x + w - 90, y - 120); ctx.line_to(x + w - 90, y - 30); ctx.stroke()
+    for k in range(1, 4):
+        ctx.move_to(x + w - k * 22, y - 125); ctx.line_to(x + w - k * 22, y - 30); ctx.stroke()
+    lr(ctx, x + 6, y - 30, w - 12, 80, r=10)                           # colchão
+    lr(ctx, x + 100, y - 66, 170, 46, fill='#2A2A2E', r=20)            # travesseiro
+    ctx.move_to(x + 290, y - 36); ctx.curve_to(x + 380, y - 70, x + 470, y - 20, x + w - 100, y - 44)
+    ctx.line_to(x + w - 100, y + 40); ctx.line_to(x + 290, y + 40); ctx.close_path()
+    setc(ctx, '#26262A'); ctx.fill_preserve(); ctx.set_source_rgba(*LINE); ctx.set_line_width(4); ctx.stroke()
+    fuxico(ctx, x + w - 210, y - 60, 110, 40)
+    ctx.set_source_rgba(*LINE); ctx.set_line_width(6)
+    for xx in (x + 20, x + w - 20):                                   # pés compridos (dá pra ver debaixo da cama)
+        ctx.move_to(xx, y + 50); ctx.line_to(xx, y + 130); ctx.stroke()
+
+
+def bg_mm_quarto_costura(ctx, t, manha=False, chinelo_=True):
+    """seu quarto na casa da vó: cama de ferro alta, máquina de costura de pedal, chinelo no chão, porta e janela padrão"""
+    mm_room(ctx, wall_c='#151413', fy=800)
+    wood_window(ctx, 220, 160, 300, 280)
+    door(ctx, 760, 260, 230, 540)
+    maquina_costura(ctx, 1010, 800)
+    cama_ferro(ctx, 1340, 790, 540)
+    if chinelo_:
+        chinelo(ctx, 1260, 905, 0.9)
+    if manha:
+        ctx.rectangle(0, 0, W, H); ctx.set_source_rgba(0.55, 0.62, 0.75, 0.13); ctx.fill()
+
+
+def filtro_barro(ctx, x, y):
+    lr(ctx, x - 60, y, 120, 20, fill=DARK3, r=4)
+    for yy, ww in ((y - 150, 110), (y - 290, 100)):
+        ctx.save(); ctx.translate(x, yy + 70); ctx.scale(1, 1.25); ctx.arc(0, 0, ww / 2 + 6, 0, TAU); ctx.restore()
+        setc(ctx, '#2A2420'); ctx.fill_preserve(); ctx.set_source_rgba(*LINE); ctx.set_line_width(4); ctx.stroke()
+    lr(ctx, x - 6, y - 70, 30, 12, fill=DARK3)
+
+
+def fogao_lenha(ctx, x, y):
+    lr(ctx, x, y - 260, 420, 260, fill='#1E1B18', r=6)
+    lr(ctx, x - 10, y - 280, 440, 24, fill=DARK3, r=4)
+    for k in range(2):
+        ctx.arc(x + 110 + k * 180, y - 268, 40, math.pi, 0); ctx.set_source_rgba(*LINE); ctx.set_line_width(4); ctx.stroke()
+    lr(ctx, x + 40, y - 190, 120, 90, fill='#0B0A09', r=6)             # boca do fogo, apagada
+    lr(ctx, x + 340, y - 900, 60, 640, fill='#1A1816')                 # chaminé
+
+
+def bg_mm_cozinha_vo(ctx, t, aberta=False, manha=False):
+    """cozinha da vó: fogão a lenha (esq.), filtro de barro, porta dos fundos de madeira (dir.) e a vassoura atrás dela"""
+    mm_room(ctx, wall_c='#151413', fy=820)
+    fogao_lenha(ctx, 120, 820)
+    filtro_barro(ctx, 760, 620)
+    lr(ctx, 640, 620, 240, 200, fill=DARK3)                           # mesinha do filtro
+    wood_window(ctx, 860, 200, 220, 200, open_=False)
+    # porta dos fundos (rect 1300,260,300,560)
+    if aberta:
+        lr(ctx, 1300, 260, 300, 560, fill='#07080A')
+        g = cairo.LinearGradient(1300, 260, 1300, 820)
+        g.add_color_stop_rgba(0, 0.5, 0.55, 0.7, 0.10); g.add_color_stop_rgba(1, 0.5, 0.55, 0.7, 0.02)
+        ctx.rectangle(1300, 260, 300, 560); ctx.set_source(g); ctx.fill()
+        ctx.move_to(1600, 260); ctx.line_to(1700, 230); ctx.line_to(1700, 850); ctx.line_to(1600, 820); ctx.close_path()
+        setc(ctx, '#1E1A17'); ctx.fill_preserve(); ctx.set_source_rgba(*LINE); ctx.set_line_width(4); ctx.stroke()
+    else:
+        lr(ctx, 1300, 260, 300, 560, fill='#1E1A17')
+        ctx.set_source_rgba(*LINE); ctx.set_line_width(3)
+        ctx.move_to(1300, 540); ctx.line_to(1600, 540); ctx.stroke()      # porta de duas folhas (cima/baixo)
+        lr(ctx, 1560, 520, 50, 14, fill=DARK3)                            # tramela
+        if not manha:                                                     # a vassoura da vó encostada
+            ctx.set_source_rgba(0.6, 0.55, 0.48, 1); ctx.set_line_width(9)
+            ctx.move_to(1690, 380); ctx.line_to(1660, 760); ctx.stroke()
+            ctx.move_to(1640, 750); ctx.line_to(1680, 750); ctx.line_to(1700, 820); ctx.line_to(1610, 820); ctx.close_path()
+            setc(ctx, '#7A6E5C'); ctx.fill_preserve(); ctx.set_source_rgba(*LINE); ctx.set_line_width(3); ctx.stroke()
+    if manha:
+        ctx.rectangle(0, 0, W, H); ctx.set_source_rgba(0.55, 0.62, 0.75, 0.13); ctx.fill()
+
+
+def bg_mm_terreiro(ctx, t, manha=False, chinelo_=False):
+    """terreiro de terra batida atrás da casa: varal, pé de manga, a parede da casa com a porta da cozinha (esq.)"""
+    ctx.rectangle(0, 0, W, H); setc(ctx, '#101217' if not manha else '#2A3140'); ctx.fill()
+    if not manha:
+        ctx.arc(1500, 170, 36, 0, TAU); ctx.set_source_rgba(0.85, 0.86, 0.9, 0.9); ctx.fill()
+    ctx.rectangle(0, 860, W, H - 860); setc(ctx, '#1E1B18' if not manha else '#3A352E'); ctx.fill()
+    ctx.set_source_rgba(*LINE); ctx.set_line_width(5); ctx.move_to(0, 860); ctx.line_to(W, 860); ctx.stroke()
+    # parede da casa e porta da cozinha
+    lr(ctx, -10, 140, 560, 720, fill='#18171A')
+    lr(ctx, 160, 320, 260, 540, fill='#1E1A17')
+    ctx.set_source_rgba(*LINE); ctx.set_line_width(3); ctx.move_to(160, 590); ctx.line_to(420, 590); ctx.stroke()
+    lr(ctx, 130, 860, 320, 24, fill=DARK3)                              # degrau
+    # pé de manga
+    ctx.set_source_rgba(*LINE); ctx.set_line_width(26); ctx.move_to(1540, 860); ctx.curve_to(1530, 700, 1560, 600, 1520, 480); ctx.stroke()
+    setc(ctx, '#0E100E' if not manha else '#1E2620')
+    for cx_, cy_, r_ in ((1520, 380, 220), (1380, 430, 160), (1680, 420, 170), (1530, 260, 150)):
+        ctx.arc(cx_, cy_, r_, 0, TAU); ctx.fill()
+    for cx_, cy_, r_ in ((1520, 380, 220), (1380, 430, 160), (1680, 420, 170), (1530, 260, 150)):
+        ctx.arc(cx_, cy_, r_, 0, TAU); ctx.set_source_rgba(0.6, 0.6, 0.64, 0.25); ctx.set_line_width(3); ctx.stroke()
+    # varal
+    ctx.set_source_rgba(*LINE); ctx.set_line_width(5)
+    ctx.move_to(700, 860); ctx.line_to(700, 420); ctx.move_to(1250, 860); ctx.line_to(1250, 420); ctx.stroke()
+    ctx.set_line_width(2); ctx.move_to(700, 440); ctx.curve_to(900, 480, 1050, 480, 1250, 440); ctx.stroke()
+    for x0, w0 in ((760, 110), (1000, 90)):
+        lr(ctx, x0, 466, w0, 120, fill='#26262A' if not manha else '#4A4A52', lw=3)
+    # pé de arruda no vaso
+    lr(ctx, 1240, 900, 70, 60, fill='#2A2420')
+    ctx.set_source_rgba(0.55, 0.62, 0.55, 1); ctx.set_line_width(4)
+    for a in (-0.4, 0, 0.35):
+        ctx.move_to(1275, 900); ctx.line_to(1275 + math.sin(a) * 70, 900 - math.cos(a) * 70); ctx.stroke()
+    if chinelo_:
+        chinelo(ctx, 1120, 960, 0.9, virado=True)
+    if manha:
+        ctx.rectangle(0, 0, W, H); ctx.set_source_rgba(0.55, 0.62, 0.75, 0.08); ctx.fill()
+
+
 BG = {
     'quarto': (bg_mm_quarto, None),
     'corredor': (bg_mm_corredor, None),
@@ -1389,6 +1547,14 @@ BG = {
     'varanda_jaqueta': (lambda c, t: bg_mm_varanda(c, t, jaqueta=False), None),
     'porta_manha': (bg_mm_porta_manha, None),
     'porta_fita': (lambda c, t: (bg_mm_porta(c, t), fita_olho(c, t)), None),
+    'quarto_costura': (bg_mm_quarto_costura, None),
+    'quarto_costura_vazio': (lambda c, t: bg_mm_quarto_costura(c, t, chinelo_=False), None),
+    'cozinha_vo': (bg_mm_cozinha_vo, None),
+    'cozinha_vo_aberta': (lambda c, t: bg_mm_cozinha_vo(c, t, aberta=True), None),
+    'cozinha_vo_manha': (lambda c, t: bg_mm_cozinha_vo(c, t, manha=True), None),
+    'terreiro': (bg_mm_terreiro, None),
+    'terreiro_manha': (lambda c, t: bg_mm_terreiro(c, t, manha=True), None),
+    'terreiro_chinelo': (lambda c, t: bg_mm_terreiro(c, t, manha=True, chinelo_=True), None),
 }
 
 SLOTS = {
@@ -1425,4 +1591,12 @@ SLOTS = {
     'varanda_jaqueta': dict(a=(520, 1010, 1.0), porta=(960, 940, 0.95), b=(1500, 1010, 1.0)),
     'porta_manha': dict(a=(500, 1010, 1.0), porta=(960, 1000, 1.0), b=(1500, 1010, 1.0)),
     'porta_fita': dict(a=(500, 1010, 1.0), porta=(960, 1000, 1.0), b=(1500, 1010, 1.0)),
+    'quarto_costura': dict(cama=(1580, 810, 0.95), porta=(875, 960, 0.95), centro=(560, 1000, 1.0)),
+    'quarto_costura_vazio': dict(cama=(1580, 810, 0.95), porta=(875, 960, 0.95), centro=(560, 1000, 1.0)),
+    'cozinha_vo': dict(a=(520, 1010, 0.95), b=(1100, 1010, 0.95), porta=(1450, 990, 0.95)),
+    'cozinha_vo_aberta': dict(a=(520, 1010, 0.95), b=(1100, 1010, 0.95), porta=(1450, 990, 0.95)),
+    'cozinha_vo_manha': dict(a=(520, 1010, 0.95), b=(1100, 1010, 0.95), porta=(1450, 990, 0.95)),
+    'terreiro': dict(a=(560, 1010, 0.95), b=(960, 1010, 0.95), c=(1400, 1010, 0.95)),
+    'terreiro_manha': dict(a=(560, 1010, 0.95), b=(960, 1010, 0.95), c=(1400, 1010, 0.95)),
+    'terreiro_chinelo': dict(a=(560, 1010, 0.95), b=(960, 1010, 0.95), c=(1400, 1010, 0.95)),
 }

@@ -915,6 +915,8 @@ def _eyes_glow(ctx, info, a=1.0, olhos='dois'):
         eyes = [(hx + sd * r * 0.36, hy - r * 0.22, 0.12) for sd in (-1, 1)] + [(hx + sd * r * 0.22, hy + r * 0.05, 0.09) for sd in (-1, 1)]
     elif olhos == 'um':
         eyes = [(hx, hy - r * 0.12, 0.26)]
+    elif olhos == 'vazios_p':      # noite 07: buracos pretos, só a pupila acesa
+        eyes = [(hx + sd * r * 0.33, hy - r * 0.05, 0.085) for sd in (-1, 1)]
     else:
         eyes = [(hx + sd * r * 0.33, hy - r * 0.08, 0.15) for sd in (-1, 1)]
     tl = info.get('tilt', 0)
@@ -943,7 +945,7 @@ def _creature(ctx, quem, x, y, s, pose, escuro=0.0, alpha=1.0):
     ctx.pop_group_to_source()
     ctx.paint_with_alpha(alpha)
     if escuro > 0.2 and CAST[quem].get('olhos') != 'fechados':   # olhos fechados não acendem no escuro
-        _eyes_glow(ctx, info, alpha, CAST[quem].get('olhos', 'dois'))
+        _eyes_glow(ctx, info, alpha, 'vazios_p' if CAST[quem].get('pupila') else CAST[quem].get('olhos', 'dois'))
     return info
 
 
@@ -965,7 +967,7 @@ def draw_monstro(ctx, item, u, dur, t):
     a = ease(u / 1.2) if item.get('surge') else 1.0
     boca = item.get('boca', 'grin')
     sway = 0.035 * math.sin(t * 0.9)
-    pose = Pose(mouth=boca, facing=item.get('facing', -1), arms=item.get('bracos', 'down'))
+    pose = Pose(mouth=boca, facing=item.get('facing', -1), arms=item.get('bracos', 'down'), varre=math.sin(t * 2.6))
     ctx.save()
     top = None
     if modo == 'porta':

@@ -72,6 +72,9 @@ CAST = {
     'coisa_ep05_olhos': dict(skin='#E4E4E4', name='A coisa (irmão, noite 05, olhos abertos)', shirt='#D4D4D8', pants='#B8B8BE', shoes='#3A3A3A', kind='tee', hair='touca', hair_c='#E5262B', extra=None, face='creature', h=1.5, olhos='dois', inclina=0.5, bracos=2.3, pescoco=0.1),
     # noite 06: imita o pai de uniforme da fábrica, alto demais (curva pra caber na porta), quatro olhos, braços compridos; capacete vermelho (o do pai é branco)
     'coisa_ep06':   dict(tie='#8E8E94', skin='#E4E4E4', name='A coisa (pai, noite 06)', shirt='#B0B0B6', pants='#46464C', shoes='#2A2A2A', kind='shirt', hair='capacete', hair_c='#E5262B', extra=None, face='creature', h=1.9, olhos='quatro', bracos=2.05, inclina=0.2, pescoco=0.06),
+    # noite 07: imita a vó (coque grisalho, vestido), alta e magra demais, pescoço comprido, olhos vazios, braços muito
+    # compridos e boca costurada com linha vermelha (o único vermelho); sempre com a vassoura de palha na mão
+    'coisa_ep07':   dict(skin='#E4E4E4', name='A coisa (vó, noite 07)', shirt='#C8C8CC', pants='#C8C8CC', shoes='#3A3A3A', kind='dress', hair='bun', hair_c='#BDBDBD', extra=None, face='creature', h=1.75, olhos='vazios', boca='costurada', bracos=2.4, pescoco=0.16, inclina=0.16, vassoura=True, pupila=2.4),
     'coisa_sombra': dict(skin='#2E2E33', name='A coisa (sombra)', shirt='#1E1E22', pants='#1E1E22', shoes='#111113', kind='tee', hair='none', hair_c='#1E1E22', extra='olhos_red', face='creature', h=1.85),
     'irma':  dict(skin='#ECECEC', name='Irmã', shirt='#D8D8DA', pants='#7E7E84', shoes='#F2F2F2', kind='tee', hair='long', hair_c='#3A3A3E', extra=None, face='min', h=0.95),
     'vizinho': dict(skin='#ECECEC', name='Vizinho', shirt='#BDBDBD', pants='#6A6A6A', shoes='#2A2A2A', kind='tee', hair='cap', hair_c='#5A5A5A', extra=None, face='min', h=1.02),
@@ -96,6 +99,7 @@ class Pose:
         self.veil = kw.get('veil', False)
         self.mustache = kw.get('mustache', False)
         self.sit = kw.get('sit', False)
+        self.varre = kw.get('varre', 0.0)        # vassoura: balanço da palha (-1..1)
         self.lie = kw.get('lie', False)          # deitado (cabeça para a esquerda, pés no ponto do slot)
 
 
@@ -108,6 +112,10 @@ def draw_char(ctx, cid, x, y, s=1.0, pose=None):
     ctx.scale(s, s)
     if p.lie:
         ctx.rotate(-math.pi / 2)
+    if c.get('vassoura') and p.extra_prop is None and not p.lie:
+        p.extra_prop = 'vassoura'
+        if p.arms == 'down':
+            p.arms = 'hold'
     f = p.facing
     by = -p.bob * 6
     H = 520 * hs  # altura total
@@ -291,7 +299,10 @@ def draw_char(ctx, cid, x, y, s=1.0, pose=None):
     # props
     if p.extra_prop and (1 in hands or -1 in hands):
         hx, hy = hands.get(f, hands.get(1))
-        draw_prop(ctx, p.extra_prop, hx, hy, f)
+        if p.extra_prop == 'vassoura':
+            draw_vassoura(ctx, hx, hy, f, p.varre)
+        else:
+            draw_prop(ctx, p.extra_prop, hx, hy, f)
     ctx.restore()
     if p.lie:
         return dict(head=(x + head_cy * s, y), head_r=head_r * s, top=(x + head_cy * s, y - head_r * s))
@@ -776,7 +787,7 @@ def _face_custom(ctx, c, p, hx, hy, r):
                 ex, ey = hx + side * r * 0.33, hy - r * 0.08
                 ctx.save(); ctx.translate(ex, ey); ctx.scale(1, 1.35); ctx.arc(0, 0, r * 0.19, 0, TAU); ctx.restore()
                 ctx.set_source_rgba(0.02, 0.02, 0.025, 1); ctx.fill()
-                glow_eye(ex, ey + r * 0.03, r * 0.035)
+                glow_eye(ex, ey + r * 0.03, r * 0.035 * c.get('pupila', 1))
         elif olhos == 'fechados':
             ctx.set_source_rgba(*FACE); ctx.set_line_width(7)
             for side in (-1, 1):
@@ -822,6 +833,28 @@ def _face_custom(ctx, c, p, hx, hy, r):
             for i in range(-6, 7):
                 x = hx + i * w / 7
                 ctx.move_to(x, my + r * 0.02); ctx.line_to(x, my + r * 0.16 - abs(i) * r * 0.012); ctx.stroke()
+
+
+def draw_vassoura(ctx, hx, hy, f, varre=0.0):
+    """vassoura de palha: cabo saindo da mão até o chão (y=0 local), palha em leque varrendo pro lado"""
+    top = (hx - f * 40, hy - 150)
+    bx = hx + f * (150 + 60 * varre)
+    by_ = -46
+    ctx.set_line_cap(cairo.LINE_CAP_ROUND)
+    ctx.set_source_rgba(*OUT); ctx.set_line_width(24)
+    ctx.move_to(*top); ctx.line_to(bx, by_); ctx.stroke()
+    setc(ctx, '#8A7A66'); ctx.set_line_width(14)
+    ctx.move_to(*top); ctx.line_to(bx, by_); ctx.stroke()
+    # amarração e palha
+    ang = math.atan2(by_ - top[1], bx - top[0])
+    ctx.save(); ctx.translate(bx, by_); ctx.rotate(ang - math.pi / 2)
+    ctx.move_to(-24, -6); ctx.line_to(24, -6); ctx.line_to(90, 84); ctx.line_to(-90, 84); ctx.close_path()
+    fill_stroke(ctx, '#B9A98A', 5)
+    ctx.set_source_rgba(0.35, 0.3, 0.22, 1); ctx.set_line_width(3)
+    for k in range(-6, 7):
+        ctx.move_to(k * 3, -2); ctx.line_to(k * 14, 82); ctx.stroke()
+    rrect(ctx, -24, -14, 48, 16, 5); fill_stroke(ctx, '#6A5E4E', 4)
+    ctx.restore()
 
 
 def draw_prop(ctx, prop, x, y, f):
