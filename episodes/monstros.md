@@ -32,3 +32,7 @@ episódio ao terminar.
 | 13 pai vendo TV sem som | `coisa_pai` iluminado pela TV (chiado), `boca='aberta'` rindo sem som |
 | 14 rádio da vó | vulto `coisa_sombra` com `olhos='um'` atrás do rádio, voz vindo do rádio |
 | 15 pai lavando o carro | `coisa_pai` com `bracos=2.3` e balde, `olhos='fechados'` |
+| 16 cadeira de balanço do avô | imita o avô de suspensório e chapéu de palha, sentado e magro demais (`h=1.8` quando levanta), `pescoco=0.25`, `olhos='fechados'` balançando; detalhe vermelho: lenço no pescoço |
+| 17 mãe no espelho | duas mães: a do reflexo com `inclina=0.4` e `boca='vertical'`, escova na mão (`segura='escova'`); a de verdade de costas; detalhe vermelho: a escova |
+| 18 pai chama pra pescar | `coisa_pai` de capa de chuva amarela e lanterna, `bracos=2.4`, `olhos='um'`, molhado; aparece na margem do rio na neblina; detalhe vermelho: a boia de pesca |
+

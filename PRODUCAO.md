@@ -38,6 +38,11 @@ coisa que imita alguém (ou algo) da sua casa. Quase todo o texto é do narrador
    com detalhes sensoriais e cotidianos brasileiros (a hora, o barulho que *não* acontece, onde cada um dorme).
 3. **A situação da noite:** quem está em casa, onde estão os adultos (plantão, viagem, turno), o horário na tela.
    Primeiro contato com a coisa (a voz, a palma, o áudio…).
+   **Teste desde 25/11 (E1, a partir do ep09; veja analytics/experimentos.md):** o primeiro contato com a coisa (a voz,
+   a palma, o cheiro) acontece até **0:50**. Depois de "Eu tô falando disso.", use no máximo 3 frases de situação, só
+   com detalhes que a regra vai usar (quem tem a chave, onde cada um dorme, o horário). Profissão, férias e "de dia é
+   tudo bom" entram depois do primeiro contato, se entrarem. No ep01 e no ep02, a ambientação genérica antes do
+   contato perdeu 26–29 pontos de retenção.
 4. **O que é a coisa e como ela age.** O que ela sabe (a casa, a voz) e o que ela *não* sabe (onde você está, quem
    você é). Uma lógica simples e consistente que as regras vão respeitar.
 5. **"E pensa bem nisso…"** — gancho que liga à vida real do espectador (uma experiência comum e inofensiva).
