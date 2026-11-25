@@ -1513,6 +1513,157 @@ def bg_mm_terreiro(ctx, t, manha=False, chinelo_=False):
         ctx.rectangle(0, 0, W, H); ctx.set_source_rgba(0.55, 0.62, 0.75, 0.08); ctx.fill()
 
 
+# ---------------------------------------------------------------- noite 08: a cozinha do café
+def xicara(ctx, x, y, s=1.0, t=0, quente=True, vazia=False):
+    """xícara branca no pires (y = apoio); quente solta um fio de vapor"""
+    ctx.save(); ctx.translate(x, y); ctx.scale(s, s)
+    ctx.save(); ctx.scale(1, 0.28); ctx.arc(0, -8, 58, 0, TAU); ctx.restore()
+    setc(ctx, '#BDBDC2'); ctx.fill_preserve(); ctx.set_source_rgba(*OUT); ctx.set_line_width(4); ctx.stroke()
+    ctx.move_to(-36, -60); ctx.line_to(36, -60); ctx.curve_to(34, -18, 24, -10, 0, -10); ctx.curve_to(-24, -10, -34, -18, -36, -60); ctx.close_path()
+    setc(ctx, '#E2E2E4'); ctx.fill_preserve(); ctx.set_source_rgba(*OUT); ctx.set_line_width(4); ctx.stroke()
+    ctx.arc(42, -40, 13, -1.5, 1.5); ctx.set_source_rgba(*OUT); ctx.set_line_width(5); ctx.stroke()
+    ctx.save(); ctx.scale(1, 0.22); ctx.arc(0, -60 / 0.22, 34, 0, TAU); ctx.restore()
+    setc(ctx, '#1A0F08' if not vazia else '#D0D0D4'); ctx.fill()
+    ctx.restore()
+    if quente:
+        vapor(ctx, x - 40 * s, y - 70 * s, 80 * s, t, a=0.16, n=2)
+
+
+def chaleira(ctx, x, y):
+    """chaleira de alumínio em cima da boca do fogão (y = apoio)"""
+    ctx.move_to(x - 70, y); ctx.curve_to(x - 80, y - 90, x + 80, y - 90, x + 70, y); ctx.close_path()
+    setc(ctx, '#3A3A40'); ctx.fill_preserve(); ctx.set_source_rgba(*LINE); ctx.set_line_width(4); ctx.stroke()
+    ctx.arc(x, y - 72, 44, math.pi * 1.1, math.pi * 1.9); ctx.set_line_width(6); ctx.stroke()
+    ctx.move_to(x + 60, y - 30); ctx.line_to(x + 120, y - 70); ctx.set_line_width(10); ctx.stroke()
+
+
+def coador(ctx, x, y):
+    """suporte de madeira com o coador de pano, em cima do balcão (y = apoio)"""
+    ctx.set_source_rgba(*LINE); ctx.set_line_width(7)
+    ctx.move_to(x - 70, y); ctx.line_to(x - 70, y - 200); ctx.move_to(x + 70, y); ctx.line_to(x + 70, y - 200)
+    ctx.move_to(x - 90, y - 200); ctx.line_to(x + 90, y - 200); ctx.stroke()
+    ctx.move_to(x - 50, y - 200); ctx.curve_to(x - 40, y - 110, x + 40, y - 110, x + 50, y - 200); ctx.close_path()
+    setc(ctx, '#5A4A3A'); ctx.fill_preserve(); ctx.set_source_rgba(*LINE); ctx.set_line_width(3); ctx.stroke()
+    lr(ctx, x - 44, y - 90, 88, 90, fill='#2E2E33', r=10)               # bule embaixo
+
+
+def bg_mm_cozinha_cafe(ctx, t, luz=True, quente=True, xicaras=2, manha=False, escorredor=False):
+    """cozinha da casa (noite 08): balcão com pia e escorredor (esq.), lâmpada pendurada, mesa com toalha xadrez e as
+    xícaras, coador de pano e fogão de quatro bocas com a chaleira (dir.), porta dos fundos fechada"""
+    mm_room(ctx, wall_c='#151413' if not manha else '#2A2D33', floor_c=DARK3 if not manha else '#34363C', fy=820)
+    for k in range(0, 1920, 64):                                         # azulejo meia-parede
+        ctx.move_to(k, 560); ctx.line_to(k, 820)
+    for k in range(560, 820, 64):
+        ctx.move_to(0, k); ctx.line_to(1920, k)
+    ctx.set_source_rgba(0.6, 0.6, 0.64, 0.10); ctx.set_line_width(2); ctx.stroke()
+    lr(ctx, 80, 190, 560, 190)                                           # armário alto
+    ctx.set_source_rgba(*LINE); ctx.set_line_width(3); ctx.move_to(360, 190); ctx.line_to(360, 380); ctx.stroke()
+    moon_window(ctx, 700, 200, 240, 200) if not manha else lr(ctx, 700, 200, 240, 200, fill='#8A98AE')
+    lr(ctx, 80, 600, 680, 220)                                           # balcão com pia
+    for k in range(3):
+        lr(ctx, 100 + k * 220, 630, 200, 170, fill=DARK3)
+    lr(ctx, 70, 586, 700, 20, fill='#2E2E33')
+    ctx.set_source_rgba(*LINE); ctx.set_line_width(6)                    # torneira
+    ctx.move_to(300, 586); ctx.line_to(300, 520); ctx.line_to(350, 520); ctx.line_to(350, 545); ctx.stroke()
+    lr(ctx, 480, 520, 200, 66, fill='#1E1E22', r=6)                     # escorredor
+    for k in range(4):
+        ctx.move_to(495 + k * 50, 586); ctx.line_to(495 + k * 50, 520)
+    ctx.set_source_rgba(*LINE); ctx.set_line_width(2); ctx.stroke()
+    if escorredor:                                                       # a xícara a mais, de boca pra baixo, ainda morna
+        ctx.move_to(540, 580); ctx.line_to(620, 580); ctx.curve_to(616, 540, 600, 528, 580, 528); ctx.curve_to(560, 528, 544, 540, 540, 580); ctx.close_path()
+        setc(ctx, '#E2E2E4'); ctx.fill_preserve(); ctx.set_source_rgba(*OUT); ctx.set_line_width(4); ctx.stroke()
+        vapor(ctx, 540, 560, 80, t, a=0.14, n=2)
+    coador(ctx, 1290, 600)
+    lr(ctx, 1180, 600, 220, 220)                                         # balcãozinho do coador
+    lr(ctx, 1460, 560, 300, 260, fill='#1C1C1F')                         # fogão
+    lr(ctx, 1450, 540, 320, 24, fill='#2E2E33')
+    for k in range(4):
+        ctx.arc(1505 + k * 70, 690, 14, 0, TAU); ctx.set_source_rgba(*LINE); ctx.set_line_width(3); ctx.stroke()
+    lr(ctx, 1490, 600, 240, 60, fill='#0E0E10', r=6)                     # vidro do forno
+    chaleira(ctx, 1560, 540)
+    lr(ctx, 1800, 260, 120, 560, fill='#1E1A17')                         # porta dos fundos (borda)
+    # mesa com toalha xadrez
+    lr(ctx, 780, 690, 380, 24, fill='#2A2A2E')
+    ctx.move_to(770, 700); ctx.line_to(1170, 700); ctx.line_to(1190, 800); ctx.line_to(750, 800); ctx.close_path()
+    setc(ctx, '#2C2626'); ctx.fill_preserve(); ctx.set_source_rgba(*LINE); ctx.set_line_width(4); ctx.stroke()
+    ctx.save(); ctx.move_to(770, 700); ctx.line_to(1170, 700); ctx.line_to(1190, 800); ctx.line_to(750, 800); ctx.close_path(); ctx.clip()
+    for k in range(750, 1200, 40):
+        ctx.rectangle(k, 700, 20, 100)
+    ctx.set_source_rgba(0.6, 0.6, 0.64, 0.12); ctx.fill()
+    ctx.restore()
+    ctx.set_source_rgba(*LINE); ctx.set_line_width(8)
+    for xx in (790, 1150):
+        ctx.move_to(xx, 800); ctx.line_to(xx, 930); ctx.stroke()
+    lr(ctx, 1080, 560, 56, 130, fill='#3A3A40', r=12)                    # garrafa térmica
+    lr(ctx, 1090, 545, 36, 20, fill='#2E2E33', r=4)
+    pos = [(860, 702), (980, 702), (920, 702), (1040, 702)][:xicaras]
+    for k, (xx, yy) in enumerate(sorted(pos)):
+        xicara(ctx, xx, yy, 0.85, t + k * 0.7, quente=quente)
+    # lâmpada pendurada
+    ctx.set_source_rgba(*LINE); ctx.set_line_width(3); ctx.move_to(960, 0); ctx.line_to(960, 150); ctx.stroke()
+    ctx.move_to(920, 150); ctx.line_to(1000, 150); ctx.line_to(1030, 190); ctx.line_to(890, 190); ctx.close_path()
+    setc(ctx, '#2E2E33'); ctx.fill_preserve(); ctx.set_source_rgba(*LINE); ctx.stroke()
+    if luz and not manha:
+        flick = 1.0 if quente else 0.55 + 0.45 * (0.5 + 0.5 * math.sin(t * 19) * math.sin(t * 5.1))
+        ctx.arc(960, 198, 16, 0, TAU); ctx.set_source_rgba(1, 0.85, 0.5, flick); ctx.fill()
+        g = cairo.RadialGradient(960, 260, 20, 960, 420, 900)
+        g.add_color_stop_rgba(0, 1, 0.72, 0.32, 0.30 * flick); g.add_color_stop_rgba(1, 1, 0.72, 0.32, 0)
+        ctx.rectangle(0, 0, W, H); ctx.set_source(g); ctx.fill()
+    if manha:
+        ctx.rectangle(0, 0, W, H); ctx.set_source_rgba(0.55, 0.62, 0.75, 0.10); ctx.fill()
+
+
+def bg_mm_corredor_cafe(ctx, t, xicara_=False, fria=False, mancha=False):
+    """corredor de casa à noite: a sua porta (esq.), o quarto da mãe (meio) e, no fundo à direita, a porta da cozinha
+    aberta com a luz acesa e o vapor saindo (rect da cozinha 1400,280,240,540)"""
+    mm_room(ctx, fy=820)
+    door(ctx, 240, 280, 240, 540, light=False)
+    door(ctx, 820, 280, 240, 540)
+    k = 1.0 if not fria else 0.55 + 0.45 * (0.5 + 0.5 * math.sin(t * 19) * math.sin(t * 5.1))
+    g = cairo.LinearGradient(1400, 280, 1400, 820)
+    g.add_color_stop_rgba(0, 1, 0.72, 0.32, 0.55 * k); g.add_color_stop_rgba(1, 1, 0.65, 0.3, 0.35 * k)
+    ctx.rectangle(1400, 280, 240, 540); ctx.set_source(g); ctx.fill()
+    ctx.set_source_rgba(0.08, 0.07, 0.07, 1)                             # mesa lá dentro, em contraluz
+    ctx.rectangle(1440, 650, 200, 20); ctx.fill(); ctx.rectangle(1460, 670, 12, 150); ctx.fill()
+    ctx.rectangle(1400, 280, 240, 540); ctx.set_source_rgba(*LINE); ctx.set_line_width(5); ctx.stroke()
+    ctx.move_to(1400, 820); ctx.line_to(1640, 820); ctx.line_to(1820, 1080); ctx.line_to(1180, 1080); ctx.close_path()
+    g2 = cairo.LinearGradient(0, 820, 0, 1080)
+    g2.add_color_stop_rgba(0, 1, 0.72, 0.32, 0.22 * k); g2.add_color_stop_rgba(1, 1, 0.72, 0.32, 0)
+    ctx.set_source(g2); ctx.fill()
+    if not fria:
+        vapor(ctx, 1400, 420, 240, t, a=0.10, n=4)
+    for x in (630, 1210):
+        ctx.arc(x, 380, 18, 0, TAU); ctx.set_source_rgba(0.5, 0.5, 0.52, 0.6); ctx.fill()
+    if xicara_:
+        xicara(ctx, 380, 900, 0.9, t, quente=not fria)
+    if mancha:                                                           # a rodinha de café seco no piso
+        ctx.save(); ctx.translate(380, 895); ctx.scale(1, 0.3); ctx.arc(0, 0, 50, 0, TAU); ctx.restore()
+        ctx.set_source_rgba(0.35, 0.22, 0.12, 0.8); ctx.set_line_width(6); ctx.stroke()
+
+
+def bg_mm_quarto_cafe(ctx, t, toalha=False, manha=False):
+    """o seu quarto com a luz da cozinha passando por baixo da porta e o vapor entrando pela fresta; toalha=True: a
+    fresta tapada com a toalha enrolada"""
+    mm_room(ctx)
+    moon_window(ctx, 220, 160, 300, 280)
+    door(ctx, 760, 260, 230, 540, light=not toalha and not manha, t=t)
+    if not toalha and not manha:
+        vapor(ctx, 760, 830, 230, t, a=0.09, n=4)
+    if toalha:
+        lr(ctx, 740, 776, 270, 34, fill='#4A4A52', r=16)
+        ctx.set_source_rgba(0.6, 0.6, 0.64, 0.5); ctx.set_line_width(2)
+        for k in range(760, 1000, 26):
+            ctx.move_to(k, 780); ctx.line_to(k + 8, 806)
+        ctx.stroke()
+    bed(ctx, 1180, 780, 640, made=False)
+    lr(ctx, 1060, 640, 100, 160, r=6)
+    lr(ctx, 1085, 560, 50, 80, fill='#2C2C30')
+    ctx.move_to(1070, 560); ctx.line_to(1150, 560); ctx.line_to(1130, 520); ctx.line_to(1090, 520); ctx.close_path()
+    setc(ctx, '#3A3A40'); ctx.fill()
+    if manha:
+        ctx.rectangle(0, 0, W, H); ctx.set_source_rgba(0.55, 0.62, 0.75, 0.13); ctx.fill()
+
+
 BG = {
     'quarto': (bg_mm_quarto, None),
     'corredor': (bg_mm_corredor, None),
@@ -1555,6 +1706,18 @@ BG = {
     'terreiro': (bg_mm_terreiro, None),
     'terreiro_manha': (lambda c, t: bg_mm_terreiro(c, t, manha=True), None),
     'terreiro_chinelo': (lambda c, t: bg_mm_terreiro(c, t, manha=True, chinelo_=True), None),
+    'cozinha_cafe': (bg_mm_cozinha_cafe, None),
+    'cozinha_fria': (lambda c, t: bg_mm_cozinha_cafe(c, t, quente=False), None),
+    'cozinha_vazia': (lambda c, t: bg_mm_cozinha_cafe(c, t, luz=False, quente=False, xicaras=0), None),
+    'cozinha_manha': (lambda c, t: bg_mm_cozinha_cafe(c, t, xicaras=0, manha=True), None),
+    'cozinha_domingo': (lambda c, t: bg_mm_cozinha_cafe(c, t, xicaras=3, manha=True, escorredor=True), None),
+    'corredor_cafe': (bg_mm_corredor_cafe, None),
+    'corredor_xicara': (lambda c, t: bg_mm_corredor_cafe(c, t, xicara_=True), None),
+    'corredor_frio': (lambda c, t: bg_mm_corredor_cafe(c, t, fria=True), None),
+    'corredor_mancha': (lambda c, t: bg_mm_corredor_cafe(c, t, fria=True, mancha=True), None),
+    'quarto_cafe': (bg_mm_quarto_cafe, None),
+    'quarto_toalha': (lambda c, t: bg_mm_quarto_cafe(c, t, toalha=True), None),
+    'quarto_cafe_manha': (lambda c, t: bg_mm_quarto_cafe(c, t, toalha=True, manha=True), None),
 }
 
 SLOTS = {
@@ -1599,4 +1762,16 @@ SLOTS = {
     'terreiro': dict(a=(560, 1010, 0.95), b=(960, 1010, 0.95), c=(1400, 1010, 0.95)),
     'terreiro_manha': dict(a=(560, 1010, 0.95), b=(960, 1010, 0.95), c=(1400, 1010, 0.95)),
     'terreiro_chinelo': dict(a=(560, 1010, 0.95), b=(960, 1010, 0.95), c=(1400, 1010, 0.95)),
+    'cozinha_cafe': dict(a=(470, 1000, 0.95), b=(1400, 1010, 0.95), c=(960, 1010, 0.95), mesa=(660, 960, 0.85), mesa2=(1290, 960, 0.85)),
+    'cozinha_fria': dict(a=(470, 1000, 0.95), b=(1400, 1010, 0.95), c=(960, 1010, 0.95), mesa=(660, 960, 0.85), mesa2=(1290, 960, 0.85)),
+    'cozinha_vazia': dict(a=(470, 1000, 0.95), b=(1400, 1010, 0.95), c=(960, 1010, 0.95), mesa=(660, 960, 0.85), mesa2=(1290, 960, 0.85)),
+    'cozinha_manha': dict(a=(470, 1000, 0.95), b=(1400, 1010, 0.95), c=(960, 1010, 0.95), mesa=(660, 960, 0.85), mesa2=(1290, 960, 0.85)),
+    'cozinha_domingo': dict(a=(470, 1000, 0.95), b=(1400, 1010, 0.95), c=(960, 1010, 0.95), mesa=(660, 960, 0.85), mesa2=(1290, 960, 0.85)),
+    'corredor_cafe': dict(p1=(360, 1000, 0.9), p2=(940, 1000, 0.9), meio=(650, 1010, 0.95), dir=(1250, 1010, 0.95)),
+    'corredor_xicara': dict(p1=(360, 1000, 0.9), p2=(940, 1000, 0.9), meio=(650, 1010, 0.95), dir=(1250, 1010, 0.95)),
+    'corredor_mancha': dict(p1=(360, 1000, 0.9), p2=(940, 1000, 0.9), meio=(650, 1010, 0.95), dir=(1250, 1010, 0.95)),
+    'corredor_frio': dict(p1=(360, 1000, 0.9), p2=(940, 1000, 0.9), meio=(650, 1010, 0.95), dir=(1250, 1010, 0.95)),
+    'quarto_cafe': dict(cama=(1420, 830, 0.95), porta=(875, 960, 0.95), centro=(560, 1000, 1.0)),
+    'quarto_toalha': dict(cama=(1420, 830, 0.95), porta=(875, 960, 0.95), centro=(560, 1000, 1.0)),
+    'quarto_cafe_manha': dict(cama=(1420, 830, 0.95), porta=(875, 960, 0.95), centro=(560, 1000, 1.0)),
 }

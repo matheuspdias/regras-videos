@@ -75,6 +75,9 @@ CAST = {
     # noite 07: imita a vó (coque grisalho, vestido), alta e magra demais, pescoço comprido, olhos vazios, braços muito
     # compridos e boca costurada com linha vermelha (o único vermelho); sempre com a vassoura de palha na mão
     'coisa_ep07':   dict(skin='#E4E4E4', name='A coisa (vó, noite 07)', shirt='#C8C8CC', pants='#C8C8CC', shoes='#3A3A3A', kind='dress', hair='bun', hair_c='#BDBDBD', extra=None, face='creature', h=1.75, olhos='vazios', boca='costurada', bracos=2.4, pescoco=0.16, inclina=0.16, vassoura=True, pupila=2.4),
+    # noite 08: imita a mãe (padeira) de avental, alta demais, um olho só no meio da testa, boca aberta (buraco preto),
+    # cabeça torta, braços compridos; sempre com o bule de ágata na mão. O avental é o único vermelho
+    'coisa_ep08':   dict(skin='#E4E4E4', name='A coisa (mãe, noite 08)', shirt='#C6C6CA', pants='#C6C6CA', shoes='#3A3A3A', kind='dress', hair='ponytail', hair_c='#3E3E44', extra=None, face='creature', h=1.72, olhos='um', boca='aberta', bracos=2.2, inclina=0.3, pescoco=0.1, avental='#D3242A', segura='bule'),
     'coisa_sombra': dict(skin='#2E2E33', name='A coisa (sombra)', shirt='#1E1E22', pants='#1E1E22', shoes='#111113', kind='tee', hair='none', hair_c='#1E1E22', extra='olhos_red', face='creature', h=1.85),
     'irma':  dict(skin='#ECECEC', name='Irmã', shirt='#D8D8DA', pants='#7E7E84', shoes='#F2F2F2', kind='tee', hair='long', hair_c='#3A3A3E', extra=None, face='min', h=0.95),
     'vizinho': dict(skin='#ECECEC', name='Vizinho', shirt='#BDBDBD', pants='#6A6A6A', shoes='#2A2A2A', kind='tee', hair='cap', hair_c='#5A5A5A', extra=None, face='min', h=1.02),
@@ -114,6 +117,10 @@ def draw_char(ctx, cid, x, y, s=1.0, pose=None):
         ctx.rotate(-math.pi / 2)
     if c.get('vassoura') and p.extra_prop is None and not p.lie:
         p.extra_prop = 'vassoura'
+        if p.arms == 'down':
+            p.arms = 'hold'
+    if c.get('segura') and p.extra_prop is None and not p.lie:   # criatura com objeto fixo na mão (noite 08: bule)
+        p.extra_prop = c['segura']
         if p.arms == 'down':
             p.arms = 'hold'
     f = p.facing
@@ -270,6 +277,19 @@ def draw_char(ctx, cid, x, y, s=1.0, pose=None):
         ctx.line_to(12, sh_y + 40)
         ctx.close_path()
         fill_stroke(ctx, c.get('tie', '#C1121F'), 4)
+    if c.get('avental'):
+        # avental: peitilho + saia, com a alça no pescoço e o laço na cintura
+        ac = c['avental']
+        bw = body_w_top * 0.52
+        ctx.set_source_rgba(*OUT); ctx.set_line_width(5)
+        ctx.move_to(-bw / 2 + 6, sh_y + 34); ctx.line_to(-16, sh_y + 4); ctx.move_to(bw / 2 - 6, sh_y + 34); ctx.line_to(16, sh_y + 4); ctx.stroke()
+        ctx.move_to(-bw / 2, sh_y + 30); ctx.line_to(bw / 2, sh_y + 30); ctx.line_to(bw / 2 + 6, hip_y - 18)
+        ctx.line_to(body_w_bot / 2 + 4, hip_y + leg_h * 0.38); ctx.line_to(-body_w_bot / 2 - 4, hip_y + leg_h * 0.38)
+        ctx.line_to(-bw / 2 - 6, hip_y - 18); ctx.close_path()
+        fill_stroke(ctx, ac, 5)
+        ctx.set_source_rgba(*OUT); ctx.set_line_width(5)
+        ctx.move_to(-bw / 2 - 6, hip_y - 18); ctx.line_to(bw / 2 + 6, hip_y - 18); ctx.stroke()
+        rrect(ctx, -30, hip_y + 4, 60, 34, 8); fill_stroke(ctx, darker(ac, 0.8), 4)       # bolso
     if cid == 'voce' and not c.get('face'):
         star(ctx, -30 * f, sh_y + 52, 16, '#FFD23F')
 
@@ -963,6 +983,17 @@ def draw_prop(ctx, prop, x, y, f):
             a = k * TAU / 5
             ctx.arc(math.cos(a) * 21, -10 + math.sin(a) * 21, 7, 0, TAU)
             ctx.set_source_rgba(0.1, 0.1, 0.12, 1); ctx.fill()
+    elif prop == 'bule':
+        # bule de ágata (esmaltado, branco encardido) pendurado pela alça
+        ctx.scale(1.4, 1.4)
+        ctx.set_source_rgba(*OUT); ctx.set_line_width(7)
+        ctx.arc(0, 18, 26, math.pi, 0); ctx.stroke()                                 # alça
+        ctx.move_to(-34, 22); ctx.line_to(34, 22); ctx.line_to(42, 98); ctx.curve_to(30, 112, -30, 112, -42, 98); ctx.close_path()
+        fill_stroke(ctx, '#D9D7D0', 5)
+        ctx.move_to(-38, 70); ctx.line_to(38, 70); ctx.set_source_rgba(0.35, 0.35, 0.38, 1); ctx.set_line_width(3); ctx.stroke()
+        ctx.save(); ctx.scale(1, 0.4); ctx.arc(0, 50, 30, 0, TAU); ctx.restore(); fill_stroke(ctx, '#C9C7C0', 4)   # tampa
+        ctx.move_to(f * 36, 60); ctx.curve_to(f * 60, 50, f * 66, 30, f * 80, 20); ctx.set_source_rgba(*OUT); ctx.set_line_width(18); ctx.stroke()
+        ctx.move_to(f * 36, 60); ctx.curve_to(f * 60, 50, f * 66, 30, f * 80, 20); setc(ctx, '#D9D7D0'); ctx.set_line_width(10); ctx.stroke()   # bico
     elif prop == 'caneca':
         rrect(ctx, -26, -50, 52, 60, 8)
         fill_stroke(ctx, '#D8D8D8', 4)

@@ -605,5 +605,76 @@ def mm_vassoura(spec, out):
     surf.write_to_png(out)
 
 
+def mm_cafe(spec, out):
+    """Capa 'cafe' (noite 08): a cozinha acesa de madrugada, a mesa posta com as xícaras fumegando em primeiro plano;
+    a criatura enorme de avental vermelho atrás da mesa, curvada debaixo da lâmpada, com o bule na mão e o olho único
+    aceso; à esquerda, o protagonista espiando da porta escura do corredor, apavorado; balão vermelho.
+    spec: ordem, criatura, balao, cena='cafe'"""
+    from .render import rich_text
+    from .scenes import bg_mm_cozinha_cafe, xicara, vapor
+    from .chars import rrect
+    surf = cairo.ImageSurface(cairo.FORMAT_RGB24, W, H)
+    ctx = cairo.Context(surf)
+    q = spec.get('criatura', 'coisa')
+    ctx.save(); ctx.translate(-260, -120); ctx.scale(1.22, 1.22)
+    bg_mm_cozinha_cafe(ctx, 0.0, xicaras=0)
+    ctx.restore()
+    # a criatura atrás da mesa, curvada, servindo
+    ctx.save(); ctx.translate(spec.get('cx', 1220), 1100); ctx.rotate(spec.get('incl', -0.2))
+    info = draw_char(ctx, q, 0, 0, spec.get('cs', 1.08), Pose(mouth='grin', facing=-1, arms='hold'))
+    tp = ctx.user_to_device(info['head'][0], info['top'][1])
+    ctx.restore()
+    # mesa em primeiro plano com toalha xadrez e as xícaras
+    ctx.move_to(560, 860); ctx.line_to(1560, 860); ctx.line_to(1640, 1080); ctx.line_to(480, 1080); ctx.close_path()
+    ctx.set_source_rgba(0.17, 0.15, 0.15, 1); ctx.fill_preserve(); ctx.set_source_rgba(0.6, 0.6, 0.64, 1); ctx.set_line_width(5); ctx.stroke()
+    ctx.save(); ctx.move_to(560, 860); ctx.line_to(1560, 860); ctx.line_to(1640, 1080); ctx.line_to(480, 1080); ctx.close_path(); ctx.clip()
+    for k in range(460, 1660, 56):
+        ctx.rectangle(k, 860, 28, 220)
+    ctx.set_source_rgba(0.6, 0.6, 0.64, 0.12); ctx.fill()
+    ctx.restore()
+    for k, x in enumerate((700, 920, 1140)):
+        xicara(ctx, x, 950, 1.25, 0.5 + k * 1.3)
+        vapor(ctx, x - 60, 860, 120, 0.9 + k, a=0.22, n=3)
+    # escurece as bordas
+    g = cairo.RadialGradient(1100, H / 2 + 40, 300, 1100, H / 2 + 40, 1250)
+    g.add_color_stop_rgba(0, 0, 0, 0, 0); g.add_color_stop_rgba(1, 0, 0, 0, 0.75)
+    ctx.rectangle(0, 0, W, H); ctx.set_source(g); ctx.fill()
+    # a porta escura do corredor à esquerda, com o protagonista espiando
+    ctx.rectangle(0, 0, 470, H); ctx.set_source_rgba(0.035, 0.035, 0.04, 1); ctx.fill()
+    ctx.set_source_rgba(0.6, 0.6, 0.64, 1); ctx.set_line_width(8); ctx.move_to(470, 0); ctx.line_to(470, H); ctx.stroke()
+    gl = cairo.LinearGradient(470, 0, 260, 0)
+    gl.add_color_stop_rgba(0, 1, 0.72, 0.32, 0.22); gl.add_color_stop_rgba(1, 1, 0.72, 0.32, 0)
+    ctx.rectangle(260, 0, 210, H); ctx.set_source(gl); ctx.fill()
+    draw_char(ctx, 'voce', spec.get('vx', 330), 1140, 1.4, Pose(eyes='wide', mouth='o', arms='face', sweat=True, facing=1))
+    ctx.set_source_rgba(0.9, 0.9, 0.92, 1); ctx.set_line_width(8); ctx.set_line_cap(cairo.LINE_CAP_ROUND)
+    for a in (-0.9, -0.5, -0.1):
+        ctx.move_to(330 + math.cos(a - 1.2) * 300, 560 + math.sin(a - 1.2) * 300)
+        ctx.line_to(330 + math.cos(a - 1.2) * 350, 560 + math.sin(a - 1.2) * 350)
+        ctx.stroke()
+    g2 = cairo.LinearGradient(0, 0, 0, 300)
+    g2.add_color_stop_rgba(0, 0.0, 0.0, 0.0, 0.92); g2.add_color_stop_rgba(1, 0.0, 0.0, 0.0, 0)
+    ctx.rectangle(0, 0, W, 300); ctx.set_source(g2); ctx.fill()
+    if spec.get('balao'):
+        msg = spec['balao']
+        ctx.select_font_face('Courier New', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+        ctx.set_font_size(58)
+        w_ = ctx.text_extents(msg).width + 80
+        hx, top = tp
+        bx, by = spec.get('bx', 1450), spec.get('by', 640)
+        rrect(ctx, bx - w_ / 2, by - 70, w_, 108, 40)
+        ctx.set_source_rgba(0.9, 0.15, 0.17, 1); ctx.fill()
+        ctx.move_to(bx - w_ / 2 + 120, by - 60); ctx.line_to(hx + 60, top + 200); ctx.line_to(bx - w_ / 2 + 220, by - 60); ctx.fill()
+        ctx.move_to(bx - w_ / 2 + 40, by + 8); ctx.set_source_rgba(1, 1, 1, 1); ctx.show_text(msg)
+    ctx.select_font_face('Poppins', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+    fs = 170
+    while fs > 90:
+        ctx.set_font_size(fs)
+        if ctx.text_extents(spec['ordem'].replace('*', '')).x_advance < W - 160:
+            break
+        fs -= 8
+    rich_text(ctx, spec['ordem'], 960, 170, fs)
+    surf.write_to_png(out)
+
+
 if __name__ == '__main__':
     _cli()
