@@ -136,6 +136,7 @@ dos 2 episódios anteriores:
 - `boca`: `'sorriso'` (padrão, largo demais), `'vertical'` (fenda com dentes), `'costurada'` (pontos vermelhos), `'aberta'` (buraco preto)
 - `pescoco`: 0–0,35 (pescoço comprido demais) · `inclina`: 0–0,6 rad (cabeça torta) · `bracos`: 1,6–2,4 (braços compridos)
 - `h` (altura, 0,9–1,95), cabelo/roupa de quem ela imita e **um único detalhe vermelho** (presilha, laço, gravata, tênis, boné, costura)
+- objetos e roupa: `vassoura=True` (ep07), `segura='bule'` (qualquer prop fixo na mão, ep08), `avental='<cor>'` (avental por cima do vestido, ep08)
 Ao terminar, acrescente a linha do episódio em `episodes/monstros.md` (monstro e composição da capa).
 
 **A capa também muda a cada episódio:** composição diferente das 3 últimas de `episodes/monstros.md`, mostrando a
