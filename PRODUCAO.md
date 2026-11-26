@@ -48,6 +48,10 @@ coisa que imita alguém (ou algo) da sua casa. Quase todo o texto é do narrador
 5. **"E pensa bem nisso…"** — gancho que liga à vida real do espectador (uma experiência comum e inofensiva).
 6. **Regras numeradas — de 6 a 8.** Cada uma: cartão da regra → o porquê → o que acontece se quebrar → a coisa
    testando a regra. A tensão sobe a cada regra (ela chora, pede ajuda, usa outra voz, sabe algo que não deveria).
+   **Pedido de inscrição no meio (desde 25/11, a partir do ep09; teste E2):** logo depois da regra 3 (a retenção já
+   está estável ali), o narrador diz uma frase só, dentro do clima, antes do cartão da regra 4. Ex.: "Antes da regra
+   quatro: se você ainda tá acordado, se inscreve. O próximo manual chega amanhã, às oito da noite." Use no mesmo plano
+   `fx=[{'texto': ['INSCREVA-SE'], 'pos': 'topo', 'cor': '#E5262B'}]`. Não repita o pedido em outro lugar além do CTA final.
 7. **O teste final / o amanhecer:** como saber que é a pessoa de verdade (uma senha, uma chave, algo que só ela sabe).
 8. **A reviravolta:** "Tem uma coisa que eu ainda não te contei…" — um detalhe que continua depois da noite.
 9. **CTA** (última linha): "Agora você conhece as regras. Se inscreve antes que a luz apague. E me conta nos
