@@ -1775,3 +1775,108 @@ SLOTS = {
     'quarto_toalha': dict(cama=(1420, 830, 0.95), porta=(875, 960, 0.95), centro=(560, 1000, 1.0)),
     'quarto_cafe_manha': dict(cama=(1420, 830, 0.95), porta=(875, 960, 0.95), centro=(560, 1000, 1.0)),
 }
+
+
+# ---------------------------------------------------------------- a irmã que pede pra dormir no seu quarto (noite 09)
+def trinco(ctx, x, y, fechado=True):
+    """trinco de porta (ferrolho) visto de frente; x,y = canto esquerdo da chapa"""
+    lr(ctx, x, y, 70, 26, fill='#3A3A40', r=4)
+    lr(ctx, x + (34 if fechado else 6), y + 6, 46, 14, fill='#8A8A90', r=4)
+    ctx.arc(x + 20, y + 13, 7, 0, TAU); ctx.set_source_rgba(*LINE); ctx.fill()
+
+
+def estrelinhas(ctx, x, y, w, h, n=9, seed=9, a=0.85):
+    rnd = random.Random(seed)
+    for k in range(n):
+        star(ctx, x + rnd.uniform(0, w), y + rnd.uniform(0, h), rnd.uniform(9, 15), '#C9E6B8')
+
+
+def luz_estrela(ctx, x, y, t, a=0.4):
+    """luzinha de tomada em forma de estrela, com o brilho em volta"""
+    amber(ctx, x, y, 190, a, t)
+    star(ctx, x, y, 22, '#FFD27A')
+
+
+def bg_mm_quarto_trinco(ctx, t, manha=False, aberta=False):
+    """o seu quarto: a porta com trinco (fechado), a cama encostada na parede do quarto da Larinha (estrelinhas que
+    ela colou na cabeceira), a janela; aberta=True: a porta destrancada e entreaberta com a luz da manhã"""
+    mm_room(ctx)
+    moon_window(ctx, 220, 160, 300, 280)
+    if aberta:
+        door(ctx, 760, 260, 230, 540, open_frac=0.45)
+        g = cairo.LinearGradient(760, 0, 990, 0)
+        g.add_color_stop_rgba(0, 0.75, 0.8, 0.9, 0.0); g.add_color_stop_rgba(1, 0.75, 0.8, 0.9, 0.18)
+        ctx.rectangle(760 + 230 * 0.55, 260, 230 * 0.45, 540); ctx.set_source(g); ctx.fill()
+    else:
+        door(ctx, 760, 260, 230, 540)
+        trinco(ctx, 900, 470, fechado=True)
+    bed(ctx, 1180, 780, 640, made=False)
+    estrelinhas(ctx, 1200, 440, 560, 150, n=10, seed=4)
+    lr(ctx, 1060, 640, 100, 160, r=6)
+    lr(ctx, 1085, 560, 50, 80, fill='#2C2C30')
+    ctx.move_to(1070, 560); ctx.line_to(1150, 560); ctx.line_to(1130, 520); ctx.line_to(1090, 520); ctx.close_path()
+    setc(ctx, '#3A3A40'); ctx.fill()
+    if manha:
+        ctx.rectangle(0, 0, W, H); ctx.set_source_rgba(0.55, 0.62, 0.75, 0.13); ctx.fill()
+
+
+def bg_mm_corredor_irma(ctx, t, luz=True, manha=False):
+    """corredor: a sua porta (esq., 240), a porta da Larinha (meio, 820) com a plaquinha e o brilho da luzinha de estrela
+    por baixo, e o quarto dos pais no fundo (dir., 1400), fechado, com o barulho do ventilador"""
+    mm_room(ctx, fy=820)
+    door(ctx, 240, 280, 240, 540)
+    door(ctx, 820, 280, 240, 540)
+    door(ctx, 1400, 280, 240, 540)
+    lr(ctx, 855, 355, 170, 56, fill='#1E1E22', r=10)                     # plaquinha da porta da Larinha
+    star(ctx, 878, 383, 11, '#C9E6B8'); star(ctx, 1002, 383, 11, '#C9E6B8')
+    text(ctx, 'LARA', 940, 395, 26, col='#9A9AA0')
+    if luz:
+        g = cairo.LinearGradient(0, 812, 0, 880)
+        g.add_color_stop_rgba(0, 1, 0.8, 0.45, 0.4); g.add_color_stop_rgba(1, 1, 0.8, 0.45, 0)
+        ctx.rectangle(800, 814, 280, 66); ctx.set_source(g); ctx.fill()
+    for x in (630, 1210):
+        ctx.arc(x, 380, 18, 0, TAU); ctx.set_source_rgba(0.5, 0.5, 0.52, 0.6); ctx.fill()
+    if manha:
+        ctx.rectangle(0, 0, W, H); ctx.set_source_rgba(0.55, 0.62, 0.75, 0.14); ctx.fill()
+
+
+def bg_mm_quarto_lara(ctx, t, vazio=False, manha=False):
+    """quarto da Larinha: cama baixa à esquerda, a luzinha de estrela na tomada, ursinho, desenhos colados na parede;
+    vazio=True: a cama desarrumada e vazia, a luzinha apagada"""
+    mm_room(ctx, wall_c='#131418')
+    moon_window(ctx, 1420, 170, 280, 260)
+    door(ctx, 760, 260, 230, 540, open_frac=0.2)
+    for k, (x, y) in enumerate(((180, 300), (380, 260), (1110, 330))):  # desenhos colados na parede
+        lr(ctx, x, y, 150, 110, fill='#1C1C20', r=3)
+        ctx.set_source_rgba(0.6, 0.6, 0.64, 0.7); ctx.set_line_width(3)
+        ctx.arc(x + 45, y + 40, 18, 0, TAU); ctx.stroke()
+        ctx.move_to(x + 20, y + 95); ctx.line_to(x + 75, y + 60); ctx.line_to(x + 130, y + 95); ctx.stroke()
+    bed(ctx, 140, 800, 560, made=vazio)
+    if not vazio:
+        luz_estrela(ctx, 1080, 720, t)
+    else:
+        star(ctx, 1080, 720, 22, '#4A4A50')
+    lr(ctx, 1150, 690, 210, 110, fill=DARK3, r=8)                         # baú de brinquedos
+    ctx.arc(1300, 650, 40, 0, TAU); setc(ctx, '#3A3A40'); ctx.fill_preserve(); ctx.set_source_rgba(*LINE); ctx.set_line_width(3); ctx.stroke()   # ursinho
+    for dx in (-28, 28):
+        ctx.arc(1300 + dx, 614, 14, 0, TAU); setc(ctx, '#3A3A40'); ctx.fill_preserve(); ctx.set_source_rgba(*LINE); ctx.stroke()
+    if manha:
+        ctx.rectangle(0, 0, W, H); ctx.set_source_rgba(0.55, 0.62, 0.75, 0.14); ctx.fill()
+
+
+BG.update({
+    'quarto_trinco': (bg_mm_quarto_trinco, None),
+    'quarto_trinco_manha': (lambda c, t: bg_mm_quarto_trinco(c, t, manha=True, aberta=True), None),
+    'quarto_trinco_alvorada': (lambda c, t: bg_mm_quarto_trinco(c, t, manha=True), None),
+    'corredor_irma': (bg_mm_corredor_irma, None),
+    'corredor_irma_escuro': (lambda c, t: bg_mm_corredor_irma(c, t, luz=False), None),
+    'corredor_irma_manha': (lambda c, t: bg_mm_corredor_irma(c, t, manha=True), None),
+    'quarto_lara': (bg_mm_quarto_lara, None),
+    'quarto_lara_vazio': (lambda c, t: bg_mm_quarto_lara(c, t, vazio=True), None),
+})
+_Q = dict(cama=(1420, 830, 0.95), porta=(875, 960, 0.95), centro=(560, 1000, 1.0))
+_C = dict(p1=(360, 1000, 0.9), p2=(940, 1000, 0.9), p3=(1520, 1000, 0.9), meio=(650, 1010, 0.95), dir=(1250, 1010, 0.95))
+_L = dict(cama=(540, 765, 0.9), porta=(875, 960, 0.95), centro=(1000, 1000, 1.0), dir=(1560, 1000, 0.95))
+SLOTS.update({'quarto_trinco': dict(_Q), 'quarto_trinco_manha': dict(_Q), 'quarto_trinco_alvorada': dict(_Q), 'corredor_irma': dict(_C),
+              'corredor_irma_escuro': dict(_C), 'corredor_irma_manha': dict(_C), 'quarto_lara': dict(_L),
+              'quarto_lara_vazio': dict(_L)})

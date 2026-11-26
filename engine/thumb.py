@@ -676,5 +676,84 @@ def mm_cafe(spec, out):
     surf.write_to_png(out)
 
 
+def mm_parede(spec, out):
+    """Capa 'parede' (noite 09): a casa em corte, dividida pela parede da sua porta trancada. À esquerda, o seu quarto
+    escuro, com o protagonista encolhido na cama, apavorado; no meio, a porta vista de dentro com o trinco fechado e a
+    sombra de dois pés na fresta; à direita, no corredor, a criatura enorme imitando a irmã (maria-chiquinha, travesseiro
+    vermelho) curvada encostada na porta, batendo; balão vermelho.
+    spec: ordem, criatura, balao, cena='parede'"""
+    from .render import rich_text
+    from .scenes import mm_room, bed, trinco, estrelinhas, lr
+    from .chars import rrect
+    surf = cairo.ImageSurface(cairo.FORMAT_RGB24, W, H)
+    ctx = cairo.Context(surf)
+    q = spec.get('criatura', 'coisa')
+    # o quarto (esq.) e o corredor (dir.)
+    mm_room(ctx, fy=900)
+    ctx.rectangle(1010, 0, W - 1010, H); ctx.set_source_rgba(0.075, 0.07, 0.065, 1); ctx.fill()
+    g = cairo.RadialGradient(1500, 380, 20, 1500, 380, 700)                  # luz amarela fraca do corredor
+    g.add_color_stop_rgba(0, 1, 0.75, 0.35, 0.22); g.add_color_stop_rgba(1, 1, 0.75, 0.35, 0)
+    ctx.rectangle(1010, 0, W - 1010, H); ctx.set_source(g); ctx.fill()
+    ctx.set_source_rgba(0.6, 0.6, 0.64, 1); ctx.set_line_width(5)
+    ctx.move_to(1010, 900); ctx.line_to(W, 900); ctx.stroke()
+    # cama e estrelinhas
+    ctx.save(); ctx.translate(-120, 80); ctx.scale(1.05, 1.05)
+    bed(ctx, 60, 860, 640, made=False)
+    ctx.restore()
+    estrelinhas(ctx, 60, 470, 520, 120, n=9, seed=4)
+    # a parede em corte com a porta
+    ctx.rectangle(940, 0, 70, H); ctx.set_source_rgba(0.13, 0.13, 0.15, 1); ctx.fill()
+    ctx.set_source_rgba(0.75, 0.75, 0.8, 1); ctx.set_line_width(6)
+    ctx.move_to(940, 0); ctx.line_to(940, H); ctx.move_to(1010, 0); ctx.line_to(1010, H); ctx.stroke()
+    lr(ctx, 700, 330, 240, 570, fill='#1A1A1E')                              # porta, de dentro
+    ctx.arc(905, 640, 8, 0, TAU); ctx.set_source_rgba(0.75, 0.75, 0.8, 1); ctx.fill()
+    trinco(ctx, 840, 560, fechado=True)
+    for xx in (760, 860):                                                    # sombra dos pés na fresta
+        ctx.rectangle(xx, 893, 50, 7); ctx.set_source_rgba(0, 0, 0, 1); ctx.fill()
+    gf = cairo.LinearGradient(0, 900, 0, 960)
+    gf.add_color_stop_rgba(0, 1, 0.75, 0.35, 0.35); gf.add_color_stop_rgba(1, 1, 0.75, 0.35, 0)
+    ctx.rectangle(700, 900, 240, 60); ctx.set_source(gf); ctx.fill()
+    # a criatura no corredor, curvada, encostada na porta, batendo
+    ctx.save(); ctx.translate(spec.get('cx', 1330), 1050); ctx.rotate(spec.get('incl', -0.12))
+    info = draw_char(ctx, q, 0, 0, spec.get('cs', 0.84), Pose(mouth='grin', facing=-1, arms='point'))
+    tp = ctx.user_to_device(info['head'][0], info['top'][1])
+    ctx.restore()
+    # escurece as bordas
+    gv = cairo.RadialGradient(960, H / 2 + 60, 350, 960, H / 2 + 60, 1250)
+    gv.add_color_stop_rgba(0, 0, 0, 0, 0); gv.add_color_stop_rgba(1, 0, 0, 0, 0.75)
+    ctx.rectangle(0, 0, W, H); ctx.set_source(gv); ctx.fill()
+    # protagonista encolhido na cama
+    draw_char(ctx, 'voce', spec.get('vx', 420), 980, 1.22, Pose(eyes='wide', mouth='o', arms='face', sweat=True, sit=True, facing=1))
+    ctx.set_source_rgba(0.9, 0.9, 0.92, 1); ctx.set_line_width(8); ctx.set_line_cap(cairo.LINE_CAP_ROUND)
+    for a in (-0.9, -0.5, -0.1):
+        ctx.move_to(420 + math.cos(a - 1.2) * 250, 600 + math.sin(a - 1.2) * 250)
+        ctx.line_to(420 + math.cos(a - 1.2) * 300, 600 + math.sin(a - 1.2) * 300)
+        ctx.stroke()
+    g2 = cairo.LinearGradient(0, 0, 0, 300)
+    g2.add_color_stop_rgba(0, 0.0, 0.0, 0.0, 0.92); g2.add_color_stop_rgba(1, 0.0, 0.0, 0.0, 0)
+    ctx.rectangle(0, 0, W, 300); ctx.set_source(g2); ctx.fill()
+    if spec.get('balao'):
+        msg = spec['balao']
+        ctx.select_font_face('Courier New', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+        ctx.set_font_size(56)
+        w_ = ctx.text_extents(msg).width + 80
+        hx, top = tp
+        bx, by = spec.get('bx', 1480), spec.get('by', 285)
+        bx = min(bx, W - w_ / 2 - 20)
+        rrect(ctx, bx - w_ / 2, by - 70, w_, 108, 40)
+        ctx.set_source_rgba(0.9, 0.15, 0.17, 1); ctx.fill()
+        ctx.move_to(hx - 40, by + 30); ctx.line_to(hx - 10, top + 40); ctx.line_to(hx + 50, by + 30); ctx.fill()
+        ctx.move_to(bx - w_ / 2 + 40, by + 8); ctx.set_source_rgba(1, 1, 1, 1); ctx.show_text(msg)
+    ctx.select_font_face('Poppins', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+    fs = 170
+    while fs > 90:
+        ctx.set_font_size(fs)
+        if ctx.text_extents(spec['ordem'].replace('*', '')).x_advance < W - 160:
+            break
+        fs -= 8
+    rich_text(ctx, spec['ordem'], 960, 170, fs)
+    surf.write_to_png(out)
+
+
 if __name__ == '__main__':
     _cli()

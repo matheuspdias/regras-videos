@@ -102,7 +102,7 @@ def build(ep_mod, ep_id):
         extra_after = 0.0
         if scene is not None and any(isinstance(i, dict) and 'regra' in i for i in scene.get('fx', [])):
             extra_after = getattr(ep, 'PAUSA_REGRA', 0.0)
-        if sp == 'coisa':
+        if sp.startswith('coisa'):
             extra_after = getattr(ep, 'PAUSA_VOZ', 0.0)
     total = t + getattr(ep, 'TAIL', TAIL)
     for k, s in enumerate(shots):
@@ -302,7 +302,7 @@ def current_caption(clips, t):
 def draw_caption(ctx, txt, sp):
     if not txt:
         return
-    col = '#FF4B4B' if sp in ('coisa',) else '#F2F2F2'
+    col = '#FF4B4B' if sp.startswith('coisa') else '#F2F2F2'
     s_ = txt.upper()
     size = 64
     ctx.select_font_face('Poppins', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
@@ -1248,12 +1248,12 @@ def draw_frame(ctx, ep, clips, shots, envs, t):
         if isinstance(item, dict) and 'voz' in item:
             voz_pos = item['voz']
     for c in clips:
-        if c['sp'] in ('coisa', 'mae') and c['t0'] <= t < c['t1'] + 0.4:
-            coisa_head = next((heads[k_] for k_ in heads if k_.startswith('coisa')), None) if c['sp'] == 'coisa' else None
+        if (c['sp'].startswith('coisa') or c['sp'] == 'mae') and c['t0'] <= t < c['t1'] + 0.4:
+            coisa_head = next((heads[k_] for k_ in heads if k_.startswith('coisa')), None) if c['sp'].startswith('coisa') else None
             if c['sp'] in heads or coisa_head:
                 info, sv = heads[c['sp']] if c['sp'] in heads else coisa_head
                 bx, by = info['head'][0] + 40, info['top'][1] - 60
-            elif c['sp'] == 'coisa' and monstro_top and not voz_pos:
+            elif c['sp'].startswith('coisa') and monstro_top and not voz_pos:
                 bx, by = monstro_top[0], max(80, monstro_top[1] - 70)
             elif voz_pos:
                 bx, by = voz_pos
@@ -1267,7 +1267,7 @@ def draw_frame(ctx, ep, clips, shots, envs, t):
             w_ = ctx.text_extents(msg).width + 60
             bx = min(max(bx, w_ / 2 + 30), W - w_ / 2 - 30)     # balão sempre inteiro na tela
             rrect(ctx, bx - w_ / 2, by - 50, w_, 76, 30)
-            if c['sp'] == 'coisa':
+            if c['sp'].startswith('coisa'):
                 ctx.set_source_rgba(0.9, 0.15, 0.17, 1)
             else:
                 ctx.set_source_rgba(0.42, 0.42, 0.46, 1)
@@ -1447,7 +1447,7 @@ def build_audio(clips, shots, total, out):
         af = []
         if c['sp'] == 'pens':
             af = ['-af', 'aecho=0.85:0.6:70|140:0.35|0.18,volume=1.05']
-        elif c['sp'] == 'coisa':
+        elif c['sp'].startswith('coisa'):   # 'coisa' e variantes de voz ('coisa_voce' = imitando você)
             af = ['-af', 'asetrate=44100*0.93,aresample=44100,atempo=1.075,aecho=0.8:0.55:45|90:0.3|0.15,volume=1.1']
         raw = subprocess.check_output(['ffmpeg', '-v', 'error', '-i', c['path'], *af, '-ac', '1', '-ar', str(sr), '-f', 'f32le', '-'])
         a = np.frombuffer(raw, dtype=np.float32)

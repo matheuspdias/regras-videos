@@ -78,7 +78,11 @@ CAST = {
     # noite 08: imita a mãe (padeira) de avental, alta demais, um olho só no meio da testa, boca aberta (buraco preto),
     # cabeça torta, braços compridos; sempre com o bule de ágata na mão. O avental é o único vermelho
     'coisa_ep08':   dict(skin='#E4E4E4', name='A coisa (mãe, noite 08)', shirt='#C6C6CA', pants='#C6C6CA', shoes='#3A3A3A', kind='dress', hair='ponytail', hair_c='#3E3E44', extra=None, face='creature', h=1.72, olhos='um', boca='aberta', bracos=2.2, inclina=0.3, pescoco=0.1, avental='#D3242A', segura='bule'),
+    # noite 09: imita a irmã mais nova (Larinha) de pijama e maria-chiquinha, mas alta e magra demais, pescoço comprido,
+    # cabeça muito torta, braços compridos, olhos e sorriso enormes; sempre abraçada no travesseiro (fronha vermelha, o único vermelho)
+    'coisa_ep09':   dict(skin='#E4E4E4', name='A coisa (irmã, noite 09)', shirt='#CACACE', pants='#B4B4BA', shoes='#3A3A3A', kind='tee', hair='pigtails', hair_c='#34343A', elastico='#55555C', extra=None, face='creature', h=1.62, olhos='dois', boca='sorriso', pescoco=0.24, inclina=0.44, bracos=2.35, segura='travesseiro'),
     'coisa_sombra': dict(skin='#2E2E33', name='A coisa (sombra)', shirt='#1E1E22', pants='#1E1E22', shoes='#111113', kind='tee', hair='none', hair_c='#1E1E22', extra='olhos_red', face='creature', h=1.85),
+    'larinha': dict(skin='#ECECEC', name='Larinha', shirt='#DCDCDE', pants='#A6A6AC', shoes='#F2F2F2', kind='tee', hair='pigtails', hair_c='#3A3A3E', elastico='#9A9AA0', extra=None, face='min', h=0.74),
     'irma':  dict(skin='#ECECEC', name='Irmã', shirt='#D8D8DA', pants='#7E7E84', shoes='#F2F2F2', kind='tee', hair='long', hair_c='#3A3A3E', extra=None, face='min', h=0.95),
     'vizinho': dict(skin='#ECECEC', name='Vizinho', shirt='#BDBDBD', pants='#6A6A6A', shoes='#2A2A2A', kind='tee', hair='cap', hair_c='#5A5A5A', extra=None, face='min', h=1.02),
 }
@@ -366,7 +370,7 @@ def draw_head(ctx, cid, c, p, hx, hy, r):
             ctx.arc(hx + side * r * 1.05, hy + r * 0.05, r * 0.38, 0, TAU)
             fill_stroke(ctx, hc)
             ctx.arc(hx + side * r * 0.88, hy - r * 0.1, r * 0.12, 0, TAU)
-            fill_stroke(ctx, '#FF6B9A', 4)
+            fill_stroke(ctx, c.get('elastico', '#FF6B9A'), 4)
     if hair == 'bigcurls':
         for i in range(11):
             a = math.pi * (0.95 + i * 0.11)
@@ -994,6 +998,14 @@ def draw_prop(ctx, prop, x, y, f):
         ctx.save(); ctx.scale(1, 0.4); ctx.arc(0, 50, 30, 0, TAU); ctx.restore(); fill_stroke(ctx, '#C9C7C0', 4)   # tampa
         ctx.move_to(f * 36, 60); ctx.curve_to(f * 60, 50, f * 66, 30, f * 80, 20); ctx.set_source_rgba(*OUT); ctx.set_line_width(18); ctx.stroke()
         ctx.move_to(f * 36, 60); ctx.curve_to(f * 60, 50, f * 66, 30, f * 80, 20); setc(ctx, '#D9D7D0'); ctx.set_line_width(10); ctx.stroke()   # bico
+    elif prop == 'travesseiro':
+        # travesseiro abraçado, com fronha vermelha (noite 09)
+        ctx.rotate(-0.25 * f)
+        rrect(ctx, -78, -46, 156, 92, 40)
+        fill_stroke(ctx, '#D3242A', 5)
+        ctx.set_source_rgba(0.55, 0.08, 0.1, 1); ctx.set_line_width(3)
+        ctx.move_to(-60, -20); ctx.curve_to(-20, -30, 20, -30, 60, -20); ctx.stroke()
+        ctx.move_to(-60, 22); ctx.curve_to(-20, 30, 20, 30, 60, 22); ctx.stroke()
     elif prop == 'caneca':
         rrect(ctx, -26, -50, 52, 60, 8)
         fill_stroke(ctx, '#D8D8D8', 4)
