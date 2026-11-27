@@ -81,6 +81,10 @@ CAST = {
     # noite 09: imita a irmã mais nova (Larinha) de pijama e maria-chiquinha, mas alta e magra demais, pescoço comprido,
     # cabeça muito torta, braços compridos, olhos e sorriso enormes; sempre abraçada no travesseiro (fronha vermelha, o único vermelho)
     'coisa_ep09':   dict(skin='#E4E4E4', name='A coisa (irmã, noite 09)', shirt='#CACACE', pants='#B4B4BA', shoes='#3A3A3A', kind='tee', hair='pigtails', hair_c='#34343A', elastico='#55555C', extra=None, face='creature', h=1.62, olhos='dois', boca='sorriso', pescoco=0.24, inclina=0.44, bracos=2.35, segura='travesseiro'),
+    # noite 10: imita o tio Dirceu (o tio que mora longe) de camisa social e chapéu de aba, alto e magro demais, pescoço
+    # comprido, cabeça torta, quatro olhos (vê de que porta você sai), boca em fenda; sempre com a mala de viagem
+    # vermelha na mão (o único vermelho)
+    'coisa_ep10':   dict(tie='#55555B', skin='#E4E4E4', name='A coisa (tio, noite 10)', shirt='#BEBEC4', pants='#3E3E44', shoes='#2A2A2A', kind='shirt', hair='chapeu', hair_c='#6E6E74', extra=None, face='creature', h=1.82, olhos='quatro', boca='vertical', pescoco=0.2, inclina=0.28, bracos=2.2, segura='mala'),
     'coisa_sombra': dict(skin='#2E2E33', name='A coisa (sombra)', shirt='#1E1E22', pants='#1E1E22', shoes='#111113', kind='tee', hair='none', hair_c='#1E1E22', extra='olhos_red', face='creature', h=1.85),
     'larinha': dict(skin='#ECECEC', name='Larinha', shirt='#DCDCDE', pants='#A6A6AC', shoes='#F2F2F2', kind='tee', hair='pigtails', hair_c='#3A3A3E', elastico='#9A9AA0', extra=None, face='min', h=0.74),
     'irma':  dict(skin='#ECECEC', name='Irmã', shirt='#D8D8DA', pants='#7E7E84', shoes='#F2F2F2', kind='tee', hair='long', hair_c='#3A3A3E', extra=None, face='min', h=0.95),
@@ -483,6 +487,17 @@ def draw_head(ctx, cid, c, p, hx, hy, r):
         fill_stroke(ctx, hc, 4)
         ctx.set_source_rgba(1, 1, 1, 0.22); ctx.set_line_width(5)
         ctx.arc(hx - r * 0.1, hy - r * 0.5, r * 0.62, 1.12 * math.pi, 1.38 * math.pi); ctx.stroke()
+    if hair == 'chapeu':                        # noite 10: chapéu de aba (copa com vinco, fita escura, aba larga)
+        ctx.move_to(hx - r * 0.78, hy - r * 0.55)
+        ctx.curve_to(hx - r * 0.82, hy - r * 1.45, hx - r * 0.3, hy - r * 1.42, hx, hy - r * 1.3)
+        ctx.curve_to(hx + r * 0.3, hy - r * 1.42, hx + r * 0.82, hy - r * 1.45, hx + r * 0.78, hy - r * 0.55)
+        ctx.close_path()
+        fill_stroke(ctx, hc)
+        rrect(ctx, hx - r * 0.8, hy - r * 0.78, r * 1.6, r * 0.2, r * 0.05)
+        fill_stroke(ctx, '#2A2A2E', 4)
+        ctx.save(); ctx.translate(hx, hy - r * 0.56); ctx.scale(1.0, 0.16)
+        ctx.arc(0, 0, r * 1.45, 0, TAU); ctx.restore()
+        fill_stroke(ctx, hc, 5)
     if hair == 'bald':
         for side in (-1, 1):
             ctx.arc(hx + side * r * 0.95, hy - r * 0.05, r * 0.2, 0, TAU)
@@ -998,6 +1013,17 @@ def draw_prop(ctx, prop, x, y, f):
         ctx.save(); ctx.scale(1, 0.4); ctx.arc(0, 50, 30, 0, TAU); ctx.restore(); fill_stroke(ctx, '#C9C7C0', 4)   # tampa
         ctx.move_to(f * 36, 60); ctx.curve_to(f * 60, 50, f * 66, 30, f * 80, 20); ctx.set_source_rgba(*OUT); ctx.set_line_width(18); ctx.stroke()
         ctx.move_to(f * 36, 60); ctx.curve_to(f * 60, 50, f * 66, 30, f * 80, 20); setc(ctx, '#D9D7D0'); ctx.set_line_width(10); ctx.stroke()   # bico
+    elif prop == 'mala':
+        # mala de viagem vermelha (noite 10), pendurada pela alça, com cantoneiras e fecho
+        ctx.set_source_rgba(*OUT); ctx.set_line_width(9)
+        ctx.arc(0, 26, 24, math.pi, 0); ctx.stroke()                                  # alça
+        rrect(ctx, -100, 26, 200, 128, 22)
+        fill_stroke(ctx, '#C7232A', 6)
+        ctx.set_source_rgba(0.42, 0.05, 0.07, 1)
+        for sx in (-1, 1):                                                            # correias de couro
+            ctx.rectangle(sx * 50 - 11, 28, 22, 124); ctx.fill()
+            rrect(ctx, sx * 50 - 15, 92, 30, 22, 4); fill_stroke(ctx, '#B8B8BE', 3)   # fivelas
+        ctx.set_line_width(4); ctx.move_to(-100, 62); ctx.line_to(100, 62); ctx.stroke()
     elif prop == 'travesseiro':
         # travesseiro abraçado, com fronha vermelha (noite 09)
         ctx.rotate(-0.25 * f)

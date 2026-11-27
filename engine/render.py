@@ -967,7 +967,8 @@ def draw_monstro(ctx, item, u, dur, t):
     a = ease(u / 1.2) if item.get('surge') else 1.0
     boca = item.get('boca', 'grin')
     sway = 0.035 * math.sin(t * 0.9)
-    pose = Pose(mouth=boca, facing=item.get('facing', -1), arms=item.get('bracos', 'down'), varre=math.sin(t * 2.6))
+    pose = Pose(mouth=boca, facing=item.get('facing', -1), arms=item.get('bracos', 'down'), varre=math.sin(t * 2.6),
+                sit=item.get('sentado', False))   # sentado=True: no sofá (noite 10)
     ctx.save()
     top = None
     if modo == 'porta':

@@ -1880,3 +1880,113 @@ _L = dict(cama=(540, 765, 0.9), porta=(875, 960, 0.95), centro=(1000, 1000, 1.0)
 SLOTS.update({'quarto_trinco': dict(_Q), 'quarto_trinco_manha': dict(_Q), 'quarto_trinco_alvorada': dict(_Q), 'corredor_irma': dict(_C),
               'corredor_irma_escuro': dict(_C), 'corredor_irma_manha': dict(_C), 'quarto_lara': dict(_L),
               'quarto_lara_vazio': dict(_L)})
+
+
+# ---------------------------------------------------------------- o tio que ninguém convidou (noite 10)
+def lencol_sofa(ctx, x, y, w, dobrado=False):
+    """lençol e travesseiro arrumados no sofá (cama de visita); dobrado=True: lençol dobrado em cima do braço"""
+    if dobrado:
+        lr(ctx, x + w - 190, y - 52, 160, 46, fill='#3A3A40', r=8)
+        lr(ctx, x + w - 180, y - 92, 140, 40, fill='#34343A', r=8)
+        return
+    ctx.move_to(x + 30, y - 10); ctx.curve_to(x + w * 0.4, y - 40, x + w * 0.7, y - 4, x + w - 20, y - 18)
+    ctx.line_to(x + w - 10, y + 60); ctx.line_to(x + 20, y + 60); ctx.close_path()
+    setc(ctx, '#3C3C42'); ctx.fill_preserve(); ctx.set_source_rgba(*LINE); ctx.set_line_width(4); ctx.stroke()
+    lr(ctx, x + 40, y - 70, 170, 56, fill='#46464C', r=24)
+
+
+def abajur(ctx, x, y, t, aceso=True):
+    lr(ctx, x - 70, y, 140, 190, r=6)                                        # mesinha
+    lr(ctx, x - 12, y - 90, 24, 90, fill='#2C2C30')
+    ctx.move_to(x - 55, y - 90); ctx.line_to(x + 55, y - 90); ctx.line_to(x + 35, y - 160); ctx.line_to(x - 35, y - 160); ctx.close_path()
+    setc(ctx, '#5A4A36' if aceso else '#3A3A40'); ctx.fill_preserve(); ctx.set_source_rgba(*LINE); ctx.set_line_width(3); ctx.stroke()
+    if aceso:
+        amber(ctx, x, y - 110, 420, 0.32, t)
+
+
+def bg_mm_sala_tio(ctx, t, luz=True, manha=False, vazio=False):
+    """sala da noite 10: à esquerda, o vão escuro do corredor (de onde se vê quem entra em que porta); no meio, o sofá
+    arrumado com lençol e travesseiro de visita; o abajur aceso na mesinha; a porta de entrada à direita.
+    vazio=True: o lençol dobrado em cima do braço do sofá (de manhã)"""
+    mm_room(ctx)
+    lr(ctx, 70, 200, 360, 600, fill='#060607')                              # vão do corredor
+    ctx.set_source_rgba(*LINE); ctx.set_line_width(3)
+    ctx.move_to(70, 800); ctx.line_to(200, 620); ctx.line_to(300, 620); ctx.line_to(430, 800); ctx.stroke()
+    lr(ctx, 205, 380, 90, 240, fill='#0C0C0E')                               # porta lá no fundo do corredor
+    moon_window(ctx, 540, 170, 240, 220)
+    lr(ctx, 1640, 260, 200, 540, fill='#0E0E10')                             # porta de entrada
+    ctx.arc(1810, 540, 9, 0, TAU); ctx.set_source_rgba(*LINE); ctx.fill()
+    lr(ctx, 780, 600, 640, 140, r=30)                                        # sofá
+    lr(ctx, 780, 520, 640, 110, r=30)
+    lr(ctx, 740, 560, 70, 190, r=22); lr(ctx, 1390, 560, 70, 190, r=22)      # braços
+    lencol_sofa(ctx, 820, 620, 560, dobrado=vazio)
+    abajur(ctx, 1550, 610, t, aceso=luz and not manha)
+    if manha:
+        ctx.rectangle(0, 0, W, H); ctx.set_source_rgba(0.55, 0.62, 0.75, 0.13); ctx.fill()
+
+
+def bg_mm_corredor_tio(ctx, t, luz=True, manha=False):
+    """corredor da noite 10: banheiro (esq., 240), o SEU quarto (meio, 820) e o quarto dos pais (fundo, 1400), três
+    portas iguais; a luz do abajur da sala chega fraca pela esquerda"""
+    mm_room(ctx, fy=820)
+    for x in (240, 820, 1400):
+        door(ctx, x, 280, 240, 540)
+    for x in (630, 1210):
+        ctx.arc(x, 380, 18, 0, TAU); ctx.set_source_rgba(0.5, 0.5, 0.52, 0.6); ctx.fill()
+    if luz:
+        g = cairo.LinearGradient(0, 0, 900, 0)
+        g.add_color_stop_rgba(0, 1, 0.72, 0.3, 0.22); g.add_color_stop_rgba(1, 1, 0.72, 0.3, 0)
+        ctx.rectangle(0, 0, 900, H); ctx.set_source(g); ctx.fill()
+    if manha:
+        ctx.rectangle(0, 0, W, H); ctx.set_source_rgba(0.55, 0.62, 0.75, 0.14); ctx.fill()
+
+
+def caixas(ctx, x, y, seed=3):
+    rnd = random.Random(seed)
+    for k, (dx, dy, w, h) in enumerate(((0, 0, 220, 150), (230, 0, 180, 150), (30, -130, 180, 130), (240, -110, 150, 110), (90, -240, 160, 110))):
+        lr(ctx, x + dx, y - h + dy, w, h, fill=rnd.choice(('#2A2824', '#262420', '#2E2B26')), r=3)
+        ctx.set_source_rgba(0.6, 0.6, 0.64, 0.5); ctx.set_line_width(3)
+        ctx.move_to(x + dx + w / 2, y - h + dy); ctx.line_to(x + dx + w / 2, y + dy - h * 0.55); ctx.stroke()
+
+
+def bg_mm_quartinho(ctx, t, arrumado=True):
+    """quartinho dos fundos (de despejo): caixas empilhadas, ventilador velho, lâmpada pelada; arrumado=True: a cama de
+    armar montada, com lençol esticado e o chinelo do lado — ninguém da casa arrumou"""
+    mm_room(ctx, wall_c='#121212')
+    door(ctx, 760, 260, 230, 540, open_frac=0.25)
+    caixas(ctx, 120, 800)
+    lr(ctx, 1640, 520, 30, 280, fill='#2C2C30')                              # ventilador velho
+    ctx.arc(1655, 470, 70, 0, TAU); setc(ctx, '#1E1E22'); ctx.fill_preserve(); ctx.set_source_rgba(*LINE); ctx.set_line_width(4); ctx.stroke()
+    ctx.set_source_rgba(*LINE); ctx.set_line_width(3)
+    ctx.move_to(1180, 0); ctx.line_to(1180, 120); ctx.stroke()              # fio da lâmpada
+    ctx.arc(1180, 140, 20, 0, TAU); ctx.set_source_rgba(1, 0.8, 0.45, 0.9 if arrumado else 0.3); ctx.fill()
+    if arrumado:
+        amber(ctx, 1180, 140, 520, 0.3, t, flick=True)
+        lr(ctx, 1080, 740, 520, 60, fill='#3A3A40', r=10)                     # cama de armar com lençol
+        lr(ctx, 1100, 700, 150, 44, fill='#46464C', r=18)
+        for x in (1100, 1560):
+            ctx.set_source_rgba(*LINE); ctx.set_line_width(5)
+            ctx.move_to(x, 800); ctx.line_to(x + 30, 860); ctx.stroke()
+        chinelo(ctx, 1400, 900, 0.9)
+        from .chars import draw_prop
+        draw_prop(ctx, 'mala', 1660, 780, -1)                                  # a mala vermelha, vazia
+    else:
+        lr(ctx, 1100, 520, 60, 280, fill='#2A2A2E', r=6)                      # cama de armar fechada, encostada
+
+
+BG.update({
+    'sala_tio': (bg_mm_sala_tio, None),
+    'sala_tio_escuro': (lambda c, t: bg_mm_sala_tio(c, t, luz=False), None),
+    'sala_tio_manha': (lambda c, t: bg_mm_sala_tio(c, t, manha=True, vazio=True), None),
+    'corredor_tio': (bg_mm_corredor_tio, None),
+    'corredor_tio_escuro': (lambda c, t: bg_mm_corredor_tio(c, t, luz=False), None),
+    'corredor_tio_manha': (lambda c, t: bg_mm_corredor_tio(c, t, manha=True), None),
+    'quartinho': (bg_mm_quartinho, None),
+    'quarto_manha': (lambda c, t: (bg_mm_quarto(c, t), c.rectangle(0, 0, W, H), c.set_source_rgba(0.55, 0.62, 0.75, 0.13), c.fill()), None),
+    'quartinho_caixas': (lambda c, t: bg_mm_quartinho(c, t, arrumado=False), None),
+})
+_ST = dict(visita=(1100, 860, 0.72), sofa=(1100, 860, 0.9), corredor=(250, 990, 0.85), centro=(560, 1000, 0.95), porta=(1740, 990, 0.9))
+_QT = dict(cama=(1330, 790, 0.9), porta=(875, 960, 0.95), centro=(560, 1000, 1.0))
+SLOTS.update({'sala_tio': dict(_ST), 'sala_tio_escuro': dict(_ST), 'sala_tio_manha': dict(_ST),
+              'corredor_tio': dict(_C), 'corredor_tio_escuro': dict(_C), 'corredor_tio_manha': dict(_C),
+              'quartinho': dict(_QT), 'quarto_manha': dict(_Q), 'quartinho_caixas': dict(_QT)})

@@ -755,5 +755,71 @@ def mm_parede(spec, out):
     surf.write_to_png(out)
 
 
+
+def mm_sofa(spec, out):
+    """Capa 'sofa' (noite 10): visto de trás do sofá da sala. Em primeiro plano, enorme, a criatura (o tio de chapéu)
+    sentada no sofá com o encosto cobrindo o corpo, o pescoço comprido esticado e a cabeça torta virada pro fundo, com a
+    mala vermelha em cima do encosto; lá no fundo, pequeno, no vão escuro do corredor, o protagonista na ponta dos pés,
+    apavorado, a caminho do quarto; balão vermelho. spec: ordem, criatura, balao, cena='sofa'"""
+    from .render import rich_text
+    from .scenes import mm_room, door, amber, lr
+    from .chars import rrect, draw_prop
+    surf = cairo.ImageSurface(cairo.FORMAT_RGB24, W, H)
+    ctx = cairo.Context(surf)
+    q = spec.get('criatura', 'coisa')
+    # fundo: a parede da sala com o vão do corredor e as portas lá dentro
+    mm_room(ctx, fy=840)
+    ctx.rectangle(180, 260, 560, 580); ctx.set_source_rgba(0.015, 0.015, 0.02, 1); ctx.fill()
+    ctx.set_source_rgba(0.6, 0.6, 0.64, 1); ctx.set_line_width(6); ctx.rectangle(180, 260, 560, 580); ctx.stroke()
+    ctx.set_line_width(3)
+    ctx.move_to(180, 840); ctx.line_to(330, 640); ctx.line_to(590, 640); ctx.line_to(740, 840); ctx.stroke()
+    for x in (350, 480):
+        lr(ctx, x, 430, 100, 210, fill='#0D0D10')
+    amber(ctx, 1700, 520, 520, 0.3, 0)
+    draw_char(ctx, 'voce', spec.get('vx', 470), 860, 0.62, Pose(eyes='wide', mouth='o', arms='face', sweat=True, facing=1))
+    ctx.set_source_rgba(0.9, 0.9, 0.92, 1); ctx.set_line_width(6); ctx.set_line_cap(cairo.LINE_CAP_ROUND)
+    for a in (-0.9, -0.5, -0.1):
+        ctx.move_to(470 + math.cos(a - 1.2) * 140, 600 + math.sin(a - 1.2) * 140)
+        ctx.line_to(470 + math.cos(a - 1.2) * 170, 600 + math.sin(a - 1.2) * 170)
+        ctx.stroke()
+    # a criatura sentada, enorme, inclinada na direção do corredor
+    ctx.save(); ctx.translate(spec.get('cx', 1400), 1200); ctx.rotate(spec.get('incl', -0.5))
+    info = draw_char(ctx, q, 0, 0, spec.get('cs', 1.25), Pose(mouth='grin', facing=-1, arms='down', sit=True))
+    tp = ctx.user_to_device(info['head'][0], info['top'][1])
+    ctx.restore()
+    # o encosto do sofá, de costas, em primeiro plano
+    rrect(ctx, 760, 860, 1300, 320, 70)
+    ctx.set_source_rgba(0.12, 0.12, 0.135, 1); ctx.fill_preserve()
+    ctx.set_source_rgba(0.6, 0.6, 0.64, 1); ctx.set_line_width(7); ctx.stroke()
+    draw_prop(ctx, 'mala', spec.get('mx', 1640), 712, -1)
+    # escurece as bordas
+    gv = cairo.RadialGradient(900, H / 2 + 40, 320, 900, H / 2 + 40, 1250)
+    gv.add_color_stop_rgba(0, 0, 0, 0, 0); gv.add_color_stop_rgba(1, 0, 0, 0, 0.8)
+    ctx.rectangle(0, 0, W, H); ctx.set_source(gv); ctx.fill()
+    g2 = cairo.LinearGradient(0, 0, 0, 300)
+    g2.add_color_stop_rgba(0, 0.0, 0.0, 0.0, 0.92); g2.add_color_stop_rgba(1, 0.0, 0.0, 0.0, 0)
+    ctx.rectangle(0, 0, W, 300); ctx.set_source(g2); ctx.fill()
+    if spec.get('balao'):
+        msg = spec['balao']
+        ctx.select_font_face('Courier New', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+        ctx.set_font_size(58)
+        w_ = ctx.text_extents(msg).width + 80
+        hx, top = tp
+        bx, by = spec.get('bx', 1480), spec.get('by', 330)
+        bx = min(bx, W - w_ / 2 - 20)
+        rrect(ctx, bx - w_ / 2, by - 70, w_, 108, 40)
+        ctx.set_source_rgba(0.9, 0.15, 0.17, 1); ctx.fill()
+        ctx.move_to(bx - w_ / 2 + 60, by + 30); ctx.line_to(hx + 60, top + 200); ctx.line_to(bx - w_ / 2 + 170, by + 30); ctx.fill()
+        ctx.move_to(bx - w_ / 2 + 40, by + 8); ctx.set_source_rgba(1, 1, 1, 1); ctx.show_text(msg)
+    ctx.select_font_face('Poppins', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+    fs = 170
+    while fs > 90:
+        ctx.set_font_size(fs)
+        if ctx.text_extents(spec['ordem'].replace('*', '')).x_advance < W - 160:
+            break
+        fs -= 8
+    rich_text(ctx, spec['ordem'], 960, 170, fs)
+    surf.write_to_png(out)
+
 if __name__ == '__main__':
     _cli()
