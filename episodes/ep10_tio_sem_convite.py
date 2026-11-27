@@ -30,7 +30,7 @@ NO_SOFA_ESCURO = {'monstro': 'fundo', 'quem': Q, 'pos': (1100, 860), 's': 0.72, 
 NA_CAMA = {'monstro': 'borda', 'quem': Q, 'pos': (1500, 752), 's': 0.78}                          # pé da sua cama
 ENCOSTO = {'monstro': 'borda', 'quem': Q, 'pos': (1000, 522), 's': 0.7, 'escuro': 0.35}           # por cima do encosto do sofá
 NO_CORREDOR = {'monstro': 'fundo', 'quem': Q, 'pos': (940, 965), 's': 0.6, 'escuro': 0.45}       # no meio do corredor
-BANHEIRO = {'monstro': 'porta', 'quem': Q, 'rect': (240, 280, 240, 540), 'lado': 'dir', 'abre': 0.35}
+BANHEIRO = {'monstro': 'porta', 'quem': Q, 'rect': (240, 280, 240, 540), 'lado': 'dir', 'abre': 0.5}
 TETO = {'monstro': 'teto', 'quem': Q, 'pos': (1150, 0), 's': 0.62, 'bracos': 'down'}
 QUARTINHO = {'monstro': 'borda', 'quem': Q, 'pos': (1330, 742), 's': 0.8}
 
@@ -62,7 +62,7 @@ LINES = [
     ('coisa', "Ô de casa! Sou eu, o tio Dirceu! Vim de longe. Deixa eu dormir aí só hoje?",
      S('porta', cam=dict(zoom=1.3, to=1.45, cx=520, cy=460), fx=[dict(JANELA_ENTRADA, surge=True), 'zoom_punch'])),
     ('nar', "O tio Dirceu é irmão do seu pai e mora em Porto Velho. Faz seis anos que ninguém vê ele. E ninguém lembra de ter falado com ele essa semana.",
-     S('porta', C('voce', 'b', None, eyes='wide', mouth='flat', facing=-1), cam=dict(zoom=1.0, to=1.1), fx=[JANELA_ENTRADA])),
+     S('porta', C('voce', 'b', None, eyes='wide', mouth='flat', facing=-1), cam=dict(zoom=1.0, to=1.1))),
     ('nar', "Mas o seu pai, de chinelo e meio dormindo, reconhece a voz do irmão. Abre o portão, dá um abraço sem acender a luz da garagem. E a sua mãe arruma o sofá com lençol limpo.",
      S('sala_tio', C(Q, 'porta', None, facing=-1, mouth='grin'), C('pai', 'centro', None, arms='wave', mouth='smile', eyes='half'), cam=dict(zoom=1.0, to=1.1))),
     ('nar', "Você vê tudo do corredor. E repara numa coisa. Ele chama o seu pai de Toninho. Chama a sua mãe pelo nome. Mas olha pra você e diz só: e aí, sobrinho.",
@@ -104,7 +104,7 @@ LINES = [
     ('nar', "Então não vai direto pro seu quarto. Vai até a cozinha, bebe um copo d'água, entra no banheiro, dá descarga. Faz ele pensar que você tá só andando pela casa.",
      S('cozinha', C('voce', 'a', None, eyes='half', mouth='flat', arms='hold', prop='caneca'), cam=dict(zoom=1.0, to=1.1))),
     ('nar', "Se ele perguntar aonde você vai, diz que vai fazer xixi. Banheiro não é quarto de ninguém.",
-     S('sala_tio_escuro', tio(mouth='grin'), C('voce', 'corredor', None, eyes='half', mouth='flat', facing=1), cam=dict(zoom=1.05, to=1.15))),
+     S('corredor_tio_escuro', C('voce', 'p1', None, eyes='half', mouth='flat', facing=-1), cam=dict(zoom=1.05, to=1.15, cx=500, cy=600))),
     ('nar', "Espera o ronco. Ronco de verdade, comprido, daqueles que fazem o sofá ranger. Só aí você atravessa o corredor de meia, encostado na parede, e entra sem acender a luz.",
      S('corredor_tio_escuro', C('voce', 'p2', None, eyes='half', mouth='flat', facing=1), cam=dict(zoom=1.1, to=1.2))),
     ('nar', "Se ele ouvir a sua porta fechando, ele não vai saber se foi a do banheiro, a dos seus pais ou a sua. Porta fechando, de madrugada, é tudo igual.",

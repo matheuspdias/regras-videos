@@ -11,6 +11,7 @@
 | ep07 | qui 26/11/2026 | Se a sua vó estiver varrendo a casa às 3 da manhã… NÃO DEIXE ELA VARRER O SEU PÉ | agendado (auto) |
 | ep08 | sex 27/11/2026 | Se você sentir cheiro de café passado às 3h da manhã… NÃO VÁ À COZINHA | agendado (auto) |
 | ep09 | sáb 28/11/2026 | Se a sua irmã pedir pra dormir no seu quarto porque tem alguém no dela… NÃO DEIXE ELA ENTRAR | agendado (auto) |
+| ep10 | dom 29/11/2026 | Se o seu tio aparecer pra dormir na sua casa sem ninguém ter convidado… NÃO MOSTRE O SEU QUARTO | entregue |
 
-Próximo: **ep10 — dom 29/11/2026**. Cada execução produz o próximo episódio e acrescenta uma linha aqui
+Próximo: **ep11 — seg 30/11/2026**. Cada execução produz o próximo episódio e acrescenta uma linha aqui
 (status `entregue`). O próximo depois de cada um é sempre o dia seguinte à última data da tabela.

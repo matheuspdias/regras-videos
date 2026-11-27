@@ -21,7 +21,7 @@ com um detalhe errado]… [ORDEM EM MAIÚSCULAS]**. Os temas de família/casa à
 | 7 | Se a sua vó estiver varrendo a casa às 3 da manhã… NÃO DEIXE ELA VARRER O SEU PÉ | NÃO DEIXE **VARRER** | família (vó) + crendice brasileira | a vassoura chegando perto do quarto; 'varrer o pé' de verdade | feito — ep07, 24/11 |
 | 8 | Se você sentir cheiro de café passado às 3h da manhã… NÃO VÁ À COZINHA | FIQUE NO **QUARTO** | casa brasileira | barulho de colher na xícara, cozinha acesa | feito — ep08, 25/11 |
 | 9 | Se a sua irmã pedir pra dormir no seu quarto porque tem alguém no dela… NÃO DEIXE ELA ENTRAR | NÃO DEIXE **ENTRAR** | família (irmã) | irmã mais nova batendo na porta às 3h; a irmã de verdade dormindo | feito — ep09, 26/11 |
-| 10 | Se o seu tio aparecer pra dormir na sua casa sem ninguém ter convidado… NÃO MOSTRE O SEU QUARTO | NÃO MOSTRE **SEU QUARTO** | família (tio) + casa | tio que mora longe; ninguém lembra de ter falado com ele | pendente |
+| 10 | Se o seu tio aparecer pra dormir na sua casa sem ninguém ter convidado… NÃO MOSTRE O SEU QUARTO | NÃO MOSTRE **SEU QUARTO** | família (tio) + casa | tio que mora longe; ninguém lembra de ter falado com ele | feito — ep10, 27/11 |
 | 11 | Se o seu pai voltar do trabalho duas vezes na mesma noite… TRANQUE O QUARTO | TRANQUE O **QUARTO** | família (pai) | dois carros na garagem, duas vozes | pendente |
 | 12 | Se o seu irmão disser que tem alguém embaixo da cama dele… DEIXE A LUZ ACESA | DEIXE A **LUZ ACESA** | família (irmão) + casa | irmão de 8 anos; a coisa só se mexe no escuro | pendente |
 | 13 | Se o seu pai estiver vendo TV de madrugada sem som… NÃO SENTE DO LADO DELE | NÃO **SENTE** | família (pai) + casa | TV sem som num canal fora do ar; ele ri na hora errada | pendente |
